@@ -19,10 +19,10 @@ Cada fase tiene un objetivo, sus tareas, un criterio de "terminado" y una instru
 
 **Objetivo:** repositorio creado, publicado en Vercel y con el contexto listo para Claude Code.
 
-- [ ] Crear el repositorio en GitHub (`bloques-didacticos`) y copiar `CLAUDE.md` y este `PLAN.md` en la raíz.
-- [ ] Crear el proyecto base con Vite + React + TypeScript.
-- [ ] Conectar el repositorio a Vercel (plan Hobby, gratuito, mientras el piloto no cobre).
-- [ ] Configurar Vitest y Playwright con una prueba de ejemplo cada uno.
+- [x] Crear el repositorio en GitHub (`DidactiPrendo`) y copiar `CLAUDE.md` y este `PLAN.md` en la raíz.
+- [x] Crear el proyecto base con Vite + React + TypeScript.
+- [x] Conectar el repositorio a Vercel (plan Hobby, gratuito, mientras el piloto no cobre).
+- [x] Configurar Vitest y Playwright con una prueba de ejemplo cada uno.
 
 **Terminado cuando:** existe un enlace de Vercel que muestra "Hola, profe" y `npm run test` pasa.
 
@@ -34,15 +34,15 @@ Cada fase tiene un objetivo, sus tareas, un criterio de "terminado" y una instru
 
 **Objetivo:** la aplicación funciona sin internet, guarda en el navegador y tiene un diseño legible al proyectar.
 
-- [ ] Modo sin internet con `vite-plugin-pwa`: la app abre aunque se corte el wifi.
-- [ ] Capa de almacenamiento con Dexie: guardar, listar, actualizar y borrar bloques. Usar `schemaVersion` para migraciones futuras.
-- [ ] Sistema de diseño base:
+- [x] Modo sin internet con `vite-plugin-pwa`: la app abre aunque se corte el wifi.
+- [x] Capa de almacenamiento con Dexie: guardar, listar, actualizar y borrar bloques. Usar `schemaVersion` para migraciones futuras.
+- [x] Sistema de diseño base:
   - Variables CSS para tamaños y colores.
   - Tema de alto contraste.
   - Letra mínima de 24 px en modo proyección.
   - Botones de 48 px o más.
-- [ ] Pantalla de inicio con solo dos acciones grandes: **"Crear actividad"** y **"Mis actividades"**.
-- [ ] Componentes comunes:
+- [x] Pantalla de inicio con solo dos acciones grandes: **"Crear actividad"** y **"Mis actividades"**.
+- [x] Componentes comunes:
   - Botón.
   - Diálogo de confirmación.
   - Aviso de "Guardado" y botón "Deshacer".
