@@ -1,0 +1,24 @@
+export type BlockType = 'ruleta' | 'preguntas' | 'marcador' | 'temporizador'
+
+export const SCHEMA_VERSION = 1
+
+export interface Block {
+  id: string
+  type: BlockType
+  title: string
+  items: unknown
+  config: unknown
+  course?: string
+  subject?: string
+  oa?: string
+  createdAt: number
+  updatedAt: number
+  schemaVersion: typeof SCHEMA_VERSION
+}
+
+/** Datos que entrega quien crea un bloque; el resto lo completa el almacenamiento. */
+export type NuevoBloque = Pick<Block, 'type' | 'title' | 'items' | 'config'> &
+  Partial<Pick<Block, 'course' | 'subject' | 'oa'>>
+
+/** Campos que se pueden cambiar después de crear el bloque. */
+export type CambiosBloque = Partial<Omit<Block, 'id' | 'createdAt' | 'updatedAt' | 'schemaVersion'>>
