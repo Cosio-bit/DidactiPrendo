@@ -1,0 +1,26 @@
+:root {
+  --color-fondo: #ffffff;
+  --color-texto: #111111;
+  --tamano-texto: 24px;
+
+  font-family: system-ui, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: var(--tamano-texto);
+  line-height: 1.4;
+  color: var(--color-texto);
+  background: var(--color-fondo);
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+h1 {
+  font-size: 3em;
+  margin: 0;
+}
