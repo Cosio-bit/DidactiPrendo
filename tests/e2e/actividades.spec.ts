@@ -1,0 +1,80 @@
+import { expect, test } from '@playwright/test'
+
+test('crear, renombrar, borrar con confirmación y deshacer', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Crear actividad' }).click()
+
+  const nombre = page.getByLabel('Nombre de la actividad')
+  await nombre.fill('Fracciones 6°B')
+  await expect(page.getByRole('status')).toHaveText('Guardado')
+
+  await page.getByRole('button', { name: 'Listo' }).click()
+  await expect(page.getByRole('heading', { name: 'Mis actividades' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Fracciones 6°B' })).toBeVisible()
+
+  // Cancelar no borra nada.
+  await page.getByRole('button', { name: 'Borrar' }).click()
+  const dialogo = page.getByRole('dialog', { name: '¿Borrar esta actividad?' })
+  await expect(dialogo).toContainText('Fracciones 6°B')
+  await dialogo.getByRole('button', { name: 'Cancelar' }).click()
+  await expect(page.getByRole('heading', { name: 'Fracciones 6°B' })).toBeVisible()
+
+  // Confirmar borra, y Deshacer la recupera.
+  await page.getByRole('button', { name: 'Borrar' }).click()
+  await dialogo.getByRole('button', { name: 'Sí, borrar' }).click()
+  await expect(page.getByText('Todavía no tienes actividades guardadas.')).toBeVisible()
+  await expect(page.getByRole('status')).toHaveText('Se borró «Fracciones 6°B»')
+
+  await page.getByRole('button', { name: 'Deshacer' }).click()
+  await expect(page.getByRole('heading', { name: 'Fracciones 6°B' })).toBeVisible()
+})
+
+test('deshacer devuelve el nombre anterior de la actividad', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Crear actividad' }).click()
+  const nombre = page.getByLabel('Nombre de la actividad')
+  await expect(nombre).toHaveValue('Actividad sin nombre')
+
+  await nombre.fill('Repaso de verbos')
+  await expect(page.getByRole('status')).toHaveText('Guardado')
+  await page.getByRole('button', { name: 'Deshacer' }).click()
+
+  await expect(nombre).toHaveValue('Actividad sin nombre')
+  await expect(page.getByRole('status')).toHaveText('Se deshizo: cambio de nombre')
+})
+
+test('lo escrito sigue ahí después de recargar la página', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Crear actividad' }).click()
+  await page.getByLabel('Nombre de la actividad').fill('Tabla del 7')
+  await expect(page.getByRole('status')).toHaveText('Guardado')
+
+  await page.reload()
+  await expect(page.getByLabel('Nombre de la actividad')).toHaveValue('Tabla del 7')
+})
+
+test('se puede usar solo con teclado', async ({ page }) => {
+  await page.goto('/')
+
+  // Desde el inicio: Tab hasta "Crear actividad".
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('button', { name: 'Crear actividad' })).toBeFocused()
+  await page.keyboard.press('Enter')
+
+  await expect(page.getByRole('heading', { name: 'Tu actividad' })).toBeFocused()
+  await page.getByLabel('Nombre de la actividad').focus()
+  await page.keyboard.press('Control+A')
+  await page.keyboard.type('Sumas')
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('button', { name: 'Listo' })).toBeFocused()
+  await page.keyboard.press('Enter')
+
+  // Borrar con teclado: el foco empieza en "Cancelar" y Esc cierra sin borrar.
+  await page.getByRole('button', { name: 'Borrar' }).focus()
+  await page.keyboard.press('Enter')
+  await expect(page.getByRole('button', { name: 'Cancelar' })).toBeFocused()
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('dialog')).toBeHidden()
+  await expect(page.getByRole('heading', { name: 'Sumas' })).toBeVisible()
+})

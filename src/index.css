@@ -1,26 +1,299 @@
+/*
+ * Sistema de diseño. Todo tamaño y color sale de estas variables.
+ * Pensado para leerse desde el fondo de la sala con un proyector de poca luz.
+ */
 :root {
-  --color-fondo: #ffffff;
-  --color-texto: #111111;
-  --tamano-texto: 24px;
+  /* Tamaños */
+  --texto: 24px; /* mínimo en toda la app, también al proyectar */
+  --texto-grande: 32px;
+  --texto-titulo: 48px;
+  --texto-proyeccion: 64px; /* resultados y preguntas proyectadas */
+  --boton-minimo: 48px; /* objetivo táctil para pizarra interactiva */
+  --espacio-1: 8px;
+  --espacio-2: 16px;
+  --espacio-3: 24px;
+  --espacio-4: 40px;
+  --radio: 12px;
+  --borde: 2px;
+  --foco: 4px;
+
+  /* Colores: tema normal */
+  --fondo: #fafafa;
+  --superficie: #ffffff;
+  --texto-color: #141414;
+  --texto-suave: #3d3d3d;
+  --borde-color: #6b6b6b;
+  --principal: #0a4fbf;
+  --principal-texto: #ffffff;
+  --peligro: #b3261e;
+  --peligro-texto: #ffffff;
+  --foco-color: #f2a900;
+  --error-fondo: #fde7e6;
 
   font-family: system-ui, 'Segoe UI', Roboto, Arial, sans-serif;
-  font-size: var(--tamano-texto);
+  font-size: var(--texto);
   line-height: 1.4;
-  color: var(--color-texto);
-  background: var(--color-fondo);
+  color: var(--texto-color);
+  background: var(--fondo);
+}
+
+/* Alto contraste: blanco sobre negro, bordes gruesos. */
+:root[data-tema='alto-contraste'] {
+  --fondo: #000000;
+  --superficie: #000000;
+  --texto-color: #ffffff;
+  --texto-suave: #ffffff;
+  --borde-color: #ffffff;
+  --principal: #ffd400;
+  --principal-texto: #000000;
+  --peligro: #ff8a80;
+  --peligro-texto: #000000;
+  --foco-color: #00e5ff;
+  --error-fondo: #4a0000;
+  --borde: 3px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  background: var(--fondo);
 }
 
-main {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
+h1,
+h2,
+p {
+  margin: 0;
 }
 
 h1 {
-  font-size: 3em;
+  font-size: var(--texto-titulo);
+  line-height: 1.15;
+}
+
+h2 {
+  font-size: var(--texto-grande);
+}
+
+:focus-visible {
+  outline: var(--foco) solid var(--foco-color);
+  outline-offset: 3px;
+}
+
+h1:focus {
+  outline: none;
+}
+
+/* Estructura */
+.app {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
+  border-bottom: var(--borde) solid var(--borde-color);
+}
+
+.cabecera__nombre {
+  font-weight: 700;
+}
+
+.principal {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--espacio-4) var(--espacio-3);
+}
+
+/* Botón */
+.boton {
+  min-width: var(--boton-minimo);
+  min-height: var(--boton-minimo);
+  padding: var(--espacio-1) var(--espacio-3);
+  font: inherit;
+  font-weight: 600;
+  border: var(--borde) solid var(--borde-color);
+  border-radius: var(--radio);
+  background: var(--superficie);
+  color: var(--texto-color);
+  cursor: pointer;
+}
+
+.boton--principal {
+  background: var(--principal);
+  border-color: var(--principal);
+  color: var(--principal-texto);
+}
+
+.boton--peligro {
+  background: var(--peligro);
+  border-color: var(--peligro);
+  color: var(--peligro-texto);
+}
+
+.boton--grande {
+  min-height: 200px;
+  padding: var(--espacio-3);
+  font-size: var(--texto-grande);
+}
+
+.boton[aria-pressed='true'] {
+  background: var(--texto-color);
+  color: var(--fondo);
+}
+
+.boton:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* Inicio */
+.inicio {
+  display: grid;
+  gap: var(--espacio-4);
+}
+
+.inicio__acciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--espacio-3);
+}
+
+/* Mis actividades */
+.mis-actividades {
+  display: grid;
+  gap: var(--espacio-3);
+}
+
+.lista-actividades {
+  list-style: none;
   margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--espacio-2);
+}
+
+.actividad {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
+  border: var(--borde) solid var(--borde-color);
+  border-radius: var(--radio);
+  background: var(--superficie);
+}
+
+.actividad__datos {
+  min-width: 0;
+  flex: 1 1 320px;
+}
+
+.actividad__nombre {
+  overflow-wrap: anywhere;
+}
+
+.actividad__fecha {
+  color: var(--texto-suave);
+}
+
+.actividad__acciones {
+  display: flex;
+  gap: var(--espacio-2);
+}
+
+.vacio {
+  padding: var(--espacio-4) var(--espacio-3);
+  border: var(--borde) dashed var(--borde-color);
+  border-radius: var(--radio);
+}
+
+/* Editor */
+.editor {
+  display: grid;
+  gap: var(--espacio-2);
+  justify-items: start;
+}
+
+.campo__etiqueta {
+  margin-top: var(--espacio-2);
+  font-weight: 600;
+}
+
+.campo__entrada {
+  width: 100%;
+  min-height: var(--boton-minimo);
+  padding: var(--espacio-1) var(--espacio-2);
+  font: inherit;
+  font-size: var(--texto-grande);
+  color: var(--texto-color);
+  background: var(--superficie);
+  border: var(--borde) solid var(--borde-color);
+  border-radius: var(--radio);
+}
+
+.nota {
+  color: var(--texto-suave);
+  margin-bottom: var(--espacio-2);
+}
+
+/* Diálogo de confirmación */
+.dialogo {
+  max-width: min(640px, calc(100vw - 2 * var(--espacio-3)));
+  padding: var(--espacio-4);
+  color: var(--texto-color);
+  background: var(--superficie);
+  border: var(--borde) solid var(--borde-color);
+  border-radius: var(--radio);
+}
+
+.dialogo::backdrop {
+  background: rgb(0 0 0 / 0.6);
+}
+
+.dialogo p {
+  margin: var(--espacio-2) 0 var(--espacio-3);
+}
+
+.dialogo__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--espacio-2);
+}
+
+/* Barra de guardado y deshacer: siempre visible */
+.barra-guardado {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
+  background: var(--superficie);
+  border-top: var(--borde) solid var(--borde-color);
+}
+
+.barra-guardado__aviso--error {
+  padding: var(--espacio-1) var(--espacio-2);
+  border-radius: var(--radio);
+  background: var(--error-fondo);
+  font-weight: 700;
+}
+
+/* Modo proyección (lo usan los bloques desde la Fase 3) */
+.proyeccion {
+  font-size: var(--texto-proyeccion);
 }
