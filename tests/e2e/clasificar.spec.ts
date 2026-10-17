@@ -24,7 +24,7 @@ async function proyectarClasificar(page: Page) {
   await expect(page.getByText('0 de 8 clasificados')).toBeVisible()
 }
 
-const ficha = (page: Page, nombre: string) => page.locator('.ficha').filter({ hasText: nombre })
+const ficha = (page: Page, nombre: string) => page.locator('.proyeccion-ordenar__fichas .ficha').filter({ hasText: nombre })
 
 test('clasificar: se elige un elemento, se toca su categoría y se comprueba', async ({ page }) => {
   await proyectarClasificar(page)

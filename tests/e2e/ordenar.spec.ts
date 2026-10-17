@@ -16,7 +16,7 @@ async function proyectarOrdenar(page: Page) {
   await expect(page.getByText('0 de 5 en su lugar')).toBeVisible()
 }
 
-const ficha = (page: Page, texto: string) => page.locator('.ficha').filter({ hasText: texto })
+const ficha = (page: Page, texto: string) => page.locator('.proyeccion-ordenar__fichas .ficha').filter({ hasText: texto })
 
 test('ordenar: el curso propone, se comprueba y queda ordenado', async ({ page }) => {
   await proyectarOrdenar(page)
