@@ -145,9 +145,11 @@ export function ProyeccionRuleta({ elementos, config, onSalir, textoVolver }: Pr
           )}
           <div className="proyeccion__secundarios">
             <Boton onClick={onSalir}>{textoVolver}</Boton>
-            <Boton onClick={pantallaCompleta.alternar}>
-            {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
-          </Boton>
+            {pantallaCompleta.disponible && (
+              <Boton onClick={pantallaCompleta.alternar}>
+                {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
+              </Boton>
+            )}
             {!terminado && config.eliminarAlSalir && (
               <Boton onClick={volverAEmpezar} disabled={girando || restantes === elementos.length}>
                 {t.volverAEmpezar}

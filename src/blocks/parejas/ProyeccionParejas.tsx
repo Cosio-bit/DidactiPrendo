@@ -122,9 +122,11 @@ export function ProyeccionParejas({ parejas, onSalir, textoVolver }: Props) {
             {t.mostrarTodas}
           </Boton>
           <Boton onClick={volverAEmpezar}>{t.volverAEmpezar}</Boton>
-          <Boton onClick={pantallaCompleta.alternar}>
-            {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
-          </Boton>
+          {pantallaCompleta.disponible && (
+            <Boton onClick={pantallaCompleta.alternar}>
+              {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
+            </Boton>
+          )}
         </div>
       </div>
 

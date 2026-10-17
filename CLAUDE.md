@@ -31,6 +31,8 @@ Aplicación web para que profesores chilenos creen **bloques didácticos vacíos
    - Debe verse bien en 1024×768 píxeles y en formato 4:3 y 16:9.
    - Botones de al menos 48×48 píxeles, para pizarra táctil.
    - No depender de pasar el mouse por encima (hover) ni del clic derecho.
+   - En el celular (hasta 600 px de ancho o 500 px de alto) nada se desplaza hacia el lado y el editor se divide en pasos (texto, actividad, proyectar).
+   - Ningún cuadro tiene su propia barra de desplazamiento: todo se lee de una vez (a lo más se desplaza la página).
 5. **Control con teclado.** En modo proyección:
    - Flechas y barra espaciadora para avanzar, compatibles con controles de presentación inalámbricos.
    - Esc para salir.

@@ -656,6 +656,17 @@ h1:focus {
   border-top: var(--borde) solid var(--borde-suave);
 }
 
+/* El aviso se acomoda en varias líneas; el botón Deshacer conserva su tamaño. */
+.barra-guardado__aviso {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.barra-guardado .boton {
+  flex: none;
+}
+
 .barra-guardado__aviso--error {
   padding: var(--espacio-1) var(--espacio-2);
   border-radius: var(--radio);
@@ -678,6 +689,8 @@ h1:focus {
   position: fixed;
   inset: 0;
   display: grid;
+  /* Una columna que nunca es más ancha que la pantalla, aunque el contenido quiera serlo. */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--espacio-3);
   padding: var(--espacio-3);
   color: var(--texto-color);
@@ -775,7 +788,7 @@ h1:focus {
 /* Pantalla vertical o muy angosta: rueda arriba, resultado abajo. */
 @media (max-aspect-ratio: 1/1) {
   .proyeccion-ruleta {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr);
     justify-items: center;
   }
@@ -1072,6 +1085,7 @@ h1:focus {
 
   .hojas {
     display: block;
+    zoom: 1 !important;
   }
 
   .hoja {
@@ -1528,4 +1542,259 @@ h1:focus {
 .vista-previa__lista--columnas {
   columns: 2;
   column-gap: 2.2em;
+}
+
+/* El texto corto de un botón solo aparece en pantallas angostas (ver más abajo). */
+.texto-corto {
+  display: none;
+}
+
+/* Editor por pasos (celular). */
+.pasos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.pasos__paso {
+  width: 100%;
+  min-height: var(--boton-minimo);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--texto-suave);
+  background: var(--superficie);
+  border: var(--borde) solid var(--borde-suave);
+  border-radius: var(--radio);
+  cursor: pointer;
+}
+
+.pasos__numero {
+  width: 1.6em;
+  height: 1.6em;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-family: var(--f-titulo);
+  border: 2px solid currentColor;
+}
+
+.pasos__paso[aria-current='step'] {
+  color: var(--texto-color);
+  background: var(--elegido-fondo);
+  border-color: var(--texto-color);
+}
+
+.pasos__paso[aria-current='step'] .pasos__numero {
+  color: var(--tinta);
+  background: var(--amarillo);
+  border-color: var(--amarillo);
+}
+
+.pasos__paso:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.editor .pasos__titulo {
+  margin-top: var(--espacio-1);
+  font-size: var(--texto-grande);
+}
+
+.pasos__resumen {
+  padding: var(--espacio-2);
+  background: var(--superficie);
+  border: var(--borde) solid var(--borde-suave);
+  border-radius: var(--radio-grande);
+}
+
+.pasos__acciones {
+  display: grid;
+  gap: var(--espacio-1);
+}
+
+/* Proyectar, la acción principal, va primero en la lista de botones. */
+.pasos__acciones .boton--principal {
+  order: -1;
+}
+
+/* En el paso 1, la ayuda de cómo escribir va sin título ni alto mínimo, para que quepa todo. */
+.pasos__ayuda .vista-previa {
+  min-height: 0;
+}
+
+.pasos__ayuda .vista-previa > h2 {
+  display: none;
+}
+
+.editor--pasos .editor__area {
+  min-height: 140px;
+}
+
+/* Atrás y Siguiente siempre a la vista, pegados abajo. */
+.pasos__navegacion {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-1);
+  margin-top: var(--espacio-1);
+  padding-block: var(--espacio-1);
+  background: var(--fondo);
+  border-top: var(--borde) solid var(--borde-suave);
+}
+
+/* ---------- Celular (vertical u horizontal): nada se sale por el lado ---------- */
+@media (max-width: 600px), (max-height: 500px) {
+  :root {
+    --texto: 20px;
+    --texto-grande: 24px;
+    --texto-titulo: 32px;
+    --espacio-3: 16px;
+    --espacio-4: 24px;
+  }
+
+  .cabecera {
+    padding: var(--espacio-1) 12px;
+    gap: var(--espacio-1);
+  }
+
+  .cabecera__inicio {
+    gap: var(--espacio-1);
+  }
+
+  .cabecera__logo {
+    width: 44px;
+    height: 44px;
+  }
+
+  .cabecera__nombre,
+  .texto-largo {
+    display: none;
+  }
+
+  .texto-corto {
+    display: inline;
+  }
+
+  .boton {
+    padding-inline: 12px;
+  }
+
+  .principal {
+    padding: var(--espacio-2);
+  }
+
+  .barra-guardado {
+    padding: var(--espacio-1) 12px;
+    font-size: 18px;
+  }
+
+  .inicio__logo {
+    display: none;
+  }
+
+  .boton--grande {
+    min-height: 88px;
+  }
+
+  .inicio__pasos ol {
+    grid-template-columns: 1fr;
+  }
+
+  .actividad {
+    padding: 12px var(--espacio-2);
+  }
+
+  .actividad__acciones,
+  .editor__acciones,
+  .dialogo__acciones {
+    flex-wrap: wrap;
+  }
+
+  .dialogo {
+    padding: var(--espacio-3);
+  }
+
+  /* Las hojas para imprimir se muestran achicadas; al imprimir salen de su tamaño real. */
+  .hojas {
+    zoom: 0.45;
+  }
+
+  .selector-tipo--fila {
+    grid-template-columns: 1fr;
+  }
+
+  /* Proyección en el celular. */
+  .proyeccion {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .proyeccion-preguntas__barra > *,
+  .proyeccion__secundarios {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .proyeccion__secundarios {
+    justify-content: flex-start;
+  }
+
+  .proyeccion__secundarios .boton {
+    font-size: 18px;
+  }
+
+  .proyeccion-preguntas__controles {
+    flex-wrap: wrap;
+  }
+
+  .proyeccion-preguntas__avanzar {
+    min-height: 56px;
+    font-size: 24px;
+  }
+
+  .temporizador {
+    font-size: 32px;
+  }
+
+  .proyeccion-clasificar__categorias {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .proyeccion-ordenar__casillas {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none !important;
+  }
+
+  .proyeccion-ruleta__panel {
+    gap: var(--espacio-1);
+  }
+
+  .proyeccion__girar {
+    min-height: 64px;
+    font-size: 28px;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 800px) {
+  .hojas {
+    zoom: 0.75;
+  }
+}
+
+/* En pantallas táctiles no hay teclado: la ayuda de teclas sobra. */
+@media (pointer: coarse) {
+  .proyeccion__teclas {
+    display: none;
+  }
 }

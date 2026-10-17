@@ -52,9 +52,11 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
         <div className="proyeccion__secundarios">
           <Boton onClick={onSalir}>{textoVolver}</Boton>
           <Boton onClick={() => setOrden(nuevoOrdenar(elementos.length))}>{t.volverAEmpezar}</Boton>
-          <Boton onClick={pantallaCompleta.alternar}>
-            {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
-          </Boton>
+          {pantallaCompleta.disponible && (
+            <Boton onClick={pantallaCompleta.alternar}>
+              {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
+            </Boton>
+          )}
         </div>
       </div>
 

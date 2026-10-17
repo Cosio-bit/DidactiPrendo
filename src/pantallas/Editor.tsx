@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { esTipoConTexto, sePuedeImprimir, sePuedeProyectar, usaTemporizador } from '../blocks/catalogo.ts'
 import { leerConfigPreguntas, OPCIONES_DE_TIEMPO } from '../blocks/preguntas/logica.ts'
 import { leerConfigRuleta } from '../blocks/ruleta/logica.ts'
@@ -11,8 +11,9 @@ import type { Block } from '../storage/modelo.ts'
 import { useConsulta } from '../storage/useConsulta.ts'
 import { Boton } from '../ui/Boton.tsx'
 import { useAltoAutomatico } from '../ui/useAltoAutomatico.ts'
+import { useEsCelular } from '../ui/useEsCelular.ts'
 import { useEdicion } from './useEdicion.ts'
-import { nombreAutomatico } from './nombreVisible.ts'
+import { nombreAutomatico, nombreVisible } from './nombreVisible.ts'
 import { SelectorTipo } from './SelectorTipo.tsx'
 import { VistaPrevia } from './VistaPrevia.tsx'
 
@@ -53,6 +54,18 @@ export function Editor({ id }: { id: string }) {
   }, [guardado])
 
   const cuadroTexto = useAltoAutomatico(estado?.texto ?? '')
+  const celular = useEsCelular()
+  const [paso, setPaso] = useState(1)
+  const tituloPaso = useRef<HTMLHeadingElement>(null)
+
+  /** Cambia de paso y lleva el foco (y la vista) al título del paso nuevo. */
+  function irAPaso(nuevo: number) {
+    setPaso(nuevo)
+    requestAnimationFrame(() => {
+      tituloPaso.current?.focus()
+      tituloPaso.current?.scrollIntoView({ block: 'start' })
+    })
+  }
 
   const lectura = useMemo(
     () => parseText(estado?.texto ?? '', estado?.tipoManual ?? undefined),
@@ -128,43 +141,48 @@ export function Editor({ id }: { id: string }) {
   const configPreguntas = leerConfigPreguntas(actual.config)
   const proyectable = sePuedeProyectar(lectura.tipo, lectura.elementos)
 
-  return (
-    <section className="editor">
-      <div className="editor__cabecera">
-        {encabezado}
-        <div className="editor__acciones">
-          <Boton onClick={() => irA({ pantalla: 'mis-actividades' })}>{textos.editor.listo}</Boton>
-          {sePuedeImprimir(lectura.tipo) && (
-            <Boton disabled={!proyectable} onClick={() => irA({ pantalla: 'imprimir', id })}>
-              {textos.editor.imprimir}
-            </Boton>
-          )}
-          <Boton variante="principal" disabled={!proyectable} onClick={() => irA({ pantalla: 'proyectar', id })}>
-            {textos.editor.proyectar}
-          </Boton>
-        </div>
-      </div>
+  const hayTexto = actual.texto.trim() !== ''
 
-      <div className="campo campo--en-linea">
-        <label htmlFor={idNombre} className="campo__etiqueta">
-          {textos.editor.nombre}
-        </label>
-        <input
-          id={idNombre}
-          className="campo__entrada"
-          value={actual.titulo}
-          placeholder={nombreAutomatico({ type: lectura.tipo, items: lectura.elementos })}
-          onChange={(evento) => cambiarTitulo(evento.target.value)}
-          autoComplete="off"
-        />
-      </div>
+  const acciones = (
+    <>
+      <Boton onClick={() => irA({ pantalla: 'mis-actividades' })}>{textos.editor.listo}</Boton>
+      {sePuedeImprimir(lectura.tipo) && (
+        <Boton disabled={!proyectable} onClick={() => irA({ pantalla: 'imprimir', id })}>
+          {textos.editor.imprimir}
+        </Boton>
+      )}
+      <Boton variante="principal" disabled={!proyectable} onClick={() => irA({ pantalla: 'proyectar', id })}>
+        {textos.editor.proyectar}
+      </Boton>
+    </>
+  )
 
-      <SelectorTipo
-        elegido={lectura.tipo}
-        sugerido={actual.texto.trim() ? lectura.tipoSugerido : null}
-        onCambiar={cambiarTipo}
+  const campoNombre = (
+    <div className="campo campo--en-linea">
+      <label htmlFor={idNombre} className="campo__etiqueta">
+        {textos.editor.nombre}
+      </label>
+      <input
+        id={idNombre}
+        className="campo__entrada"
+        value={actual.titulo}
+        placeholder={nombreAutomatico({ type: lectura.tipo, items: lectura.elementos })}
+        onChange={(evento) => cambiarTitulo(evento.target.value)}
+        autoComplete="off"
       />
+    </div>
+  )
 
+  const selector = (
+    <SelectorTipo
+      elegido={lectura.tipo}
+      sugerido={hayTexto ? lectura.tipoSugerido : null}
+      onCambiar={cambiarTipo}
+    />
+  )
+
+  const opciones = (
+    <>
       {esRuleta && (
         <fieldset className="opciones">
           <legend className="solo-lector">{textos.ruleta.opciones}</legend>
@@ -216,25 +234,108 @@ export function Editor({ id }: { id: string }) {
           )}
         </fieldset>
       )}
+    </>
+  )
+
+  const cuadroDeTexto = (
+    <div className="editor__texto">
+      <label htmlFor={idTexto} className="campo__etiqueta">
+        {textos.editor.pegaTuTexto}
+      </label>
+      <textarea
+        ref={cuadroTexto}
+        id={idTexto}
+        className="campo__entrada editor__area"
+        value={actual.texto}
+        placeholder={textos.editor.porEjemplo(textos.editor.ejemplos[lectura.tipo])}
+        // Actividad recién creada en el computador: se puede pegar al tiro con Ctrl+V.
+        // En el celular no, porque abriría el teclado y taparía la pantalla.
+        autoFocus={nueva && !celular}
+        spellCheck={false}
+        onChange={(evento) => cambiarTexto(evento.target.value)}
+      />
+    </div>
+  )
+
+  const vistaPrevia = <VistaPrevia lectura={lectura} hayTexto={hayTexto} onUsarEjemplo={cambiarTexto} />
+
+  if (celular) {
+    const t = textos.editor.pasos
+    const titulos = t.cortos
+    return (
+      <section className="editor editor--pasos">
+        <ol className="pasos" aria-label={t.nombre}>
+          {titulos.map((titulo, i) => (
+            <li key={titulo}>
+              <button
+                type="button"
+                className="pasos__paso"
+                aria-current={paso === i + 1 ? 'step' : undefined}
+                disabled={i > 0 && !hayTexto}
+                onClick={() => irAPaso(i + 1)}
+              >
+                <span className="pasos__numero">{i + 1}</span>
+                {titulo}
+              </button>
+            </li>
+          ))}
+        </ol>
+        <h1 ref={tituloPaso} tabIndex={-1} className="pasos__titulo">
+          {t.titulo(paso, titulos.length, t.largos[paso - 1])}
+        </h1>
+
+        {paso === 1 && (
+          <>
+            {campoNombre}
+            {cuadroDeTexto}
+            {!hayTexto && <div className="pasos__ayuda">{vistaPrevia}</div>}
+          </>
+        )}
+        {paso === 2 && (
+          <>
+            {selector}
+            {vistaPrevia}
+          </>
+        )}
+        {paso === 3 && (
+          <>
+            <p className="pasos__resumen">
+              <strong>{nombreVisible({ ...guardado.valor, title: actual.titulo, type: lectura.tipo, items: lectura.elementos })}</strong>
+              <br />
+              {textos.tipos[lectura.tipo]} · {textos.vistaPrevia.cantidad(lectura.tipo, lectura.elementos.length)}
+            </p>
+            {opciones}
+            <div className="pasos__acciones">{acciones}</div>
+          </>
+        )}
+
+        <div className="pasos__navegacion">
+          {paso > 1 ? <Boton onClick={() => irAPaso(paso - 1)}>{t.atras}</Boton> : <span />}
+          {paso < 3 && (
+            <Boton variante="principal" disabled={!hayTexto} onClick={() => irAPaso(paso + 1)}>
+              {t.siguiente}
+            </Boton>
+          )}
+        </div>
+        {paso === 1 && !hayTexto && <p className="nota">{t.escribeParaSeguir}</p>}
+      </section>
+    )
+  }
+
+  return (
+    <section className="editor">
+      <div className="editor__cabecera">
+        {encabezado}
+        <div className="editor__acciones">{acciones}</div>
+      </div>
+
+      {campoNombre}
+      {selector}
+      {opciones}
 
       <div className="editor__columnas">
-        <div className="editor__texto">
-          <label htmlFor={idTexto} className="campo__etiqueta">
-            {textos.editor.pegaTuTexto}
-          </label>
-          <textarea
-            ref={cuadroTexto}
-            id={idTexto}
-            className="campo__entrada editor__area"
-            value={actual.texto}
-            placeholder={textos.editor.porEjemplo(textos.editor.ejemplos[lectura.tipo])}
-            // Actividad recién creada: se puede pegar al tiro con Ctrl+V.
-            autoFocus={nueva}
-            spellCheck={false}
-            onChange={(evento) => cambiarTexto(evento.target.value)}
-          />
-        </div>
-        <VistaPrevia lectura={lectura} hayTexto={actual.texto.trim() !== ''} onUsarEjemplo={cambiarTexto} />
+        {cuadroDeTexto}
+        {vistaPrevia}
       </div>
     </section>
   )

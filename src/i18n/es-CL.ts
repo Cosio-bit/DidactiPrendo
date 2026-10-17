@@ -27,6 +27,7 @@ export const textos = {
   app: {
     nombre: 'DidactiPrendo',
     volverAlInicio: 'Volver al inicio',
+    inicio: 'Inicio',
     altoContraste: 'Alto contraste',
   },
   inicio: {
@@ -73,6 +74,16 @@ export const textos = {
     nombrePorDefecto: 'Actividad sin nombre',
     pegaTuTexto: 'Pega tu texto aquí',
     porEjemplo: (ejemplo: string) => `Por ejemplo:\n${ejemplo}`,
+    pasos: {
+      nombre: 'Pasos para crear la actividad',
+      /** En los botones de arriba (cortos) y en el título del paso (largos). */
+      cortos: ['Texto', 'Actividad', 'Proyectar'],
+      largos: ['Pega tu texto', 'Elige la actividad', 'Proyecta'],
+      titulo: (n: number, total: number, paso: string) => `Paso ${n} de ${total}: ${paso}`,
+      siguiente: 'Siguiente →',
+      atras: '← Atrás',
+      escribeParaSeguir: 'Pega o escribe tu texto para seguir.',
+    },
     comoEscribirlo: 'Cómo escribirlo',
     probarEjemplo: 'Probar con este ejemplo',
     ejemplos: {

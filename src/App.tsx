@@ -36,7 +36,10 @@ function App() {
             <span className="cabecera__nombre">{textos.app.nombre}</span>
           </span>
           {ruta.pantalla !== 'inicio' && (
-            <Boton onClick={() => irA({ pantalla: 'inicio' })}>{textos.app.volverAlInicio}</Boton>
+            <Boton onClick={() => irA({ pantalla: 'inicio' })}>
+              <span className="texto-largo">{textos.app.volverAlInicio}</span>
+              <span className="texto-corto">{textos.app.inicio}</span>
+            </Boton>
           )}
         </div>
         <Boton

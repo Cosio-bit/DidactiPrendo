@@ -134,9 +134,11 @@ export function ProyeccionPreguntas({ preguntas, config, onSalir, textoVolver, v
           {conTiempo && !terminado && !revelada && !cuenta.terminada && (
             <Boton onClick={alternarPausa}>{cuenta.corriendo ? t.pausar : t.seguir}</Boton>
           )}
-          <Boton onClick={pantallaCompleta.alternar}>
-            {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
-          </Boton>
+          {pantallaCompleta.disponible && (
+            <Boton onClick={pantallaCompleta.alternar}>
+              {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
+            </Boton>
+          )}
         </div>
       </div>
 

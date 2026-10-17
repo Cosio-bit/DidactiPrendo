@@ -28,5 +28,6 @@ export function usePantallaCompleta() {
     else entrarPantallaCompleta()
   }, [])
 
-  return { activa, alternar }
+  const disponible = typeof document !== 'undefined' && typeof document.documentElement.requestFullscreen === 'function'
+  return { activa, alternar, disponible }
 }
