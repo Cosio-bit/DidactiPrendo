@@ -101,13 +101,13 @@ Cada fase tiene un objetivo, sus tareas, un criterio de "terminado" y una instru
 
 **Objetivo:** preguntas con alternativas para que respondan todos a mano alzada, con tarjetas A, B, C, D en papel o por equipos.
 
-- [ ] Editor alimentado por el lector de la Fase 2.
-- [ ] Proyección de una pregunta por pantalla:
+- [x] Editor alimentado por el lector de la Fase 2.
+- [x] Proyección de una pregunta por pantalla:
   - Mostrar alternativas.
   - Botón "Revelar respuesta".
   - Botón "Comentar el error", que deja la respuesta incorrecta en pantalla para discutirla.
-- [ ] Temporizador opcional por pregunta.
-- [ ] Botón para imprimir tarjetas A, B, C, D en papel, como respaldo cuando no hay proyector o para que los estudiantes respondan.
+- [x] Temporizador opcional por pregunta.
+- [x] Botón para imprimir tarjetas A, B, C, D en papel, como respaldo cuando no hay proyector o para que los estudiantes respondan.
 
 **Terminado cuando:** se puede hacer un repaso de 10 preguntas proyectado de principio a fin usando solo el teclado.
 
