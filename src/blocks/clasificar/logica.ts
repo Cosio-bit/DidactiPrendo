@@ -60,6 +60,23 @@ export function ubicarEn(c: Clasificar, categoria: number): Clasificar {
   return { ...c, errado: { elemento: c.elegido, categoria } }
 }
 
+/** Deja el elemento agarrado (elegido), sin alternar: soltarlo sin querer no lo cancela. */
+export function agarrar(c: Clasificar, elemento: number): Clasificar {
+  if (c.ubicados.includes(elemento) || !c.elementos[elemento]) return c
+  return { ...c, elegido: elemento, errado: null }
+}
+
+/** Suelta a propósito el elemento agarrado (Esc). */
+export function soltarElegido(c: Clasificar): Clasificar {
+  return c.elegido === null ? c : { ...c, elegido: null }
+}
+
+/** Arrastrar un elemento y soltarlo sobre una categoría: lo mismo que elegirlo y tocar la categoría. */
+export function soltarEn(c: Clasificar, elemento: number, categoria: number): Clasificar {
+  const agarrado = agarrar(c, elemento)
+  return agarrado === c ? c : ubicarEn(agarrado, categoria)
+}
+
 /** Espacio: ubica el elegido o, si no hay, el primero que queda suelto. */
 export function revelarSiguiente(c: Clasificar): Clasificar {
   const siguiente = c.elegido ?? c.elementos.findIndex((_, i) => !c.ubicados.includes(i))

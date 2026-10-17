@@ -1,15 +1,19 @@
 import { useState } from 'react'
 import { textos } from '../../i18n/es-CL.ts'
 import type { Categoria } from '../../parser/tipos.ts'
+import { useArrastrar } from '../../projection/useArrastrar.ts'
 import { useAtajos } from '../../projection/useAtajos.ts'
 import { usePantallaCompleta } from '../../projection/usePantallaCompleta.ts'
 import { useTextoAjustado } from '../../projection/useTextoAjustado.ts'
 import { Boton } from '../../ui/Boton.tsx'
 import {
+  agarrar,
   deshacer,
   elegir,
   nuevoClasificar,
   revelarSiguiente,
+  soltarElegido,
+  soltarEn,
   terminado,
   ubicarEn,
   type Clasificar,
@@ -38,9 +42,21 @@ export function ProyeccionClasificar({ titulo, categorias, onSalir, textoVolver 
   useAtajos({
     avanzar: () => setJuego(revelarSiguiente),
     retroceder: () => setJuego(deshacer),
-    salir: onSalir,
+    // Con un elemento agarrado, Esc solo lo suelta; si no, sale de la proyección.
+    salir: () => (juego.elegido !== null ? setJuego(soltarElegido) : onSalir()),
     pantallaCompleta: pantallaCompleta.alternar,
     otras: numeros,
+  })
+
+  // Tomar y arrastrar un elemento hasta su categoría (mouse, dedo o lápiz).
+  // Si se suelta fuera de una categoría, queda agarrado: no se pierde la elección.
+  const { fantasma, arrastrable, fueArrastre } = useArrastrar<number>({
+    agarrado: juego.elegido,
+    alSoltar: (elemento, destino) => {
+      const categoria = Number(destino.replace('categoria-', ''))
+      setJuego((j) => soltarEn(j, elemento, categoria))
+    },
+    alSoltarFuera: (elemento) => setJuego((j) => agarrar(j, elemento)),
   })
 
   const contenido = useTextoAjustado<HTMLDivElement>(`${juego.ubicados.length}-${juego.elegido}-${juego.errado?.categoria}`, 56)
@@ -77,7 +93,14 @@ export function ProyeccionClasificar({ titulo, categorias, onSalir, textoVolver 
               <button
                 key={i}
                 type="button"
-                className={errada ? 'categoria categoria--errada' : 'categoria'}
+                className={[
+                  'categoria',
+                  errada && 'categoria--errada',
+                  fantasma?.destino === `categoria-${i}` && 'categoria--destino',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                data-destino={`categoria-${i}`}
                 onClick={() => setJuego((j) => ubicarEn(j, i))}
                 aria-label={t.categoriaBoton(i + 1, categoria.nombre)}
               >
@@ -105,13 +128,15 @@ export function ProyeccionClasificar({ titulo, categorias, onSalir, textoVolver 
             const clases = ['ficha']
             if (elegido) clases.push('ficha--elegida')
             if (errado) clases.push('ficha--errada')
+            if (fantasma?.ancho !== undefined && fantasma.item === e.indice) clases.push('ficha--arrastrada')
             return (
               <li key={e.indice}>
                 <button
                   type="button"
                   className={clases.join(' ')}
                   aria-pressed={elegido}
-                  onClick={() => setJuego((j) => elegir(j, e.indice))}
+                  {...arrastrable(e.indice)}
+                  onClick={() => !fueArrastre(e.indice) && setJuego((j) => elegir(j, e.indice))}
                 >
                   {e.texto}
                   {errado && (
@@ -122,6 +147,17 @@ export function ProyeccionClasificar({ titulo, categorias, onSalir, textoVolver 
             )
           })}
         </ul>
+
+        {/* La copia que sigue al puntero (dentro del contenido, para tener su mismo tamaño de letra). */}
+        {fantasma && (
+          <div
+            className="ficha ficha--fantasma"
+            aria-hidden="true"
+            style={{ left: fantasma.x, top: fantasma.y, width: fantasma.ancho }}
+          >
+            {juego.elementos[fantasma.item].texto}
+          </div>
+        )}
       </div>
 
       <div className="proyeccion-preguntas__controles">

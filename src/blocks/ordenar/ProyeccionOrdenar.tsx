@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { textos } from '../../i18n/es-CL.ts'
+import { useArrastrar } from '../../projection/useArrastrar.ts'
 import { useAtajos } from '../../projection/useAtajos.ts'
 import { usePantallaCompleta } from '../../projection/usePantallaCompleta.ts'
 import { useTextoAjustado } from '../../projection/useTextoAjustado.ts'
@@ -26,11 +27,31 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
   const [orden, setOrden] = useState<Ordenar>(() => nuevoOrdenar(elementos.length))
   const pantallaCompleta = usePantallaCompleta()
   const listo = terminado(orden)
+  /** Ficha soltada fuera del orden: queda agarrada hasta que se toque el orden (o Esc). */
+  const [agarrado, setAgarrado] = useState<number | null>(null)
+
+  function proponerFicha(indice: number) {
+    setAgarrado(null)
+    setOrden((o) => proponer(o, indice))
+  }
+
+  const { fantasma, arrastrable, fueArrastre } = useArrastrar<number>({
+    agarrado,
+    alSoltar: (indice) => proponerFicha(indice),
+    alSoltarFuera: (indice) => setAgarrado(indice),
+  })
 
   useAtajos({
-    avanzar: () => setOrden(revelarSiguiente),
-    retroceder: () => setOrden(deshacer),
-    salir: onSalir,
+    avanzar: () => {
+      setAgarrado(null)
+      setOrden(revelarSiguiente)
+    },
+    retroceder: () => {
+      setAgarrado(null)
+      setOrden(deshacer)
+    },
+    // Con una ficha agarrada, Esc solo la suelta; si no, sale de la proyección.
+    salir: () => (agarrado !== null ? setAgarrado(null) : onSalir()),
     pantallaCompleta: pantallaCompleta.alternar,
   })
 
@@ -61,7 +82,11 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
       </div>
 
       <div ref={contenido} className="proyeccion-ordenar__contenido">
-        <section className="proyeccion-ordenar__columna">
+        <section
+          className={agarrado !== null ? 'proyeccion-ordenar__columna proyeccion-ordenar__destino' : 'proyeccion-ordenar__columna'}
+          data-destino="orden"
+          onClick={() => agarrado !== null && proponerFicha(agarrado)}
+        >
           <h2 className="proyeccion-ordenar__titulo">{t.ordenCorrecto}</h2>
           <ol
             className="proyeccion-ordenar__lista proyeccion-ordenar__casillas"
@@ -74,7 +99,9 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
                   i < orden.colocados
                     ? 'casilla casilla--llena'
                     : i === orden.colocados
-                      ? 'casilla casilla--siguiente'
+                      ? fantasma?.destino === 'orden'
+                        ? 'casilla casilla--siguiente casilla--destino'
+                        : 'casilla casilla--siguiente'
                       : 'casilla'
                 }
               >
@@ -104,8 +131,16 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
                 <li key={p.indice}>
                   <button
                     type="button"
-                    className={orden.errado === p.indice ? 'ficha ficha--errada' : 'ficha'}
-                    onClick={() => setOrden((o) => proponer(o, p.indice))}
+                    className={[
+                      'ficha',
+                      orden.errado === p.indice && 'ficha--errada',
+                      agarrado === p.indice && 'ficha--elegida',
+                      fantasma?.ancho !== undefined && fantasma.item === p.indice && 'ficha--arrastrada',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                    {...arrastrable(p.indice)}
+                    onClick={() => !fueArrastre(p.indice) && proponerFicha(p.indice)}
                   >
                     <span className="ficha__letra">{p.letra}</span> {elementos[p.indice]}
                     {orden.errado === p.indice && <strong className="ficha__marca"> ✗ {t.noVaAqui}</strong>}
@@ -114,6 +149,17 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
               ))}
           </ul>
         </section>
+
+        {/* La copia que sigue al puntero (dentro del contenido, para tener su mismo tamaño de letra). */}
+        {fantasma && (
+          <div
+            className="ficha ficha--fantasma"
+            aria-hidden="true"
+            style={{ left: fantasma.x, top: fantasma.y, width: fantasma.ancho }}
+          >
+            <span className="ficha__letra">{letraDe(fantasma.item)}</span> {elementos[fantasma.item]}
+          </div>
+        )}
       </div>
 
       <div className="proyeccion-preguntas__controles">
@@ -129,7 +175,7 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
           {t.revelarSiguiente}
         </Boton>
       </div>
-      <p className="proyeccion__teclas">{t.teclasOrdenar}</p>
+      <p className="proyeccion__teclas">{agarrado !== null ? t.tocarOrden : t.teclasOrdenar}</p>
     </div>
   )
 }
