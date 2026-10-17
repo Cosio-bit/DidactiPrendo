@@ -8,10 +8,10 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      // La versión nueva se activa sola la próxima vez que se abre la app;
-      // nunca recarga la página en medio de una clase.
-      registerType: 'autoUpdate',
-      injectRegister: 'script-defer',
+      // La app decide cuándo aplicar una versión nueva (ver src/actualizacion.ts):
+      // al estar en el inicio o en Mis actividades, nunca en medio de una clase.
+      registerType: 'prompt',
+      injectRegister: false,
       includeAssets: ['icono.svg', 'apple-touch-icon.png'],
       manifest: {
         name: 'DidactiPrendo',
