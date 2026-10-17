@@ -71,30 +71,36 @@ test('clasificar: si se suelta sin querer fuera de una categoría, la ficha sigu
   await expect(page.locator('.proyeccion')).toBeVisible()
 })
 
-test('ordenar: arrastrar al orden; soltada fuera queda agarrada y un clic en el orden la propone', async ({ page }) => {
+test('ordenar: arrastrar a cualquier lugar; soltada fuera queda agarrada y un clic en un lugar la pone', async ({ page }) => {
   await proyectar(page, 'Semilla\nGerminación\nPlanta\nFlor', 'Ordenar')
-  const orden = page.locator('[data-destino="orden"]')
+  const lugar = (n: number) => page.getByRole('button', { name: `Lugar ${n}`, exact: true })
 
-  await arrastrar(page, ficha(page, 'Semilla'), await centro(orden))
+  // Directo al último lugar.
+  await arrastrar(page, ficha(page, 'Flor'), await centro(lugar(4)))
+  await expect(lugar(4)).toHaveClass(/casilla--destino/)
   await expect(page.locator('.casilla--destino')).toHaveCount(1)
   await page.mouse.up()
   await expect(page.getByText('1 de 4 en su lugar')).toBeVisible()
 
-  // Equivocada: se marca "No va aquí".
-  await arrastrar(page, ficha(page, 'Flor'), await centro(orden))
+  // Equivocada: se marca "No va en el 1" y sigue agarrada.
+  await arrastrar(page, ficha(page, 'Planta'), await centro(lugar(1)))
   await page.mouse.up()
-  await expect(ficha(page, 'Flor')).toContainText('No va aquí')
+  await expect(ficha(page, 'Planta')).toContainText('No va en el 1')
+  await expect(ficha(page, 'Planta')).toHaveAttribute('aria-pressed', 'true')
+  await lugar(3).click()
+  await expect(page.getByText('2 de 4 en su lugar')).toBeVisible()
 
-  // Soltada fuera: queda agarrada; un clic en el orden la propone.
+  // Soltada fuera: queda agarrada; un clic en su lugar la pone.
   await arrastrar(page, ficha(page, 'Germinación'), await centro(page.locator('.proyeccion__teclas')))
   await page.mouse.up()
   await expect(ficha(page, 'Germinación')).toHaveClass(/ficha--elegida/)
-  await expect(page.getByText('Ahora toca el orden')).toBeVisible()
-  const destino = await centro(orden)
+  await expect(page.getByText('Ahora toca su lugar en el orden')).toBeVisible()
+  const destino = await centro(lugar(2))
   await page.mouse.click(destino.x, destino.y)
-  await expect(page.getByText('2 de 4 en su lugar')).toBeVisible()
-
-  // Un toque sin arrastrar sigue proponiendo al tiro.
-  await ficha(page, 'Planta').click()
   await expect(page.getByText('3 de 4 en su lugar')).toBeVisible()
+
+  // Un toque sin arrastrar la toma; otro toque en su lugar la pone.
+  await ficha(page, 'Semilla').click()
+  await lugar(1).click()
+  await expect(page.getByText('¡Quedó ordenado!')).toBeVisible()
 })

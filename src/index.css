@@ -1375,10 +1375,27 @@ h1:focus {
   font-weight: 700;
 }
 
-.casilla--siguiente {
+/* Una casilla vacía es un botón: con un elemento tomado, se toca para ponerlo ahí. */
+.casilla--vacia {
+  width: 100%;
+  height: 100%;
+  font: inherit;
+  line-height: inherit;
+  text-align: left;
+  color: var(--texto-color);
+  background: none;
+  cursor: pointer;
+}
+
+/* Con un elemento tomado, las casillas vacías se marcan: ahí se puede tocar o soltar. */
+.casilla--disponible {
   border-color: var(--principal);
   border-width: max(1px, 0.12em);
-  color: var(--texto-suave);
+}
+
+/* La casilla donde se probó y no iba. */
+.casilla--errada {
+  border-color: var(--peligro);
 }
 
 .ficha {
@@ -1447,18 +1464,6 @@ h1:focus {
   position: relative;
 }
 
-/* "¿Cuál va aquí?" se dibuja encima del lugar reservado de la casilla que sigue. */
-.casilla__pregunta {
-  position: absolute;
-  left: 2.2em;
-  right: 0.3em;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--texto-suave);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 .ficha--elegida {
   border-color: var(--texto-color);
@@ -2197,11 +2202,6 @@ h1:focus {
   border-style: solid;
   background: var(--herramienta-fondo);
   box-shadow: inset 0 0 0 0.12em var(--principal);
-}
-
-/* Con una ficha agarrada, el orden se puede tocar para ponerla ahí. */
-.proyeccion-ordenar__destino {
-  cursor: pointer;
 }
 
 .temporizador--oculto {

@@ -7,7 +7,19 @@ import { usePantallaCompleta } from '../../projection/usePantallaCompleta.ts'
 import { useTextoAjustado } from '../../projection/useTextoAjustado.ts'
 import { Boton } from '../../ui/Boton.tsx'
 import { letra } from '../preguntas/logica.ts'
-import { deshacer, nuevoOrdenar, proponer, revelarSiguiente, terminado, type Ordenar } from './logica.ts'
+import {
+  agarrar,
+  deshacer,
+  elegir,
+  estaColocado,
+  nuevoOrdenar,
+  ponerEn,
+  revelarSiguiente,
+  soltarElegido,
+  soltarEn,
+  terminado,
+  type Ordenar,
+} from './logica.ts'
 
 const t = textos.proyeccion
 
@@ -28,32 +40,30 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
   const [orden, setOrden] = useState<Ordenar>(() => nuevoOrdenar(elementos.length))
   const pantallaCompleta = usePantallaCompleta()
   const listo = terminado(orden)
-  /** Ficha soltada fuera del orden: queda agarrada hasta que se toque el orden (o Esc). */
-  const [agarrado, setAgarrado] = useState<number | null>(null)
+  const colocados = orden.colocados.length
 
-  function proponerFicha(indice: number) {
-    setAgarrado(null)
-    setOrden((o) => proponer(o, indice))
-  }
-
+  // Tomar y arrastrar un elemento hasta su casilla (mouse, dedo o lápiz).
+  // Si se suelta fuera de una casilla, queda agarrado: no se pierde la elección.
   const { fantasma, arrastrable, fueArrastre } = useArrastrar<number>({
-    agarrado,
-    alSoltar: (indice) => proponerFicha(indice),
-    alSoltarFuera: (indice) => setAgarrado(indice),
+    agarrado: orden.elegido,
+    alSoltar: (elemento, destino) => {
+      const casilla = Number(destino.replace('casilla-', ''))
+      setOrden((o) => soltarEn(o, elemento, casilla))
+    },
+    alSoltarFuera: (elemento) => setOrden((o) => agarrar(o, elemento)),
   })
 
+  // Números 1 a 9: llevar el elemento elegido a esa casilla.
+  const numeros = Object.fromEntries(
+    elementos.slice(0, 9).map((_, i) => [String(i + 1), () => setOrden((o) => ponerEn(o, i))]),
+  )
   useAtajos({
-    avanzar: () => {
-      setAgarrado(null)
-      setOrden(revelarSiguiente)
-    },
-    retroceder: () => {
-      setAgarrado(null)
-      setOrden(deshacer)
-    },
-    // Con una ficha agarrada, Esc solo la suelta; si no, sale de la proyección.
-    salir: () => (agarrado !== null ? setAgarrado(null) : onSalir()),
+    avanzar: () => setOrden(revelarSiguiente),
+    retroceder: () => setOrden(deshacer),
+    // Con un elemento agarrado, Esc solo lo suelta; si no, sale de la proyección.
+    salir: () => (orden.elegido !== null ? setOrden(soltarElegido) : onSalir()),
     pantallaCompleta: pantallaCompleta.alternar,
+    otras: numeros,
   })
 
   // El tamaño de letra se calcula una sola vez, con todas las casillas ya ocupadas (texto reservado) y el
@@ -63,6 +73,7 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
   // Cada elemento conserva la letra con que apareció, aunque los demás se muevan.
   const porOrdenar = orden.desorden.map((indice, posicion) => ({ indice, letra: letra(posicion) }))
   const letraDe = (indice: number) => porOrdenar.find((p) => p.indice === indice)!.letra
+  const filas = Math.ceil(elementos.length / columnasCasillas(elementos.length))
 
   return (
     <div className="proyeccion proyeccion-ordenar">
@@ -71,7 +82,7 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
           {titulo}
         </p>
         <p className="proyeccion-parejas__aviso" aria-live="polite">
-          {listo ? t.ordenTerminado : t.enSuLugar(orden.colocados, elementos.length)}
+          {listo ? t.ordenTerminado : t.enSuLugar(colocados, elementos.length)}
         </p>
         <div className="proyeccion__secundarios">
           <Boton variante="navegacion" onClick={onSalir}>{textoVolver}</Boton>
@@ -85,75 +96,92 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
       </div>
 
       <div ref={contenido} className="proyeccion-ordenar__contenido">
-        <section
-          className={agarrado !== null ? 'proyeccion-ordenar__columna proyeccion-ordenar__destino' : 'proyeccion-ordenar__columna'}
-          data-destino="orden"
-          onClick={() => agarrado !== null && proponerFicha(agarrado)}
-        >
+        <section className="proyeccion-ordenar__columna">
           <h2 className="proyeccion-ordenar__titulo">{t.ordenCorrecto}</h2>
           <ol
             className="proyeccion-ordenar__lista proyeccion-ordenar__casillas"
-            style={{ gridTemplateRows: `repeat(${Math.ceil(elementos.length / columnasCasillas(elementos.length))}, auto)` }}
+            style={{ gridTemplateRows: `repeat(${filas}, auto)` }}
           >
-            {elementos.map((elemento, i) => (
-              <li
-                key={i}
-                className={
-                  i < orden.colocados
-                    ? 'casilla casilla--llena'
-                    : i === orden.colocados
-                      ? fantasma?.destino === 'orden'
-                        ? 'casilla casilla--siguiente casilla--destino'
-                        : 'casilla casilla--siguiente'
-                      : 'casilla'
-                }
-              >
-                <span className="casilla__numero">{i + 1}</span>
-                {/* El texto que va en la casilla ocupa su lugar desde el inicio (invisible hasta que se coloca). */}
-                <span
-                  className={i < orden.colocados ? 'casilla__texto' : 'casilla__texto casilla__texto--reservado'}
-                  aria-hidden={i >= orden.colocados}
-                >
+            {elementos.map((elemento, i) => {
+              const lleno = estaColocado(orden, i)
+              // El texto que va en la casilla ocupa su lugar desde el inicio (invisible hasta que se coloca).
+              const texto = (
+                <span className={lleno ? 'casilla__texto' : 'casilla__texto casilla__texto--reservado'} aria-hidden={!lleno}>
                   <span className="ficha__letra">{letraDe(i)}</span> {elemento}
                 </span>
-                {i === orden.colocados && <span className="casilla__pregunta">{t.cualSigue}</span>}
-              </li>
-            ))}
+              )
+              if (lleno) {
+                return (
+                  <li key={i} className="casilla casilla--llena">
+                    <span className="casilla__numero">{i + 1}</span>
+                    {texto}
+                  </li>
+                )
+              }
+              return (
+                <li key={i}>
+                  <button
+                    type="button"
+                    className={[
+                      'casilla',
+                      'casilla--vacia',
+                      orden.elegido !== null && 'casilla--disponible',
+                      orden.errado?.casilla === i && 'casilla--errada',
+                      fantasma?.destino === `casilla-${i}` && 'casilla--destino',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                    data-destino={`casilla-${i}`}
+                    aria-label={t.lugarBoton(i + 1)}
+                    onClick={() => setOrden((o) => ponerEn(o, i))}
+                  >
+                    <span className="casilla__numero">{i + 1}</span>
+                    {texto}
+                  </button>
+                </li>
+              )
+            })}
           </ol>
         </section>
 
         <section className="proyeccion-ordenar__columna">
           <h2 className="proyeccion-ordenar__titulo">{t.porOrdenar}</h2>
           <ul className="proyeccion-ordenar__fichas">
-            {porOrdenar.map((p) =>
+            {porOrdenar.map((p) => {
               // Una ficha ya colocada deja su hueco: las demás no se corren.
-              p.indice < orden.colocados ? (
-                <li key={p.indice} aria-hidden="true">
-                  <span className="ficha ficha--hueco">
-                    <span className="ficha__letra">{p.letra}</span> {elementos[p.indice]}
-                  </span>
-                </li>
-              ) : (
+              if (estaColocado(orden, p.indice)) {
+                return (
+                  <li key={p.indice} aria-hidden="true">
+                    <span className="ficha ficha--hueco">
+                      <span className="ficha__letra">{p.letra}</span> {elementos[p.indice]}
+                    </span>
+                  </li>
+                )
+              }
+              const elegido = orden.elegido === p.indice
+              const errado = orden.errado?.elemento === p.indice ? orden.errado : null
+              return (
                 <li key={p.indice}>
                   <button
                     type="button"
                     className={[
                       'ficha',
-                      orden.errado === p.indice && 'ficha--errada',
-                      agarrado === p.indice && 'ficha--elegida',
+                      errado && 'ficha--errada',
+                      elegido && 'ficha--elegida',
                       fantasma?.ancho !== undefined && fantasma.item === p.indice && 'ficha--arrastrada',
                     ]
                       .filter(Boolean)
                       .join(' ')}
+                    aria-pressed={elegido}
                     {...arrastrable(p.indice)}
-                    onClick={() => !fueArrastre(p.indice) && proponerFicha(p.indice)}
+                    onClick={() => !fueArrastre(p.indice) && setOrden((o) => elegir(o, p.indice))}
                   >
                     <span className="ficha__letra">{p.letra}</span> {elementos[p.indice]}
-                    {orden.errado === p.indice && <strong className="ficha__marca">✗ {t.noVaAqui}</strong>}
+                    {errado && <strong className="ficha__marca">✗ {t.noVaEnLugar(errado.casilla + 1)}</strong>}
                   </button>
                 </li>
-              ),
-            )}
+              )
+            })}
           </ul>
         </section>
 
@@ -170,7 +198,7 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
       </div>
 
       <div className="proyeccion-preguntas__controles">
-        <Boton variante="herramienta" onClick={() => setOrden(deshacer)} disabled={orden.colocados === 0}>
+        <Boton variante="herramienta" onClick={() => setOrden(deshacer)} disabled={colocados === 0}>
           {t.deshacerPaso}
         </Boton>
         <Boton
@@ -182,7 +210,9 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
           {t.revelarSiguiente}
         </Boton>
       </div>
-      <AyudaTeclas indicacion={agarrado !== null}>{agarrado !== null ? t.tocarOrden : t.teclasOrdenar}</AyudaTeclas>
+      <AyudaTeclas indicacion={orden.elegido !== null}>
+        {orden.elegido !== null ? t.elegirLugar : t.teclasOrdenar}
+      </AyudaTeclas>
     </div>
   )
 }
