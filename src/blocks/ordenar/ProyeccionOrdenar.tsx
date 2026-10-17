@@ -55,7 +55,9 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
     pantallaCompleta: pantallaCompleta.alternar,
   })
 
-  const contenido = useTextoAjustado<HTMLDivElement>(`${orden.colocados}-${orden.errado}`, 56)
+  // El tamaño de letra se calcula una sola vez, con todas las casillas ya ocupadas (texto reservado) y el
+  // banco completo, así no cambia en cada jugada. Solo se recalcula si cambia el tamaño de la pantalla.
+  const contenido = useTextoAjustado<HTMLDivElement>('ordenar', 56)
 
   // Cada elemento conserva la letra con que apareció, aunque los demás se muevan.
   const porOrdenar = orden.desorden.map((indice, posicion) => ({ indice, letra: letra(posicion) }))
@@ -106,17 +108,14 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
                 }
               >
                 <span className="casilla__numero">{i + 1}</span>
-                <span className="casilla__texto">
-                  {i < orden.colocados ? (
-                    <>
-                      <span className="ficha__letra">{letraDe(i)}</span> {elemento}
-                    </>
-                  ) : i === orden.colocados ? (
-                    t.cualSigue
-                  ) : (
-                    ''
-                  )}
+                {/* El texto que va en la casilla ocupa su lugar desde el inicio (invisible hasta que se coloca). */}
+                <span
+                  className={i < orden.colocados ? 'casilla__texto' : 'casilla__texto casilla__texto--reservado'}
+                  aria-hidden={i >= orden.colocados}
+                >
+                  <span className="ficha__letra">{letraDe(i)}</span> {elemento}
                 </span>
+                {i === orden.colocados && <span className="casilla__pregunta">{t.cualSigue}</span>}
               </li>
             ))}
           </ol>
@@ -125,9 +124,15 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
         <section className="proyeccion-ordenar__columna">
           <h2 className="proyeccion-ordenar__titulo">{t.porOrdenar}</h2>
           <ul className="proyeccion-ordenar__fichas">
-            {porOrdenar
-              .filter((p) => p.indice >= orden.colocados)
-              .map((p) => (
+            {porOrdenar.map((p) =>
+              // Una ficha ya colocada deja su hueco: las demás no se corren.
+              p.indice < orden.colocados ? (
+                <li key={p.indice} aria-hidden="true">
+                  <span className="ficha ficha--hueco">
+                    <span className="ficha__letra">{p.letra}</span> {elementos[p.indice]}
+                  </span>
+                </li>
+              ) : (
                 <li key={p.indice}>
                   <button
                     type="button"
@@ -143,10 +148,11 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
                     onClick={() => !fueArrastre(p.indice) && proponerFicha(p.indice)}
                   >
                     <span className="ficha__letra">{p.letra}</span> {elementos[p.indice]}
-                    {orden.errado === p.indice && <strong className="ficha__marca"> ✗ {t.noVaAqui}</strong>}
+                    {orden.errado === p.indice && <strong className="ficha__marca">✗ {t.noVaAqui}</strong>}
                   </button>
                 </li>
-              ))}
+              ),
+            )}
           </ul>
         </section>
 

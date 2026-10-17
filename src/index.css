@@ -925,9 +925,9 @@ h1:focus {
   white-space: nowrap;
 }
 
+/* Sin negrita: la negrita es más ancha y haría bajar una línea (y cambiar el tamaño) al revelar. */
 .alternativa-proyectada--correcta {
   border-color: var(--correcta);
-  font-weight: 700;
 }
 
 .alternativa-proyectada--correcta .alternativa-proyectada__marca {
@@ -1411,9 +1411,50 @@ h1:focus {
   border-style: dashed;
 }
 
+/* "✗ No va aquí": etiqueta flotante sobre la ficha, para no cambiar su tamaño ni mover nada. */
+.ficha {
+  position: relative;
+}
+
 .ficha__marca {
-  color: var(--peligro);
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  bottom: calc(100% + 0.15em);
+  transform: translateX(-50%);
+  padding: 0.05em 0.4em;
+  font-size: 0.6em;
   white-space: nowrap;
+  color: var(--peligro-texto);
+  background: var(--peligro);
+  border-radius: 0.4em;
+  pointer-events: none;
+}
+
+/* Lugares reservados: ocupan su espacio pero no se ven, para que nada se mueva al jugar. */
+.ficha--hueco,
+.categoria__elemento--reservado,
+.casilla__texto--reservado,
+.alternativa-proyectada__marca--reservada,
+.proyeccion-preguntas__nota--reservada {
+  visibility: hidden;
+}
+
+.casilla {
+  position: relative;
+}
+
+/* "¿Cuál va aquí?" se dibuja encima del lugar reservado de la casilla que sigue. */
+.casilla__pregunta {
+  position: absolute;
+  left: 2.2em;
+  right: 0.3em;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--texto-suave);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ficha--elegida {
@@ -1886,4 +1927,18 @@ h1:focus {
 /* Con una ficha agarrada, el orden se puede tocar para ponerla ahí. */
 .proyeccion-ordenar__destino {
   cursor: pointer;
+}
+
+.temporizador--oculto {
+  visibility: hidden;
+}
+
+/* La ayuda de abajo cambia de texto al jugar: reserva dos líneas para que el contenido no cambie de alto. */
+.proyeccion-ordenar .proyeccion__teclas,
+.proyeccion-preguntas .proyeccion__teclas {
+  min-height: 2.8em;
+}
+
+.proyeccion-parejas__aviso {
+  white-space: nowrap;
 }

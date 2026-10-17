@@ -16,11 +16,11 @@ async function proyectarOrdenar(page: Page) {
   await expect(page.getByText('0 de 5 en su lugar')).toBeVisible()
 }
 
-const ficha = (page: Page, texto: string) => page.locator('.proyeccion-ordenar__fichas .ficha').filter({ hasText: texto })
+const ficha = (page: Page, texto: string) => page.locator('.proyeccion-ordenar__fichas button.ficha').filter({ hasText: texto })
 
 test('ordenar: el curso propone, se comprueba y queda ordenado', async ({ page }) => {
   await proyectarOrdenar(page)
-  await expect(page.locator('.ficha')).toHaveCount(5)
+  await expect(page.locator('button.ficha')).toHaveCount(5)
 
   // Una propuesta equivocada queda marcada y no se coloca.
   await ficha(page, 'Fruto').click()
@@ -65,7 +65,7 @@ test('ordenar con 12 elementos cabe en 1024×768', async ({ page }) => {
   await page.getByLabel('Pega tu texto aquí').fill(pasos.join('\n'))
   await page.getByRole('radio', { name: 'Ordenar' }).check()
   await page.getByRole('button', { name: 'Proyectar' }).click()
-  await expect(page.locator('.ficha')).toHaveCount(12)
+  await expect(page.locator('button.ficha')).toHaveCount(12)
   const contenido = page.locator('.proyeccion-ordenar__contenido')
   expect(await contenido.evaluate((c) => c.scrollHeight - c.clientHeight)).toBeLessThanOrEqual(0)
   await expect(page.getByRole('button', { name: 'Mostrar el que sigue' })).toBeInViewport()

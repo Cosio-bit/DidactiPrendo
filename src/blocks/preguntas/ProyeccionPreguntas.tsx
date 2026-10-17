@@ -106,7 +106,9 @@ export function ProyeccionPreguntas({ preguntas, config, onSalir, textoVolver, v
     otras: { ...letras, p: alternarPausa },
   })
 
-  const contenido = useTextoAjustado<HTMLDivElement>(`${actual}-${revelada}-${comentada}-${terminado}`, 64)
+  // La letra se calcula al mostrar cada pregunta, con el espacio de las marcas ya reservado: al revelar
+  // la respuesta o comentar un error, nada cambia de tamaño.
+  const contenido = useTextoAjustado<HTMLDivElement>(`${actual}-${terminado}`, 64)
   const sinCorrecta = revelada && !pregunta.alternativas.some((a) => a.correcta)
   const tiempoAcabado = conTiempo && cuenta.terminada && !revelada && !terminado
 
@@ -120,9 +122,16 @@ export function ProyeccionPreguntas({ preguntas, config, onSalir, textoVolver, v
               ? t.numeroAfirmacion(actual + 1, preguntas.length)
               : t.numeroPregunta(actual + 1, preguntas.length)}
         </p>
-        {conTiempo && !terminado && !revelada && (
+        {conTiempo && !terminado && (
           <p
-            className={tiempoAcabado ? 'temporizador temporizador--fin' : 'temporizador'}
+            className={[
+              'temporizador',
+              tiempoAcabado && 'temporizador--fin',
+              // Al revelar se esconde pero conserva su lugar, para que nada cambie de tamaño.
+              revelada && 'temporizador--oculto',
+            ]
+              .filter(Boolean)
+              .join(' ')}
             role="timer"
             aria-live={tiempoAcabado ? 'assertive' : 'off'}
           >
@@ -180,14 +189,29 @@ export function ProyeccionPreguntas({ preguntas, config, onSalir, textoVolver, v
                   <span className="alternativa-proyectada__letra">{etiqueta(i)}</span>
                   <span className="alternativa-proyectada__texto">
                     {alternativa.texto}
-                    {esCorrecta && <strong className="alternativa-proyectada__marca"> ✓ {t.correcta}</strong>}
-                    {esComentada && <strong className="alternativa-proyectada__marca"> ✗ {t.paraComentar}</strong>}
+                    {esCorrecta ? (
+                      <strong className="alternativa-proyectada__marca"> ✓ {t.correcta}</strong>
+                    ) : esComentada ? (
+                      <strong className="alternativa-proyectada__marca"> ✗ {t.paraComentar}</strong>
+                    ) : (
+                      // Espacio reservado para la marca, para que revelar no cambie el tamaño de la letra.
+                      <strong className="alternativa-proyectada__marca alternativa-proyectada__marca--reservada" aria-hidden="true">
+                        {verdaderoFalso ? `✓ ${t.correcta}` : `✗ ${t.paraComentar}`}
+                      </strong>
+                    )}
                   </span>
                 </li>
               )
             })}
           </ol>
-          {sinCorrecta && <p className="proyeccion-preguntas__nota">{t.sinRespuestaMarcada}</p>}
+          {!pregunta.alternativas.some((a) => a.correcta) && (
+            <p
+              className={sinCorrecta ? 'proyeccion-preguntas__nota' : 'proyeccion-preguntas__nota proyeccion-preguntas__nota--reservada'}
+              aria-hidden={!sinCorrecta}
+            >
+              {t.sinRespuestaMarcada}
+            </p>
+          )}
         </div>
       )}
 

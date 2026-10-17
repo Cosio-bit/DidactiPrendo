@@ -3,7 +3,7 @@ import { useLayoutEffect, useRef } from 'react'
 /** Mínimo para leer desde el fondo de la sala (ver CLAUDE.md). */
 const MINIMO_COMODO_PX = 24
 /** Si el texto es tan largo que no cabe ni así, se sigue achicando hasta aquí, pero nunca se corta ni se desplaza. */
-const MINIMO_ABSOLUTO_PX = 12
+const MINIMO_ABSOLUTO_PX = 10
 
 /**
  * Agranda el texto lo más posible sin que se salga de su caja.

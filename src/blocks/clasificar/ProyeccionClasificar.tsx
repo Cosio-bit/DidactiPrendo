@@ -59,8 +59,10 @@ export function ProyeccionClasificar({ titulo, categorias, onSalir, textoVolver 
     alSoltarFuera: (elemento) => setJuego((j) => agarrar(j, elemento)),
   })
 
-  const contenido = useTextoAjustado<HTMLDivElement>(`${juego.ubicados.length}-${juego.elegido}-${juego.errado?.categoria}`, 56)
-  const sueltos = juego.elementos.map((e, i) => ({ ...e, indice: i })).filter((e) => !juego.ubicados.includes(e.indice))
+  // El tamaño de letra se calcula una sola vez, con todo el espacio ya reservado (cajas llenas y
+  // banco completo), así no cambia en cada jugada. Solo se recalcula si cambia el tamaño de la pantalla.
+  const contenido = useTextoAjustado<HTMLDivElement>('clasificar', 56)
+  const todos = juego.elementos.map((e, i) => ({ ...e, indice: i }))
 
   return (
     <div className="proyeccion proyeccion-ordenar proyeccion-clasificar">
@@ -107,12 +109,21 @@ export function ProyeccionClasificar({ titulo, categorias, onSalir, textoVolver 
                 <span className="categoria__nombre">
                   <span className="ficha__letra">{i + 1}</span> {categoria.nombre}
                 </span>
+                {/* Cada elemento tiene su lugar reservado en la caja: al ubicarlo, aparece ahí y nada se mueve. */}
                 <span className="categoria__elementos">
-                  {juego.ubicados
-                    .filter((u) => juego.elementos[u].categoria === i)
-                    .map((u) => (
-                      <span key={u} className="categoria__elemento">
-                        {juego.elementos[u].texto}
+                  {todos
+                    .filter((e) => e.categoria === i)
+                    .map((e) => (
+                      <span
+                        key={e.indice}
+                        className={
+                          juego.ubicados.includes(e.indice)
+                            ? 'categoria__elemento'
+                            : 'categoria__elemento categoria__elemento--reservado'
+                        }
+                        aria-hidden={!juego.ubicados.includes(e.indice)}
+                      >
+                        {e.texto}
                       </span>
                     ))}
                 </span>
@@ -122,7 +133,15 @@ export function ProyeccionClasificar({ titulo, categorias, onSalir, textoVolver 
         </div>
 
         <ul className="proyeccion-ordenar__fichas">
-          {sueltos.map((e) => {
+          {todos.map((e) => {
+            // Una ficha ya ubicada deja su hueco: las demás no se corren.
+            if (juego.ubicados.includes(e.indice)) {
+              return (
+                <li key={e.indice} aria-hidden="true">
+                  <span className="ficha ficha--hueco">{e.texto}</span>
+                </li>
+              )
+            }
             const elegido = juego.elegido === e.indice
             const errado = juego.errado?.elemento === e.indice
             const clases = ['ficha']
@@ -140,7 +159,7 @@ export function ProyeccionClasificar({ titulo, categorias, onSalir, textoVolver 
                 >
                   {e.texto}
                   {errado && (
-                    <strong className="ficha__marca"> ✗ {t.noVaEn(categorias[juego.errado!.categoria].nombre)}</strong>
+                    <strong className="ficha__marca">✗ {t.noVaEn(categorias[juego.errado!.categoria].nombre)}</strong>
                   )}
                 </button>
               </li>

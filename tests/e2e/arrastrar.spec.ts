@@ -23,7 +23,7 @@ async function proyectar(page: Page, texto: string, tipo?: string) {
   await page.getByRole('button', { name: 'Proyectar' }).click()
 }
 
-const ficha = (page: Page, texto: string) => page.locator('.proyeccion-ordenar__fichas .ficha').filter({ hasText: texto })
+const ficha = (page: Page, texto: string) => page.locator('.proyeccion-ordenar__fichas button.ficha').filter({ hasText: texto })
 
 test('clasificar: arrastrar con el mouse a la categoría, con la ficha siguiendo al puntero', async ({ page }) => {
   await proyectar(page, 'Mamíferos: perro, ballena\nAves: cóndor, loica')

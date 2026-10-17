@@ -24,11 +24,11 @@ async function proyectarClasificar(page: Page) {
   await expect(page.getByText('0 de 8 clasificados')).toBeVisible()
 }
 
-const ficha = (page: Page, nombre: string) => page.locator('.proyeccion-ordenar__fichas .ficha').filter({ hasText: nombre })
+const ficha = (page: Page, nombre: string) => page.locator('.proyeccion-ordenar__fichas button.ficha').filter({ hasText: nombre })
 
 test('clasificar: se elige un elemento, se toca su categoría y se comprueba', async ({ page }) => {
   await proyectarClasificar(page)
-  await expect(page.locator('.ficha')).toHaveCount(8)
+  await expect(page.locator('button.ficha')).toHaveCount(8)
 
   // Equivocado: queda marcado y sigue suelto.
   await ficha(page, 'perro').click()
@@ -47,7 +47,7 @@ test('clasificar: se elige un elemento, se toca su categoría y se comprueba', a
     await page.getByRole('button', { name: categoria }).click()
   }
   await expect(page.getByText('¡Todo clasificado!')).toBeVisible()
-  await expect(page.locator('.ficha')).toHaveCount(0)
+  await expect(page.locator('button.ficha')).toHaveCount(0)
 })
 
 test('clasificar: solo con teclado', async ({ page }) => {
@@ -85,7 +85,7 @@ test('clasificar con 4 categorías y 16 elementos cabe en 1024×768', async ({ p
   await page.getByLabel('Pega tu texto aquí').fill(tabla)
   await expect(page.getByRole('radio', { name: 'Clasificar (sugerido)' })).toBeChecked()
   await page.getByRole('button', { name: 'Proyectar' }).click()
-  await expect(page.locator('.ficha')).toHaveCount(16)
+  await expect(page.locator('button.ficha')).toHaveCount(16)
   for (let i = 0; i < 16; i++) await page.keyboard.press('Space')
   await expect(page.getByText('¡Todo clasificado!')).toBeVisible()
   const contenido = page.locator('.proyeccion-ordenar__contenido')
