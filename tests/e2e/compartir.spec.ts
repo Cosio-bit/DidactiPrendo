@@ -90,7 +90,7 @@ test('descargar todas en un archivo y abrirlo en otro computador, sin duplicar y
 
   async function abrir() {
     const selector = otro.waitForEvent('filechooser')
-    await otro.getByRole('button', { name: 'Abrir un archivo' }).click()
+    await otro.getByRole('button', { name: 'Cargar material' }).click()
     await (await selector).setFiles(ruta)
   }
 
@@ -110,7 +110,7 @@ test('descargar todas en un archivo y abrirlo en otro computador, sin duplicar y
 
   // Un archivo que no es de la app.
   const selector = otro.waitForEvent('filechooser')
-  await otro.getByRole('button', { name: 'Abrir un archivo' }).click()
+  await otro.getByRole('button', { name: 'Cargar material' }).click()
   await (await selector).setFiles({ name: 'foto.json', mimeType: 'application/json', buffer: aBuffer('{"hola": 1}') })
   await expect(otro.getByRole('status')).toHaveText('Ese archivo no es de DidactiPrendo o está dañado.')
   await otro.context().close()

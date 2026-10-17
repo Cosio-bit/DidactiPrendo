@@ -354,6 +354,54 @@ h1:focus {
   gap: var(--espacio-3);
 }
 
+/* Cargar material: un recuadro punteado que invita a soltar el archivo, con el botón para buscarlo. */
+.zona-cargar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
+  background: var(--superficie);
+  border: var(--borde) dashed var(--borde-color);
+  border-radius: var(--radio-grande);
+}
+
+.zona-cargar__titulo {
+  font-size: var(--texto);
+}
+
+.zona-cargar__ayuda {
+  color: var(--texto-suave);
+}
+
+/* Mientras se arrastra un archivo sobre la página: toda la pantalla dice dónde soltarlo. */
+.soltar-aqui {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: var(--espacio-4);
+  background: rgb(233 246 253 / 0.92);
+  border: 8px dashed var(--principal);
+  pointer-events: none;
+}
+
+.soltar-aqui p {
+  max-width: 16em;
+  font-family: var(--f-titulo);
+  font-size: var(--texto-titulo);
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
+  color: var(--texto-color);
+}
+
+:root[data-tema='alto-contraste'] .soltar-aqui {
+  background: rgb(0 0 0 / 0.92);
+}
+
 /* Mis actividades */
 .mis-actividades {
   display: grid;

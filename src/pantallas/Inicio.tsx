@@ -1,6 +1,7 @@
 import { textos } from '../i18n/es-CL.ts'
 import { irA } from '../navegacion.ts'
 import { Boton } from '../ui/Boton.tsx'
+import { BotonCargarMaterial } from './BotonCargarMaterial.tsx'
 import { crearActividad } from './crearActividad.ts'
 
 export function Inicio() {
@@ -30,6 +31,16 @@ export function Inicio() {
           {textos.inicio.misActividades}
         </Boton>
       </div>
+      {/* Para quien recibió o descargó un archivo de actividades: arrastrarlo o buscarlo. */}
+      <section className="zona-cargar" aria-labelledby="cargar-material">
+        <div>
+          <h2 id="cargar-material" className="zona-cargar__titulo">
+            {textos.inicio.cargarTitulo}
+          </h2>
+          <p className="zona-cargar__ayuda">{textos.inicio.cargarAyuda}</p>
+        </div>
+        <BotonCargarMaterial />
+      </section>
       <section className="inicio__pasos" aria-labelledby="como-funciona">
         <h2 id="como-funciona" className="ceja">
           {textos.inicio.comoFunciona}

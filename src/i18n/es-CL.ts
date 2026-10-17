@@ -45,6 +45,8 @@ export const textos = {
     ],
     crearActividad: 'Crear actividad',
     misActividades: 'Mis actividades',
+    cargarTitulo: '¿Te pasaron un archivo de actividades?',
+    cargarAyuda: 'Arrástralo a esta página o búscalo en tu computador.',
   },
   misActividades: {
     titulo: 'Mis actividades',
@@ -77,8 +79,10 @@ export const textos = {
   /** Descargar las actividades en un archivo y traerlas de vuelta (o a otro computador). */
   respaldo: {
     descargarTodas: 'Descargar todas en un archivo',
-    abrirArchivo: 'Abrir un archivo',
-    ayuda: 'Para guardar una copia o pasar tus actividades a otro computador.',
+    cargarMaterial: 'Cargar material',
+    ayuda:
+      'Para guardar una copia o pasar tus actividades a otro computador. Para cargarlas, también puedes arrastrar el archivo a esta página.',
+    soltarAqui: 'Suelta el archivo aquí para cargar tus actividades',
     nombreArchivoTodas: (fecha: string) => `actividades-didactiprendo-${fecha}.json`,
     nombreArchivo: (nombre: string) => `${nombre}.json`,
     descargado: 'Archivo descargado. Lo encuentras en la carpeta Descargas.',

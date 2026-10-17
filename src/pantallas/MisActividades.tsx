@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { textos } from '../i18n/es-CL.ts'
 import { irA } from '../navegacion.ts'
 import { esTipoConTexto, sePuedeProyectar } from '../blocks/catalogo.ts'
@@ -11,7 +11,8 @@ import { crearActividad } from './crearActividad.ts'
 import { nombreVisible } from './nombreVisible.ts'
 import { pilaDeshacer } from '../ui/deshacer.ts'
 import { descargar, fechaParaArchivo } from '../ui/descargar.ts'
-import { importar, leerArchivo, paraArchivo } from '../storage/intercambio.ts'
+import { paraArchivo } from '../storage/intercambio.ts'
+import { BotonCargarMaterial } from './BotonCargarMaterial.tsx'
 import { DialogoCompartir } from './DialogoCompartir.tsx'
 
 /** "hoy", "ayer", "el 3 de octubre" (con el año solo si no es este año). */
@@ -51,31 +52,11 @@ async function borrar(bloque: Block) {
   }
 }
 
-/** Trae las actividades de un archivo descargado antes (en este u otro computador). Se puede deshacer. */
-async function abrirArchivo(archivo: File) {
-  const t = textos.respaldo
-  try {
-    const bloques = leerArchivo(await archivo.text())
-    if (!bloques) return pilaDeshacer.avisar(t.archivoInvalido, true)
-    if (bloques.length === 0) return pilaDeshacer.avisar(t.archivoVacio, true)
-    const { agregadas, yaEstaban } = await importar(almacen, bloques)
-    if (agregadas.length === 0) return pilaDeshacer.avisar(t.yaEstaban)
-    pilaDeshacer.registrar({
-      descripcion: textos.acciones.importacion,
-      deshacer: () => Promise.all(agregadas.map((b) => almacen.borrar(b.id))),
-    })
-    pilaDeshacer.avisar(t.agregadas(agregadas.length, yaEstaban))
-  } catch {
-    pilaDeshacer.avisar(textos.avisos.errorGuardar, true)
-  }
-}
-
 export function MisActividades() {
   // Las actividades creadas y abandonadas sin escribir nada no se muestran.
   const bloques = useConsulta(async () => (await almacen.listar()).filter((b) => !esVacio(b)), 'lista')
   const [porBorrar, setPorBorrar] = useState<Block | null>(null)
   const [porCompartir, setPorCompartir] = useState<Block | null>(null)
-  const selectorArchivo = useRef<HTMLInputElement>(null)
   const hayActividades = bloques.listo && bloques.valor.length > 0
 
   function descargarTodas() {
@@ -94,22 +75,8 @@ export function MisActividades() {
             {textos.respaldo.descargarTodas}
           </Boton>
         )}
-        <Boton variante="herramienta" onClick={() => selectorArchivo.current?.click()}>
-          {textos.respaldo.abrirArchivo}
-        </Boton>
+        <BotonCargarMaterial />
       </div>
-      <input
-        ref={selectorArchivo}
-        // Oculto: se abre con el botón "Abrir un archivo".
-        hidden
-        type="file"
-        accept=".json,application/json"
-        onChange={(evento) => {
-          const archivo = evento.target.files?.[0]
-          evento.target.value = ''
-          if (archivo) void abrirArchivo(archivo)
-        }}
-      />
     </div>
   )
 

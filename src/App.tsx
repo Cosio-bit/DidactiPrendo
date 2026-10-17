@@ -10,6 +10,10 @@ import { Recibir } from './pantallas/Recibir.tsx'
 import { BarraGuardado } from './ui/BarraGuardado.tsx'
 import { Boton } from './ui/Boton.tsx'
 import { useTema } from './ui/tema.ts'
+import { useSoltarArchivos } from './ui/useSoltarArchivos.ts'
+import { cargarMaterial } from './pantallas/cargarMaterial.ts'
+
+const cargarArchivosSoltados = (archivos: File[]) => void cargarMaterial(archivos)
 
 function App() {
   const ruta = useRuta()
@@ -24,6 +28,9 @@ function App() {
     pantallaAnterior.current = ruta.pantalla
     principal.current?.querySelector<HTMLElement>('h1')?.focus()
   }, [ruta.pantalla])
+
+  // Un archivo de actividades soltado en cualquier parte de la app se carga (en la proyección se ignora).
+  const archivoEncima = useSoltarArchivos(ruta.pantalla === 'proyectar' ? null : cargarArchivosSoltados)
 
   // La proyección ocupa toda la pantalla, sin cabecera ni barra de guardado.
   if (ruta.pantalla === 'proyectar') return <Proyectar key={ruta.id} id={ruta.id} />
@@ -61,6 +68,11 @@ function App() {
       </main>
 
       <BarraGuardado />
+      {archivoEncima && (
+        <div className="soltar-aqui" aria-hidden="true">
+          <p>{textos.respaldo.soltarAqui}</p>
+        </div>
+      )}
     </div>
   )
 }

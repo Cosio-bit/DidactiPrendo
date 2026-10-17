@@ -1,11 +1,12 @@
 import { expect, test } from '@playwright/test'
 
-test('la pantalla de inicio saluda al profe y ofrece solo dos acciones grandes', async ({ page }) => {
+test('la pantalla de inicio saluda al profe y ofrece dos acciones grandes, y cargar material', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('heading', { name: 'Hola, profe' })).toBeVisible()
 
+  await expect(page.locator('.inicio__acciones').getByRole('button')).toHaveText(['Crear actividad', 'Mis actividades'])
   const acciones = page.locator('main').getByRole('button')
-  await expect(acciones).toHaveText(['Crear actividad', 'Mis actividades'])
+  await expect(acciones).toHaveText(['Crear actividad', 'Mis actividades', 'Cargar material'])
   for (const boton of await acciones.all()) {
     const caja = (await boton.boundingBox())!
     expect(caja.height).toBeGreaterThanOrEqual(48)
