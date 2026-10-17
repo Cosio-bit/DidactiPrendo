@@ -245,3 +245,18 @@ describe('lector: cada tipo explica lo que no entendió', () => {
     }
   })
 })
+
+describe('lector: textos demasiado largos para proyectar', () => {
+  it('avisa los que se verán con letra chica, sin dejar de usarlos', () => {
+    const largo = 'Una frase muy larga para una ruleta, que en la sala se leería con letra demasiado chica'
+    const l = parseText(`Ana\n${largo}`)
+    expect((l.elementos as string[])[1]).toBe(largo)
+    expect(codigos(l)).toEqual(['texto-largo'])
+    expect(l.advertencias[0].mensaje).toContain('letra más chica')
+  })
+
+  it('en el memorice, una definición larga también se avisa', () => {
+    const l = parseText('perro = dog\ncélula = la unidad más pequeña de los seres vivos, capaz de funcionar de manera independiente')
+    expect(codigos(l)).toEqual(['texto-largo'])
+  })
+})

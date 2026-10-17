@@ -63,16 +63,3 @@ test('el profe puede cambiar el tipo sugerido, se guarda y se puede deshacer', a
   await page.getByRole('button', { name: 'Deshacer' }).click()
   await expect(page.getByRole('radio', { name: /^Ruleta/ })).toBeChecked()
 })
-
-test('la pantalla de pegar texto cabe en 1024×768', async ({ page }) => {
-  await page.goto('/')
-  await page.getByRole('button', { name: 'Crear actividad' }).click()
-  await page.getByLabel('Pega tu texto aquí').fill(nombres.join('\n'))
-
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1024)
-  // Nada que desplazar: la pantalla entera se ve de una vez, con la barra de Deshacer.
-  const principal = page.locator('main')
-  expect(await principal.evaluate((m) => m.scrollHeight - m.clientHeight)).toBeLessThanOrEqual(0)
-  await expect(page.getByRole('button', { name: 'Deshacer' })).toBeInViewport()
-  await expect(page.getByRole('button', { name: 'Proyectar' })).toBeInViewport()
-})

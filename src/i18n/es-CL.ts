@@ -300,6 +300,10 @@ export const textos = {
         : `${citar(elementos)} están en más de una categoría.`,
     demasiadasCategorias: (cantidad: number, maximo: number) =>
       `Hay ${cantidad} categorías. Se ven bien en la sala ${maximo} como máximo.`,
+    textosLargos: (largos: string[]) =>
+      largos.length === 1
+        ? `Este texto es largo y en la sala se verá con letra más chica: ${citar(largos)}. Si puedes, acórtalo.`
+        : `Estos textos son largos y en la sala se verán con letra más chica: ${citar(largos)}. Si puedes, acórtalos.`,
     preguntasRepetidas: (numeros: number[]) =>
       `${preguntasN(numeros, 'aparece', 'aparecen')} más de una vez. No las borramos, por si es a propósito.`,
   },

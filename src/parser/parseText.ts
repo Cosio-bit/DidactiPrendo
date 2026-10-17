@@ -1,4 +1,6 @@
+import { textos } from '../i18n/es-CL.ts'
 import { leerClasificar } from './clasificar.ts'
+import { textosLargos } from './largos.ts'
 import { leerLineas, normalizar } from './lineas.ts'
 import { leerRuleta } from './lista.ts'
 import { leerOrdenar } from './ordenar.ts'
@@ -18,6 +20,16 @@ const PROPORCION_MINIMA = 0.6
  * Nunca lanza errores: lo que no entiende lo explica en `advertencias`.
  */
 export function parseText(texto: string, tipo?: TipoLectura): Lectura {
+  const lectura = leer(texto, tipo)
+  // Avisa lo que en la sala se verá con letra chica, para que el profe pueda acortarlo.
+  const largos = textosLargos(lectura)
+  if (largos.length > 0) {
+    lectura.advertencias.push({ codigo: 'texto-largo', mensaje: textos.lector.textosLargos(largos), lineas: [] })
+  }
+  return lectura
+}
+
+function leer(texto: string, tipo?: TipoLectura): Lectura {
   const lineas = leerLineas(texto)
   // Si había algo escrito y no sale nada útil, hay que explicarlo.
   const hayTexto = normalizar(texto).trim() !== ''

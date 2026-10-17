@@ -10,6 +10,7 @@ import { almacen } from '../storage/bloques.ts'
 import type { Block } from '../storage/modelo.ts'
 import { useConsulta } from '../storage/useConsulta.ts'
 import { Boton } from '../ui/Boton.tsx'
+import { useAltoAutomatico } from '../ui/useAltoAutomatico.ts'
 import { useEdicion } from './useEdicion.ts'
 import { nombreAutomatico } from './nombreVisible.ts'
 import { SelectorTipo } from './SelectorTipo.tsx'
@@ -50,6 +51,8 @@ export function Editor({ id }: { id: string }) {
     setEstado(estadoDesde(guardado.valor))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guardado])
+
+  const cuadroTexto = useAltoAutomatico(estado?.texto ?? '')
 
   const lectura = useMemo(
     () => parseText(estado?.texto ?? '', estado?.tipoManual ?? undefined),
@@ -220,6 +223,7 @@ export function Editor({ id }: { id: string }) {
             {textos.editor.pegaTuTexto}
           </label>
           <textarea
+            ref={cuadroTexto}
             id={idTexto}
             className="campo__entrada editor__area"
             value={actual.texto}

@@ -249,7 +249,6 @@ h1:focus {
 
 /* Editor */
 .editor {
-  height: 100%;
   display: flex;
   flex-direction: column;
   gap: var(--espacio-1);
@@ -323,21 +322,20 @@ h1:focus {
 .editor__columnas {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  align-items: start;
   gap: var(--espacio-3);
-  /* Ocupa el alto que queda; cada columna se desplaza por dentro. */
-  flex: 1;
-  min-height: 240px;
 }
 
+/* Sin cuadros con su propia barra: el texto y la vista previa crecen con su contenido
+   y, si hace falta, se desplaza la página completa. */
 .editor__texto {
   display: grid;
-  grid-template-rows: auto 1fr auto;
   gap: var(--espacio-1);
-  min-height: 0;
 }
 
 .editor__area {
-  min-height: 0;
+  min-height: 240px;
+  overflow: hidden;
   resize: none;
   line-height: 1.35;
 }
@@ -348,8 +346,7 @@ h1:focus {
 
 /* Vista previa */
 .vista-previa {
-  min-height: 0;
-  overflow-y: auto;
+  min-height: 240px;
   padding: var(--espacio-2);
   border: var(--borde) solid var(--borde-color);
   border-radius: var(--radio);
@@ -473,11 +470,6 @@ h1:focus {
 
   .editor__columnas {
     grid-template-columns: 1fr;
-    height: auto;
-  }
-
-  .editor__area {
-    min-height: 240px;
   }
 }
 
@@ -1167,8 +1159,8 @@ h1:focus {
   gap: 0.4em;
   min-height: 1.4em;
   padding: 0.1em 0.3em;
-  border: 2px dashed var(--borde-color);
-  border-radius: var(--radio);
+  border: max(1px, 0.08em) dashed var(--borde-color);
+  border-radius: 0.4em;
 }
 
 .casilla__numero {
@@ -1189,7 +1181,7 @@ h1:focus {
 
 .casilla--siguiente {
   border-color: var(--principal);
-  border-width: 3px;
+  border-width: max(1px, 0.12em);
   color: var(--texto-suave);
 }
 
@@ -1198,14 +1190,16 @@ h1:focus {
   align-items: baseline;
   gap: 0.4em;
   width: 100%;
-  min-height: var(--boton-minimo);
+  /* 2em = 48 px con la letra normal; si hay mucho texto se achica junto con la letra para que todo quepa. */
+  min-height: 2em;
   padding: 0.1em 0.4em;
   font: inherit;
   text-align: left;
   color: var(--texto-color);
   background: var(--superficie);
-  border: 3px solid var(--borde-color);
-  border-radius: var(--radio);
+  /* Bordes en em: con mucho texto se achican junto con la letra. */
+  border: max(1px, 0.12em) solid var(--borde-color);
+  border-radius: 0.4em;
   cursor: pointer;
 }
 
@@ -1215,7 +1209,7 @@ h1:focus {
   min-width: 1.3em;
   text-align: center;
   font-weight: 800;
-  border: 2px solid currentColor;
+  border: max(1px, 0.08em) solid currentColor;
   border-radius: 0.3em;
 }
 
@@ -1252,8 +1246,8 @@ h1:focus {
   text-align: left;
   color: var(--texto-color);
   background: var(--superficie);
-  border: 3px solid var(--borde-color);
-  border-radius: var(--radio);
+  border: max(1px, 0.12em) solid var(--borde-color);
+  border-radius: 0.4em;
   cursor: pointer;
 }
 
@@ -1343,4 +1337,10 @@ h1:focus {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* La lista de la ruleta en dos columnas, para que se vea entera sin desplazarse tanto. */
+.vista-previa__lista--columnas {
+  columns: 2;
+  column-gap: 2.2em;
 }

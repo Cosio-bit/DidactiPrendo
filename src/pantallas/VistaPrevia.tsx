@@ -21,7 +21,14 @@ function Elementos({ lectura }: { lectura: Lectura }) {
     case 'ruleta':
     case 'ordenar':
       return (
-        <ol className="vista-previa__lista">
+        <ol
+          className={
+            // Dos columnas solo con elementos cortos; si no, se partirían en dos líneas.
+            lectura.tipo === 'ruleta' && lectura.elementos.length > 8 && lectura.elementos.every((e) => e.length <= 12)
+              ? 'vista-previa__lista vista-previa__lista--columnas'
+              : 'vista-previa__lista'
+          }
+        >
           {lectura.elementos.map((elemento, i) => (
             <li key={i}>{elemento}</li>
           ))}

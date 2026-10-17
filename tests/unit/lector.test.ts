@@ -112,7 +112,7 @@ describe('lector: listas', () => {
   it('11. una frase con comas no se separa', () => {
     const l = parseText('Hoy, en la clase de ciencias, vimos el ciclo del agua y la lluvia en el sur de Chile')
     expect(lista(l)).toHaveLength(1)
-    expect(codigos(l)).toEqual(['pocos-elementos'])
+    expect(codigos(l)).toEqual(['pocos-elementos', 'texto-largo'])
   })
 
   it('12. preguntas abiertas para la ruleta (sin alternativas)', () => {

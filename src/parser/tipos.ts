@@ -48,6 +48,7 @@ export type CodigoAdvertencia =
   | 'pocas-categorias'
   | 'categoria-vacia'
   | 'demasiadas-categorias'
+  | 'texto-largo'
 
 export interface Advertencia {
   codigo: CodigoAdvertencia
