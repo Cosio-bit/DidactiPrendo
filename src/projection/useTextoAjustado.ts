@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef } from 'react'
 
-const MINIMO_PX = 28
+/** Mínimo para leer desde el fondo de la sala (ver CLAUDE.md). */
+const MINIMO_PX = 24
 
 /**
  * Agranda el texto lo más posible sin que se salga de su caja.
@@ -21,6 +22,7 @@ export function useTextoAjustado<T extends HTMLElement>(texto: string, maximoPx:
       if (!caja) return
       // Primero se achica sin partir palabras; solo si ni así cabe, se permite partirlas.
       caja.style.overflowWrap = 'normal'
+      caja.style.overflowY = ''
       let tamano = maximoPx
       caja.style.fontSize = `${tamano}px`
       while (tamano > MINIMO_PX && seSale()) {
@@ -28,6 +30,8 @@ export function useTextoAjustado<T extends HTMLElement>(texto: string, maximoPx:
         caja.style.fontSize = `${tamano}px`
       }
       if (seSale()) caja.style.overflowWrap = 'anywhere'
+      // Último recurso: si ni con la letra mínima cabe, se puede desplazar, pero nunca se corta.
+      caja.style.overflowY = seSale() ? 'auto' : ''
     }
 
     ajustar()

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 
 export interface Atajos {
   /** Espacio, Enter, flecha derecha o abajo, Avanzar página: lo que envían los controles de presentación. */
@@ -7,6 +7,8 @@ export interface Atajos {
   retroceder?: () => void
   salir?: () => void
   pantallaCompleta?: () => void
+  /** Otras teclas, por su letra en minúscula (ej. { a: …, p: … }). */
+  otras?: Record<string, () => void>
 }
 
 const AVANZAR = new Set([' ', 'Enter', 'ArrowRight', 'ArrowDown', 'PageDown'])
@@ -15,14 +17,15 @@ const RETROCEDER = new Set(['ArrowLeft', 'ArrowUp', 'PageUp'])
 /** Atajos de teclado del modo proyección. */
 export function useAtajos(atajos: Atajos) {
   const actuales = useRef(atajos)
-  useEffect(() => {
+  useLayoutEffect(() => {
     actuales.current = atajos
   })
 
-  useEffect(() => {
+  // Antes de dibujar: así, apenas se ve la proyección, el teclado ya responde.
+  useLayoutEffect(() => {
     function alPresionar(evento: KeyboardEvent) {
       if (evento.ctrlKey || evento.altKey || evento.metaKey || evento.repeat) return
-      const { avanzar, retroceder, salir, pantallaCompleta } = actuales.current
+      const { avanzar, retroceder, salir, pantallaCompleta, otras } = actuales.current
       const enBoton = evento.target instanceof HTMLButtonElement
 
       // Enter sobre un botón lo activa como siempre. El espacio, en cambio, siempre avanza:
@@ -34,6 +37,7 @@ export function useAtajos(atajos: Atajos) {
       else if (RETROCEDER.has(evento.key)) accion = retroceder
       else if (evento.key === 'Escape') accion = salir
       else if (evento.key === 'f' || evento.key === 'F') accion = pantallaCompleta
+      else accion = otras?.[evento.key.toLowerCase()]
 
       if (accion) {
         evento.preventDefault()

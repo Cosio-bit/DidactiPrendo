@@ -36,6 +36,13 @@ export function sonarFin() {
   tono(880, 0.25, 0.12, 'sine')
 }
 
+/** Se acabó el tiempo: tres pitidos claros. */
+export function sonarAlarma() {
+  const ctx = obtenerContexto()
+  if (!ctx) return
+  for (let i = 0; i < 3; i++) window.setTimeout(() => tono(988, 0.18, 0.15, 'square'), i * 280)
+}
+
 /** Debe llamarse en respuesta a una tecla o un toque para que el navegador permita el sonido. */
 export function prepararSonido() {
   obtenerContexto()
