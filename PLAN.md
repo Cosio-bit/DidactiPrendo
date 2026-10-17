@@ -121,7 +121,7 @@ Cada fase tiene un objetivo, sus tareas, un criterio de "terminado" y una instru
 - [x] **Verdadero o falso:** una afirmación por pantalla, revelar, temporizador opcional e impresión de tarjetas V y F.
 - [x] **Parejas:** memorice proyectado; se voltean dos tarjetas por turno con un toque o el teclado.
 - [x] **Ordenar:** los elementos aparecen desordenados; el curso propone cuál va después y se comprueba, o se revela paso a paso.
-- [ ] **Clasificar:** los elementos aparecen sueltos y se llevan a su categoría; se comprueba o se revela uno por uno.
+- [x] **Clasificar:** los elementos aparecen sueltos y se llevan a su categoría; se comprueba o se revela uno por uno.
 
 **Terminado cuando:** cada bloque se crea pegando texto y se proyecta de principio a fin con teclado o toques, en 1024×768.
 

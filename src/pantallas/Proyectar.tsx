@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react'
 import { ProyeccionRuleta } from '../blocks/ruleta/ProyeccionRuleta.tsx'
 import { leerConfigRuleta } from '../blocks/ruleta/logica.ts'
 import { esListaDePreguntas, leerConfigPreguntas } from '../blocks/preguntas/logica.ts'
+import { esListaDeCategorias } from '../blocks/clasificar/logica.ts'
+import { ProyeccionClasificar } from '../blocks/clasificar/ProyeccionClasificar.tsx'
+import { sePuedeProyectar } from '../blocks/catalogo.ts'
 import { esListaDeTextos } from '../blocks/ordenar/logica.ts'
 import { ProyeccionOrdenar } from '../blocks/ordenar/ProyeccionOrdenar.tsx'
 import { esListaDeParejas } from '../blocks/parejas/logica.ts'
@@ -115,6 +118,15 @@ export function Proyectar({ id }: { id: string }) {
       return <Aviso id={id} mensaje={textos.proyeccion.sinElementosOrdenar} />
     }
     return <ProyeccionOrdenar key={b.id} titulo={nombreVisible(b)} elementos={b.items} onSalir={() => salir(id)} />
+  }
+
+  if (b.type === 'clasificar') {
+    if (!esListaDeCategorias(b.items) || !sePuedeProyectar('clasificar', b.items)) {
+      return <Aviso id={id} mensaje={textos.proyeccion.sinCategorias} />
+    }
+    // Las categorías sin elementos no aportan nada a la proyección.
+    const categorias = b.items.filter((c) => c.elementos.length > 0)
+    return <ProyeccionClasificar key={b.id} titulo={nombreVisible(b)} categorias={categorias} onSalir={() => salir(id)} />
   }
 
   return <Aviso id={id} mensaje={textos.proyeccion.tipoNoDisponible} />

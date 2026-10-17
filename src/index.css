@@ -1209,3 +1209,49 @@ h1:focus {
   border-color: var(--principal);
   box-shadow: inset 0 0 0 3px var(--principal);
 }
+
+/* Clasificar: cajas de categorías arriba, elementos sueltos abajo. */
+.proyeccion-clasificar__categorias {
+  display: grid;
+  gap: 0.4em;
+}
+
+.categoria {
+  min-width: 0;
+  min-height: 3.2em;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.3em;
+  padding: 0.3em;
+  font: inherit;
+  text-align: left;
+  color: var(--texto-color);
+  background: var(--superficie);
+  border: 3px solid var(--borde-color);
+  border-radius: var(--radio);
+  cursor: pointer;
+}
+
+.categoria--errada {
+  border-color: var(--peligro);
+  border-style: dashed;
+}
+
+.categoria__nombre {
+  font-weight: 800;
+}
+
+.categoria__elementos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25em;
+}
+
+.categoria__elemento {
+  padding: 0 0.3em;
+  font-size: 0.85em;
+  font-weight: 700;
+  border: 2px solid var(--correcta);
+  border-radius: 0.3em;
+}
