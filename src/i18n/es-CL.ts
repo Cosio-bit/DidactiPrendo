@@ -1,5 +1,7 @@
 // Todos los textos visibles de la aplicación. Nunca escribirlos directo en los componentes.
 
+type TipoConTexto = 'ruleta' | 'preguntas' | 'parejas' | 'verdadero-falso' | 'ordenar' | 'clasificar'
+
 /** "a", "a y b", "a, b y c" */
 function enumerar(cosas: string[]): string {
   if (cosas.length <= 1) return cosas.join('')
@@ -43,7 +45,11 @@ export const textos = {
   },
   tipos: {
     ruleta: 'Ruleta',
-    preguntas: 'Preguntas con alternativas',
+    preguntas: 'Selección múltiple',
+    parejas: 'Parejas',
+    'verdadero-falso': 'Verdadero o falso',
+    ordenar: 'Ordenar',
+    clasificar: 'Clasificar',
     marcador: 'Marcador',
     temporizador: 'Temporizador',
   },
@@ -72,11 +78,16 @@ export const textos = {
     imprimir: 'Imprimir',
     queImprimir: '¿Qué quieres imprimir?',
     tarjetas: 'Tarjetas A, B, C, D',
+    tarjetasVF: 'Tarjetas V y F',
     preguntas: 'Las preguntas en papel',
+    afirmaciones: 'Las afirmaciones en papel',
+    explicacionTarjetasVF:
+      'Dos juegos de tarjetas V y F por hoja para recortar. Cada estudiante (o equipo) levanta la que elige.',
+    instruccionVF: 'Escribe V si la afirmación es verdadera o F si es falsa.',
     explicacionTarjetas:
       'Cuatro tarjetas por hoja para recortar. Cada estudiante (o equipo) levanta la letra que elige. Sirven para cualquier repaso.',
     explicacionPreguntas:
-      'Las preguntas sin las respuestas, por si no hay proyector. La pauta con las respuestas sale en una hoja aparte.',
+      'Sin las respuestas, por si no hay proyector. La pauta con las respuestas sale en una hoja aparte.',
     nombreYCurso: 'Nombre: ______________________________   Curso: ________',
     instruccion: 'Encierra en un círculo la letra de la alternativa correcta.',
     pauta: (titulo: string) => `Pauta: ${titulo}`,
@@ -105,6 +116,10 @@ export const textos = {
     tipoNoDisponible: 'Este tipo de actividad todavía no se puede proyectar.',
     sinPreguntas: 'Esta actividad no tiene preguntas con alternativas. Sal y revisa el texto.',
     numeroPregunta: (n: number, total: number) => `Pregunta ${n} de ${total}`,
+    numeroAfirmacion: (n: number, total: number) => `Afirmación ${n} de ${total}`,
+    teclasVF: 'Espacio: revelar y avanzar · ←: anterior · F: pantalla completa · Esc: salir',
+    teclasVFConTiempo: 'Espacio: revelar y avanzar · ←: anterior · P: pausar · F: pantalla completa · Esc: salir',
+    sinAfirmaciones: 'Esta actividad no tiene afirmaciones. Sal y revisa el texto.',
     sinEnunciado: '(Pregunta sin enunciado)',
     correcta: 'Correcta',
     paraComentar: 'Para comentar',
@@ -132,10 +147,21 @@ export const textos = {
     vacia: 'Aquí verás tu actividad cuando pegues o escribas el texto.',
     revisa: 'Revisa esto',
     correcta: 'correcta',
-    cantidad: (tipo: 'ruleta' | 'preguntas', n: number) =>
-      tipo === 'ruleta'
-        ? `${n} ${n === 1 ? 'elemento' : 'elementos'}`
-        : `${n} ${n === 1 ? 'pregunta' : 'preguntas'}`,
+    cantidad: (tipo: TipoConTexto, n: number) => {
+      const [singular, plural] = {
+        ruleta: ['elemento', 'elementos'],
+        ordenar: ['elemento', 'elementos'],
+        preguntas: ['pregunta', 'preguntas'],
+        parejas: ['pareja', 'parejas'],
+        'verdadero-falso': ['afirmación', 'afirmaciones'],
+        clasificar: ['categoría', 'categorías'],
+      }[tipo]
+      return `${n} ${n === 1 ? singular : plural}`
+    },
+    verdadero: 'Verdadero',
+    falso: 'Falso',
+    sinMarcar: 'sin marcar',
+    paso: (n: number) => `${n}.`,
   },
   confirmarBorrado: {
     titulo: '¿Borrar esta actividad?',
@@ -188,6 +214,38 @@ export const textos = {
       `${preguntasN(numeros, 'tiene', 'tienen')} más de una alternativa marcada como correcta.`,
     pocasAlternativas: (numeros: number[]) =>
       `${preguntasN(numeros, 'tiene', 'tienen')} una sola alternativa. Agrega al menos otra.`,
+    lineasSinPareja: (lineas: string[]) =>
+      lineas.length === 1
+        ? `No usamos esta línea porque no encontramos su pareja: ${citar(lineas)}. Escribe las dos partes separadas por =, por ejemplo: perro = dog.`
+        : `No usamos estas líneas porque no encontramos su pareja: ${citar(lineas)}. Escribe las dos partes separadas por =, por ejemplo: perro = dog.`,
+    sinParejas: 'Para el memorice se necesitan al menos 2 parejas. Escribe una por línea, separadas por =, por ejemplo: perro = dog.',
+    demasiadasParejas: (cantidad: number, maximo: number) =>
+      `Hay ${cantidad} parejas. El memorice se lee bien con ${maximo} como máximo.`,
+    sinAfirmaciones: 'No encontramos afirmaciones. Escribe una por línea con (V) o (F) al final.',
+    sinRespuesta: (numeros: number[]) =>
+      numeros.length === 1
+        ? `La afirmación ${numeros[0]} no dice si es verdadera o falsa. Agrega (V) o (F) al final.`
+        : `Las afirmaciones ${enumerar(numeros.map(String))} no dicen si son verdaderas o falsas. Agrega (V) o (F) al final.`,
+    ordenadoPorNumero: 'Los ordenamos según los números que traían.',
+    pocosParaOrdenar: (minimo: number) => `Para ordenar se necesitan al menos ${minimo} elementos.`,
+    demasiadosParaOrdenar: (cantidad: number, maximo: number) =>
+      `Hay ${cantidad} elementos. Para ordenar en la sala se leen bien ${maximo} como máximo.`,
+    lineasSinCategoria: (lineas: string[]) =>
+      lineas.length === 1
+        ? `No usamos esta línea porque no está bajo ninguna categoría: ${citar(lineas)}.`
+        : `No usamos estas líneas porque no están bajo ninguna categoría: ${citar(lineas)}.`,
+    pocasCategorias:
+      'Para clasificar se necesitan al menos 2 categorías con elementos. Escribe cada categoría con dos puntos, por ejemplo: Mamíferos: perro, ballena.',
+    categoriasVacias: (nombres: string[]) =>
+      nombres.length === 1
+        ? `La categoría ${citar(nombres)} no tiene elementos.`
+        : `Las categorías ${citar(nombres)} no tienen elementos.`,
+    enDosCategorias: (elementos: string[]) =>
+      elementos.length === 1
+        ? `${citar(elementos)} está en más de una categoría.`
+        : `${citar(elementos)} están en más de una categoría.`,
+    demasiadasCategorias: (cantidad: number, maximo: number) =>
+      `Hay ${cantidad} categorías. Se ven bien en la sala ${maximo} como máximo.`,
     preguntasRepetidas: (numeros: number[]) =>
       `${preguntasN(numeros, 'aparece', 'aparecen')} más de una vez. No las borramos, por si es a propósito.`,
   },

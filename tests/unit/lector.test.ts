@@ -92,7 +92,8 @@ describe('lector: listas', () => {
 
   it('8. ChatGPT con títulos markdown y separadores', () => {
     const texto = '### Mamíferos\n- Perro\n- Gato\n\n---\n\n### Aves\n- Cóndor\n* Loica'
-    const l = parseText(texto)
+    // Con títulos se sugiere Clasificar (ver lector-bloques.test.ts); como lista, se ignoran.
+    const l = parseText(texto, 'ruleta')
     expect(lista(l)).toEqual(['Perro', 'Gato', 'Cóndor', 'Loica'])
     expect(codigos(l)).toEqual(['lineas-ignoradas'])
   })

@@ -13,6 +13,14 @@ export interface Linea {
   separador: boolean
   /** Toda la línea (o la alternativa) venía en negrita. */
   negrita: boolean
+  /** Encabezado de una lista de curso copiada de Excel ("N°", "Nombre", "Apellido"). */
+  encabezadoDeLista: boolean
+  /** Número con que venía en la lista ("3." → 3); sirve para respetar el orden. */
+  numeroDeLista: number | null
+  /** Celdas con contenido, si venía de una tabla con dos o más columnas (sin la columna de número). */
+  celdas: string[]
+  /** Todas las celdas de la tabla, incluidas las vacías, para respetar las columnas. */
+  columnas: string[]
 }
 
 const INVISIBLES = /[\u200B-\u200D\u2060\uFEFF\u00AD]/g
@@ -42,16 +50,26 @@ export function normalizar(texto: string): string {
 }
 
 export function sinTildes(texto: string): string {
-  return texto.normalize('NFD').replace(/[̀-ͯ]/g, '')
+  return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 }
 
-function quitarViñetasYNumeros(texto: string, linea: Pick<Linea, 'numerada'>): string {
+function quitarFormato(texto: string): string {
+  return texto
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/__(.+?)__/g, '$1')
+    .replace(/\*\*/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function quitarViñetasYNumeros(texto: string, linea: Pick<Linea, 'numerada' | 'numeroDeLista'>): string {
   for (;;) {
     const antes = texto
     if (!ASTERISCO_DE_CORRECTA.test(texto)) texto = texto.replace(VINETA, '')
     const numero = texto.match(NUMERO) ?? texto.match(PREGUNTA_N)
     if (numero) {
       linea.numerada = true
+      linea.numeroDeLista ??= Number(numero[0].match(/\d+/)![0])
       texto = texto.slice(numero[0].length)
     }
     if (texto === antes) return texto.trim()
@@ -67,6 +85,10 @@ export function limpiarLinea(original: string, numero: number): Linea {
     titulo: false,
     separador: false,
     negrita: false,
+    encabezadoDeLista: false,
+    numeroDeLista: null,
+    celdas: [],
+    columnas: [],
   }
   let texto = original
 
@@ -79,18 +101,23 @@ export function limpiarLinea(original: string, numero: number): Linea {
   }
 
   // Columnas de Excel y listas de Word ("1.\tTexto", "•\tTexto").
-  const celdas = texto
-    .split('\t')
-    .map((c) => c.replace(/\s+/g, ' ').trim())
-    .filter(Boolean)
+  const columnas = texto.split('\t').map((c) => c.replace(/\s+/g, ' ').trim())
+  const celdas = columnas.filter(Boolean)
   if (celdas.length > 1) {
-    if (CELDA_ENCABEZADO.test(celdas[0]) || celdas.every((c) => COLUMNA_DE_LISTA.test(c))) linea.titulo = true
-    else if (CELDA_NUMERO.test(celdas[0])) {
+    if (CELDA_ENCABEZADO.test(celdas[0]) || celdas.every((c) => COLUMNA_DE_LISTA.test(c))) {
+      linea.titulo = true
+      linea.encabezadoDeLista = true
+    } else if (CELDA_NUMERO.test(celdas[0])) {
       linea.numerada = true
+      linea.numeroDeLista = Number(celdas[0].match(/\d+/)![0])
       celdas.shift()
     } else if (CELDA_VINETA.test(celdas[0]) && !(celdas[0] === '*' && ASTERISCO_DE_CORRECTA.test(`*${celdas[1]}`))) {
       celdas.shift()
     }
+  }
+  if (columnas.length > 1) {
+    linea.columnas = columnas.map(quitarFormato)
+    if (celdas.length > 1) linea.celdas = celdas.map(quitarFormato)
   }
   texto = celdas.join(' ')
 
