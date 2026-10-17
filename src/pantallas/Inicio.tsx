@@ -14,7 +14,13 @@ export function Inicio() {
           </h1>
           <p className="inicio__descripcion">{textos.inicio.descripcion}</p>
         </div>
-        <img className="inicio__logo" src="/logo-completo.webp" alt={textos.inicio.logoCompleto} width={142} height={180} />
+        <figure className="marca-completa">
+          <img src="/logo-grande.png" alt="" width={120} height={120} />
+          <figcaption>
+            <span className="marca-completa__nombre">{textos.app.nombre}</span>
+            <span className="marca-completa__eslogan">{textos.app.eslogan}</span>
+          </figcaption>
+        </figure>
       </div>
       <div className="inicio__acciones">
         <Boton variante="principal" grande onClick={() => void crearActividad()}>

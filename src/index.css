@@ -1470,15 +1470,39 @@ h1:focus {
   gap: var(--espacio-1);
 }
 
-.inicio__logo {
+/* Logo completo: la ampolleta y, centrados debajo, el nombre y el eslogan. */
+.marca-completa {
   flex: none;
-  width: auto;
-  height: 180px;
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  text-align: center;
 }
 
-:root[data-tema='alto-contraste'] .inicio__logo {
-  background: #ffffff;
-  border-radius: var(--radio);
+.marca-completa img {
+  display: block;
+  width: 120px;
+  height: 120px;
+}
+
+.marca-completa figcaption {
+  display: grid;
+  gap: 2px;
+}
+
+.marca-completa__nombre {
+  font-family: var(--f-titulo);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.marca-completa__eslogan {
+  font-family: var(--f-titulo);
+  font-size: 17px;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--texto-suave);
 }
 
 /* Etiqueta pequeña en mayúsculas, como en la presentación de la marca. Solo para rótulos secundarios. */
@@ -1698,7 +1722,7 @@ h1:focus {
     font-size: 18px;
   }
 
-  .inicio__logo {
+  .marca-completa {
     display: none;
   }
 
