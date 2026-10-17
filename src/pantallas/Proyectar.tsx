@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { ProyeccionRuleta } from '../blocks/ruleta/ProyeccionRuleta.tsx'
 import { leerConfigRuleta } from '../blocks/ruleta/logica.ts'
 import { esListaDePreguntas, leerConfigPreguntas } from '../blocks/preguntas/logica.ts'
+import { esListaDeParejas } from '../blocks/parejas/logica.ts'
+import { ProyeccionParejas } from '../blocks/parejas/ProyeccionParejas.tsx'
 import { ProyeccionPreguntas } from '../blocks/preguntas/ProyeccionPreguntas.tsx'
 import { comoPreguntas, esListaDeAfirmaciones } from '../blocks/preguntas/verdaderoFalso.ts'
 import { textos } from '../i18n/es-CL.ts'
@@ -100,6 +102,13 @@ export function Proyectar({ id }: { id: string }) {
         verdaderoFalso
       />
     )
+  }
+
+  if (b.type === 'parejas') {
+    if (!esListaDeParejas(b.items) || b.items.length < 2) {
+      return <Aviso id={id} mensaje={textos.proyeccion.sinParejas} />
+    }
+    return <ProyeccionParejas key={b.id} parejas={b.items} onSalir={() => salir(id)} />
   }
 
   return <Aviso id={id} mensaje={textos.proyeccion.tipoNoDisponible} />

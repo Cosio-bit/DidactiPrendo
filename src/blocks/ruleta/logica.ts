@@ -47,11 +47,7 @@ export function terminarGiro(sorteo: Sorteo, ganador: number, eliminarAlSalir: b
   return { ...sorteo, ganador, porSacar: eliminarAlSalir ? ganador : null }
 }
 
-/** Entero al azar entre 0 y n - 1, con el generador seguro del navegador. */
-export function azar(n: number): number {
-  const valor = crypto.getRandomValues(new Uint32Array(1))[0]
-  return Math.floor((valor / 2 ** 32) * n)
-}
+export { azar } from '../azar.ts'
 
 function modulo(a: number, n: number) {
   return ((a % n) + n) % n

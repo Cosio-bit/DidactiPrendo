@@ -975,3 +975,105 @@ h1:focus {
   display: grid;
   gap: var(--espacio-2);
 }
+
+/* Memorice: grilla de cartas que se voltean. */
+.proyeccion-parejas {
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: var(--espacio-2);
+}
+
+.proyeccion-parejas__aviso {
+  font-size: var(--texto-grande);
+  font-weight: 700;
+}
+
+.proyeccion-parejas__aviso--pareja {
+  color: var(--correcta);
+}
+
+.proyeccion-parejas__aviso--no-pareja {
+  color: var(--peligro);
+}
+
+.proyeccion-parejas__zona {
+  min-height: 0;
+  display: grid;
+}
+
+.proyeccion-parejas__grilla {
+  display: grid;
+  grid-auto-rows: minmax(0, 1fr);
+  gap: var(--espacio-1);
+}
+
+.carta {
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  perspective: 900px;
+  touch-action: manipulation;
+}
+
+.carta__interior {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.35s ease;
+  transform-style: preserve-3d;
+}
+
+/* Voltear la carta es la única animación: es funcional (CLAUDE.md, regla 8). */
+.carta--visible .carta__interior {
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carta__interior {
+    transition: none;
+  }
+}
+
+.carta__dorso,
+.carta__cara {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--espacio-1);
+  border: var(--borde) solid var(--borde-color);
+  border-radius: var(--radio);
+  backface-visibility: hidden;
+  overflow: hidden;
+  text-align: center;
+  line-height: 1.15;
+}
+
+.carta__dorso {
+  background: var(--principal);
+  color: var(--principal-texto);
+  font-size: 48px;
+  font-weight: 800;
+}
+
+.carta__cara {
+  transform: rotateY(180deg);
+  background: var(--superficie);
+  color: var(--texto-color);
+  font-weight: 700;
+}
+
+.carta--encontrada .carta__cara {
+  border-color: var(--correcta);
+  border-width: 4px;
+}
+
+.carta:focus-visible {
+  outline: var(--foco) solid var(--foco-color);
+  outline-offset: 3px;
+}
