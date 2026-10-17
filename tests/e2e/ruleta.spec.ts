@@ -10,6 +10,8 @@ async function crearRuleta(page: Page, elementos: string[]) {
   await page.goto('/')
   await page.getByRole('button', { name: 'Crear actividad' }).click()
   await page.getByLabel('Pega tu texto aquí').fill(elementos.join('\n'))
+  // Si el lector sugiere otro tipo (por ejemplo, Parejas por un ":"), se elige Ruleta.
+  await page.getByRole('radio', { name: /^Ruleta/ }).check()
   await expect(page.getByRole('status')).toHaveText('Guardado')
 }
 

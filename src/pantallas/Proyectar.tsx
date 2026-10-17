@@ -3,6 +3,7 @@ import { ProyeccionRuleta } from '../blocks/ruleta/ProyeccionRuleta.tsx'
 import { leerConfigRuleta } from '../blocks/ruleta/logica.ts'
 import { esListaDePreguntas, leerConfigPreguntas } from '../blocks/preguntas/logica.ts'
 import { ProyeccionPreguntas } from '../blocks/preguntas/ProyeccionPreguntas.tsx'
+import { comoPreguntas, esListaDeAfirmaciones } from '../blocks/preguntas/verdaderoFalso.ts'
 import { textos } from '../i18n/es-CL.ts'
 import { volverDeProyeccion } from '../navegacion.ts'
 import { entrarPantallaCompleta, salirPantallaCompleta } from '../projection/usePantallaCompleta.ts'
@@ -82,6 +83,21 @@ export function Proyectar({ id }: { id: string }) {
         preguntas={b.items}
         config={leerConfigPreguntas(b.config)}
         onSalir={() => salir(id)}
+      />
+    )
+  }
+
+  if (b.type === 'verdadero-falso') {
+    if (!esListaDeAfirmaciones(b.items) || b.items.length === 0) {
+      return <Aviso id={id} mensaje={textos.proyeccion.sinAfirmaciones} />
+    }
+    return (
+      <ProyeccionPreguntas
+        key={b.id}
+        preguntas={comoPreguntas(b.items)}
+        config={leerConfigPreguntas(b.config)}
+        onSalir={() => salir(id)}
+        verdaderoFalso
       />
     )
   }

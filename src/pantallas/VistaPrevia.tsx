@@ -1,52 +1,92 @@
 import { useId } from 'react'
 import { textos } from '../i18n/es-CL.ts'
-import type { Lectura, TipoLectura } from '../parser/tipos.ts'
-
-const TIPOS: TipoLectura[] = ['ruleta', 'preguntas']
+import type { Lectura } from '../parser/tipos.ts'
 
 interface Props {
   lectura: Lectura
   hayTexto: boolean
-  onCambiarTipo: (tipo: TipoLectura) => void
 }
+
+const t = textos.vistaPrevia
 
 function letra(indice: number) {
   return `${String.fromCharCode(97 + indice)})`
 }
 
-export function VistaPrevia({ lectura, hayTexto, onCambiarTipo }: Props) {
+/** Cómo se verán los elementos según el tipo. */
+function Elementos({ lectura }: { lectura: Lectura }) {
+  switch (lectura.tipo) {
+    case 'ruleta':
+    case 'ordenar':
+      return (
+        <ol className="vista-previa__lista">
+          {lectura.elementos.map((elemento, i) => (
+            <li key={i}>{elemento}</li>
+          ))}
+        </ol>
+      )
+    case 'preguntas':
+      return (
+        <ol className="vista-previa__preguntas">
+          {lectura.elementos.map((pregunta, i) => (
+            <li key={i}>
+              <p className="vista-previa__enunciado">{pregunta.enunciado}</p>
+              <ul className="vista-previa__alternativas">
+                {pregunta.alternativas.map((a, j) => (
+                  <li key={j} className={a.correcta ? 'alternativa alternativa--correcta' : 'alternativa'}>
+                    {letra(j)} {a.texto}
+                    {a.correcta && <strong className="etiqueta-correcta"> ✓ {t.correcta}</strong>}
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ol>
+      )
+    case 'parejas':
+      return (
+        <ol className="vista-previa__lista">
+          {lectura.elementos.map((p, i) => (
+            <li key={i}>
+              {p.a} <span aria-hidden="true">↔</span> {p.b}
+            </li>
+          ))}
+        </ol>
+      )
+    case 'verdadero-falso':
+      return (
+        <ol className="vista-previa__lista">
+          {lectura.elementos.map((a, i) => (
+            <li key={i}>
+              {a.texto}{' '}
+              <strong className={a.verdadera === null ? 'etiqueta' : 'etiqueta-correcta'}>
+                ({a.verdadera === null ? t.sinMarcar : a.verdadera ? t.verdadero : t.falso})
+              </strong>
+            </li>
+          ))}
+        </ol>
+      )
+    case 'clasificar':
+      return (
+        <ul className="vista-previa__categorias">
+          {lectura.elementos.map((c, i) => (
+            <li key={i}>
+              <p className="vista-previa__enunciado">{c.nombre}</p>
+              <p>{c.elementos.join(', ')}</p>
+            </li>
+          ))}
+        </ul>
+      )
+  }
+}
+
+export function VistaPrevia({ lectura, hayTexto }: Props) {
   const idTitulo = useId()
-  const nombreGrupo = useId()
-  const t = textos.vistaPrevia
 
   return (
     <section className="vista-previa" aria-labelledby={idTitulo}>
       <h2 id={idTitulo}>{t.titulo}</h2>
 
-      <fieldset className="selector-tipo">
-        <legend>{t.tipo}</legend>
-        {TIPOS.map((tipo) => (
-          <label
-            key={tipo}
-            className={
-              lectura.tipo === tipo ? 'selector-tipo__opcion selector-tipo__opcion--elegida' : 'selector-tipo__opcion'
-            }
-          >
-            <input
-              type="radio"
-              name={nombreGrupo}
-              checked={lectura.tipo === tipo}
-              onChange={() => onCambiarTipo(tipo)}
-            />
-            <span>
-              {textos.tipos[tipo]}
-              {hayTexto && lectura.tipoSugerido === tipo && (
-                <span className="etiqueta"> ({t.sugerido})</span>
-              )}
-            </span>
-          </label>
-        ))}
-      </fieldset>
 
       {!hayTexto && (
         <>
@@ -67,33 +107,10 @@ export function VistaPrevia({ lectura, hayTexto, onCambiarTipo }: Props) {
       )}
 
       {lectura.elementos.length > 0 && (
-        <p className="vista-previa__cantidad">{t.cantidad(lectura.tipo, lectura.elementos.length)}</p>
-      )}
-
-      {lectura.tipo === 'ruleta' && lectura.elementos.length > 0 && (
-        <ol className="vista-previa__lista">
-          {lectura.elementos.map((elemento, i) => (
-            <li key={i}>{elemento}</li>
-          ))}
-        </ol>
-      )}
-
-      {lectura.tipo === 'preguntas' && lectura.elementos.length > 0 && (
-        <ol className="vista-previa__preguntas">
-          {lectura.elementos.map((pregunta, i) => (
-            <li key={i}>
-              <p className="vista-previa__enunciado">{pregunta.enunciado}</p>
-              <ul className="vista-previa__alternativas">
-                {pregunta.alternativas.map((a, j) => (
-                  <li key={j} className={a.correcta ? 'alternativa alternativa--correcta' : 'alternativa'}>
-                    {letra(j)} {a.texto}
-                    {a.correcta && <strong className="etiqueta-correcta"> ✓ {t.correcta}</strong>}
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ol>
+        <>
+          <p className="vista-previa__cantidad">{t.cantidad(lectura.tipo, lectura.elementos.length)}</p>
+          <Elementos lectura={lectura} />
+        </>
       )}
     </section>
   )

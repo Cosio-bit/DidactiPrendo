@@ -1,4 +1,12 @@
-export type BlockType = 'ruleta' | 'preguntas' | 'marcador' | 'temporizador'
+export type BlockType =
+  | 'ruleta'
+  | 'preguntas'
+  | 'parejas'
+  | 'verdadero-falso'
+  | 'ordenar'
+  | 'clasificar'
+  | 'marcador'
+  | 'temporizador'
 
 export const SCHEMA_VERSION = 1
 

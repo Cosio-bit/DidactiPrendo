@@ -12,7 +12,7 @@ async function crearPreguntas(page: Page, texto = repaso) {
   await page.goto('/')
   await page.getByRole('button', { name: 'Crear actividad' }).click()
   await page.getByLabel('Pega tu texto aquí').fill(texto)
-  await expect(page.getByRole('radio', { name: 'Preguntas con alternativas (sugerido)' })).toBeChecked()
+  await expect(page.getByRole('radio', { name: 'Selección múltiple (sugerido)' })).toBeChecked()
   await expect(page.getByRole('status')).toHaveText('Guardado')
 }
 
@@ -29,10 +29,8 @@ test('repaso de 10 preguntas proyectado de principio a fin solo con el teclado',
   await page.keyboard.insertText(repaso)
   await expect(page.getByText('10 preguntas', { exact: true })).toBeVisible()
 
-  // Hacia atrás hasta "Proyectar": tiempo por pregunta, nombre y Proyectar.
-  await page.keyboard.press('Shift+Tab')
-  await page.keyboard.press('Shift+Tab')
-  await page.keyboard.press('Shift+Tab')
+  // Hacia atrás hasta "Proyectar": tiempo por pregunta, tipo de actividad, nombre y Proyectar.
+  for (let i = 0; i < 4; i++) await page.keyboard.press('Shift+Tab')
   await expect(page.getByRole('button', { name: 'Proyectar' })).toBeFocused()
   await page.keyboard.press('Enter')
 
@@ -162,7 +160,7 @@ test('se puede proyectar un repaso desde Mis actividades', async ({ page }) => {
   await crearPreguntas(page)
   await page.getByLabel('Nombre de la actividad').fill('Tablas')
   await page.getByRole('button', { name: 'Listo' }).click()
-  await expect(page.getByText('Preguntas con alternativas · 10 preguntas')).toBeVisible()
+  await expect(page.getByText('Selección múltiple · 10 preguntas')).toBeVisible()
   await page.getByRole('button', { name: 'Proyectar' }).click()
   await expect(pantalla(page)).toContainText('Pregunta 1 de 10')
 })

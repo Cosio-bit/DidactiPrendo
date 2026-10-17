@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { textos } from '../i18n/es-CL.ts'
 import { irA } from '../navegacion.ts'
+import { esTipoConTexto, sePuedeProyectar } from '../blocks/catalogo.ts'
 import { almacen, esVacio } from '../storage/bloques.ts'
 import type { Block } from '../storage/modelo.ts'
 import { useConsulta } from '../storage/useConsulta.ts'
@@ -15,7 +16,7 @@ function fecha(ms: number) {
 
 function resumen(bloque: Block) {
   const partes: string[] = []
-  if (bloque.type === 'ruleta' || bloque.type === 'preguntas') {
+  if (esTipoConTexto(bloque.type)) {
     partes.push(textos.tipos[bloque.type])
     if (Array.isArray(bloque.items)) partes.push(textos.vistaPrevia.cantidad(bloque.type, bloque.items.length))
   }
@@ -68,10 +69,10 @@ export function MisActividades() {
                 <p className="actividad__fecha">{resumen(bloque)}</p>
               </div>
               <div className="actividad__acciones">
-                {(bloque.type === 'ruleta' || bloque.type === 'preguntas') && (
+                {esTipoConTexto(bloque.type) && (
                   <Boton
                     variante="principal"
-                    disabled={!Array.isArray(bloque.items) || bloque.items.length < (bloque.type === 'ruleta' ? 2 : 1)}
+                    disabled={!sePuedeProyectar(bloque.type, bloque.items)}
                     onClick={() => irA({ pantalla: 'proyectar', id: bloque.id })}
                   >
                     {textos.misActividades.proyectar}

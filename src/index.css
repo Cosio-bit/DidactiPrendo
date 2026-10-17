@@ -228,7 +228,11 @@ h1:focus {
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-2);
+  gap: var(--espacio-1);
+}
+
+.editor h1 {
+  font-size: 36px;
 }
 
 .editor__acciones {
@@ -298,7 +302,7 @@ h1:focus {
   gap: var(--espacio-3);
   /* Ocupa el alto que queda; cada columna se desplaza por dentro. */
   flex: 1;
-  min-height: 300px;
+  min-height: 240px;
 }
 
 .editor__texto {
@@ -748,9 +752,12 @@ h1:focus {
 }
 
 .proyeccion-preguntas__controles {
-  display: grid;
-  grid-template-columns: auto auto 1fr;
+  display: flex;
   gap: var(--espacio-2);
+}
+
+.proyeccion-preguntas__avanzar {
+  flex: 1;
 }
 
 .proyeccion-preguntas__avanzar {
@@ -908,4 +915,63 @@ h1:focus {
     padding: 0;
     width: auto;
   }
+}
+
+/* Selector de tipo: los seis en una fila de ancho completo. */
+.selector-tipo--fila-completa {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--espacio-1);
+}
+
+/* "Tipo de actividad" a la izquierda y las seis opciones al lado, en una sola fila. */
+.selector-tipo-fila {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.selector-tipo--fila-completa .selector-tipo__opcion {
+  position: relative;
+  justify-content: center;
+  padding: 4px var(--espacio-1);
+  font-size: 20px;
+  line-height: 1.15;
+  text-align: center;
+}
+
+/* El círculo del botón de opción no hace falta: la opción elegida se marca con su borde. */
+.selector-tipo--fila-completa .selector-tipo__opcion input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.selector-tipo--fila-completa .selector-tipo__opcion:focus-within {
+  outline: var(--foco) solid var(--foco-color);
+  outline-offset: 2px;
+}
+
+.selector-tipo--fila-completa .etiqueta {
+  display: block;
+  font-size: 18px;
+}
+
+@media (max-width: 800px) {
+  .selector-tipo-fila {
+    grid-template-columns: 1fr;
+  }
+
+  .selector-tipo--fila-completa {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.vista-previa__categorias {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--espacio-2);
 }

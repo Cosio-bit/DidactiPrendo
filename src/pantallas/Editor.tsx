@@ -1,4 +1,5 @@
 import { useEffect, useId, useMemo, useState } from 'react'
+import { esTipoConTexto, sePuedeImprimir, sePuedeProyectar, usaTemporizador } from '../blocks/catalogo.ts'
 import { leerConfigPreguntas, OPCIONES_DE_TIEMPO } from '../blocks/preguntas/logica.ts'
 import { leerConfigRuleta } from '../blocks/ruleta/logica.ts'
 import { textos } from '../i18n/es-CL.ts'
@@ -10,6 +11,7 @@ import type { Block } from '../storage/modelo.ts'
 import { useConsulta } from '../storage/useConsulta.ts'
 import { Boton } from '../ui/Boton.tsx'
 import { useEdicion } from './useEdicion.ts'
+import { SelectorTipo } from './SelectorTipo.tsx'
 import { VistaPrevia } from './VistaPrevia.tsx'
 
 interface Estado {
@@ -23,7 +25,7 @@ interface Estado {
 function estadoDesde(bloque: Block): Estado {
   const texto = bloque.texto ?? ''
   const sugerido = parseText(texto).tipoSugerido
-  const tipo = bloque.type === 'ruleta' || bloque.type === 'preguntas' ? bloque.type : sugerido
+  const tipo = esTipoConTexto(bloque.type) ? bloque.type : sugerido
   return {
     titulo: bloque.title,
     texto,
@@ -120,7 +122,7 @@ export function Editor({ id }: { id: string }) {
   const esRuleta = lectura.tipo === 'ruleta'
   const configRuleta = leerConfigRuleta(actual.config)
   const configPreguntas = leerConfigPreguntas(actual.config)
-  const sePuedeProyectar = lectura.elementos.length >= (esRuleta ? 2 : 1)
+  const proyectable = sePuedeProyectar(lectura.tipo, lectura.elementos)
 
   return (
     <section className="editor">
@@ -128,12 +130,12 @@ export function Editor({ id }: { id: string }) {
         {encabezado}
         <div className="editor__acciones">
           <Boton onClick={() => irA({ pantalla: 'mis-actividades' })}>{textos.editor.listo}</Boton>
-          {!esRuleta && (
-            <Boton disabled={!sePuedeProyectar} onClick={() => irA({ pantalla: 'imprimir', id })}>
+          {sePuedeImprimir(lectura.tipo) && (
+            <Boton disabled={!proyectable} onClick={() => irA({ pantalla: 'imprimir', id })}>
               {textos.editor.imprimir}
             </Boton>
           )}
-          <Boton variante="principal" disabled={!sePuedeProyectar} onClick={() => irA({ pantalla: 'proyectar', id })}>
+          <Boton variante="principal" disabled={!proyectable} onClick={() => irA({ pantalla: 'proyectar', id })}>
             {textos.editor.proyectar}
           </Boton>
         </div>
@@ -152,6 +154,12 @@ export function Editor({ id }: { id: string }) {
           autoComplete="off"
         />
       </div>
+
+      <SelectorTipo
+        elegido={lectura.tipo}
+        sugerido={actual.texto.trim() ? lectura.tipoSugerido : null}
+        onCambiar={cambiarTipo}
+      />
 
       {esRuleta && (
         <fieldset className="opciones">
@@ -175,7 +183,7 @@ export function Editor({ id }: { id: string }) {
         </fieldset>
       )}
 
-      {!esRuleta && (
+      {usaTemporizador(lectura.tipo) && (
         <fieldset className="opciones">
           <legend className="solo-lector">{textos.preguntas.opciones}</legend>
           <label className="opcion">
@@ -221,7 +229,7 @@ export function Editor({ id }: { id: string }) {
             onChange={(evento) => cambiarTexto(evento.target.value)}
           />
         </div>
-        <VistaPrevia lectura={lectura} hayTexto={actual.texto.trim() !== ''} onCambiarTipo={cambiarTipo} />
+        <VistaPrevia lectura={lectura} hayTexto={actual.texto.trim() !== ''} />
       </div>
     </section>
   )

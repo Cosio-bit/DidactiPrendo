@@ -17,21 +17,26 @@ import {
   type ConfigPreguntas,
   type Repaso,
 } from './logica.ts'
+import { LETRAS_VF } from './verdaderoFalso.ts'
 
 const t = textos.proyeccion
 
-/** Alternativas cortas (como "3/4" o "Santiago") caben en dos columnas. */
+/** Dos o cuatro alternativas cortas (como "3/4" o "Santiago") caben en dos columnas. */
 function enDosColumnas(pregunta: Pregunta) {
-  return pregunta.alternativas.length === 4 && pregunta.alternativas.every((a) => a.texto.length <= 24)
+  const n = pregunta.alternativas.length
+  return (n === 2 || n === 4) && pregunta.alternativas.every((a) => a.texto.length <= 24)
 }
 
 interface Props {
   preguntas: Pregunta[]
   config: ConfigPreguntas
   onSalir: () => void
+  /** Verdadero o falso: letras V y F, sin "comentar el error" (solo hay una incorrecta). */
+  verdaderoFalso?: boolean
 }
 
-export function ProyeccionPreguntas({ preguntas, config, onSalir }: Props) {
+export function ProyeccionPreguntas({ preguntas, config, onSalir, verdaderoFalso = false }: Props) {
+  const etiqueta = (i: number) => (verdaderoFalso ? LETRAS_VF[i] : letra(i))
   const [repaso, setRepaso] = useState<Repaso>(() => nuevoRepaso(preguntas.length))
   const [eligiendoError, setEligiendoError] = useState(false)
   const pantallaCompleta = usePantallaCompleta()
@@ -88,9 +93,9 @@ export function ProyeccionPreguntas({ preguntas, config, onSalir }: Props) {
     setRepaso(nuevoRepaso(preguntas.length))
   }
 
-  const letras = Object.fromEntries(
-    ['a', 'b', 'c', 'd', 'e'].map((l, i) => [l, () => !terminado && marcarError(i)]),
-  )
+  const letras = verdaderoFalso
+    ? {}
+    : Object.fromEntries(['a', 'b', 'c', 'd', 'e'].map((l, i) => [l, () => !terminado && marcarError(i)]))
   useAtajos({
     avanzar: siguiente,
     retroceder: anterior,
@@ -107,7 +112,11 @@ export function ProyeccionPreguntas({ preguntas, config, onSalir }: Props) {
     <div className="proyeccion proyeccion-preguntas" data-tiempo-acabado={tiempoAcabado}>
       <div className="proyeccion-preguntas__barra">
         <p className="proyeccion-preguntas__numero">
-          {terminado ? t.repasoTerminado : t.numeroPregunta(actual + 1, preguntas.length)}
+          {terminado
+            ? t.repasoTerminado
+            : verdaderoFalso
+              ? t.numeroAfirmacion(actual + 1, preguntas.length)
+              : t.numeroPregunta(actual + 1, preguntas.length)}
         </p>
         {conTiempo && !terminado && !revelada && (
           <p
@@ -132,7 +141,7 @@ export function ProyeccionPreguntas({ preguntas, config, onSalir }: Props) {
       {terminado ? (
         <div className="proyeccion-preguntas__cierre">
           <p className="proyeccion-preguntas__cierre-titulo">{t.terminaste}</p>
-          <p>{textos.vistaPrevia.cantidad('preguntas', preguntas.length)}</p>
+          <p>{textos.vistaPrevia.cantidad(verdaderoFalso ? 'verdadero-falso' : 'preguntas', preguntas.length)}</p>
           <div className="proyeccion__secundarios">
             <Boton onClick={anterior}>{t.anterior}</Boton>
             <Boton variante="principal" onClick={volverAEmpezar}>
@@ -164,7 +173,7 @@ export function ProyeccionPreguntas({ preguntas, config, onSalir }: Props) {
                   tabIndex={elegible ? 0 : undefined}
                   onClick={elegible ? () => marcarError(i) : undefined}
                 >
-                  <span className="alternativa-proyectada__letra">{letra(i)}</span>
+                  <span className="alternativa-proyectada__letra">{etiqueta(i)}</span>
                   <span className="alternativa-proyectada__texto">
                     {alternativa.texto}
                     {esCorrecta && <strong className="alternativa-proyectada__marca"> ✓ {t.correcta}</strong>}
@@ -183,16 +192,26 @@ export function ProyeccionPreguntas({ preguntas, config, onSalir }: Props) {
           <Boton onClick={anterior} disabled={actual === 0}>
             {t.anterior}
           </Boton>
-          <Boton onClick={alternarComentar} aria-pressed={eligiendoError || comentada !== null}>
-            {comentada !== null ? t.quitarComentario : t.comentarError}
-          </Boton>
+          {!verdaderoFalso && (
+            <Boton onClick={alternarComentar} aria-pressed={eligiendoError || comentada !== null}>
+              {comentada !== null ? t.quitarComentario : t.comentarError}
+            </Boton>
+          )}
           <Boton variante="principal" className="proyeccion-preguntas__avanzar" onClick={siguiente}>
             {!revelada ? t.revelar : esUltima ? t.terminar : t.siguiente}
           </Boton>
         </div>
       )}
       <p className="proyeccion__teclas">
-        {eligiendoError ? t.elegirError : conTiempo ? t.teclasPreguntasConTiempo : t.teclasPreguntas}
+        {eligiendoError
+          ? t.elegirError
+          : verdaderoFalso
+            ? conTiempo
+              ? t.teclasVFConTiempo
+              : t.teclasVF
+            : conTiempo
+              ? t.teclasPreguntasConTiempo
+              : t.teclasPreguntas}
       </p>
     </div>
   )
