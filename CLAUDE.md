@@ -4,7 +4,7 @@ Este archivo lo lee Claude Code al comenzar cada sesión. Resume qué se constru
 
 ## Qué es
 
-Aplicación web para que profesores chilenos creen **bloques didácticos vacíos** (ruleta, preguntas con alternativas, marcador por equipos, temporizador) y los **proyecten en la sala** con un data o una pizarra interactiva.
+Aplicación web para que profesores chilenos creen **bloques didácticos vacíos** (ruleta, selección múltiple, parejas, verdadero o falso, ordenar, clasificar) y los **proyecten en la sala** con un data o una pizarra interactiva. El marcador por equipos y el temporizador acompañan a cualquier bloque.
 
 - La aplicación **no entrega contenido**: el profesor pone el suyo.
 - La forma principal de crear un bloque es **pegar texto plano** (una lista, preguntas copiadas de Word o de ChatGPT) y que el bloque se arme solo.
@@ -68,7 +68,10 @@ src/
   parser/              lector de texto pegado -> bloque
   blocks/
     ruleta/            editor + vista de proyección
-    preguntas/
+    preguntas/         selección múltiple (y verdadero o falso, que reutiliza su proyección)
+    parejas/           memorice
+    ordenar/
+    clasificar/
     marcador/
     temporizador/
   storage/             Dexie: guardar, listar, exportar, importar
@@ -83,7 +86,9 @@ tests/
 ## Modelo de datos
 
 ```ts
-type BlockType = "ruleta" | "preguntas" | "marcador" | "temporizador";
+type BlockType =
+  | "ruleta" | "preguntas" | "parejas" | "verdadero-falso" | "ordenar" | "clasificar"
+  | "marcador" | "temporizador";
 
 interface Block {
   id: string;            // identificador único
@@ -114,7 +119,18 @@ interface Block {
   - La pregunta termina en `?` o es la línea que viene antes de las alternativas.
   - La alternativa correcta lleva `*` al inicio.
   - Las preguntas se separan con una línea vacía.
-- **Parejas** (futuro): `palabra = definición`.
+- **Parejas** (memorice): `palabra = definición`, una pareja por línea. También sirven `→`, `:` o dos columnas de Word o Excel.
+- **Verdadero o falso**: una afirmación por línea con `(V)` o `(F)` al final (también `V)` al inicio, o una línea `Respuesta: F` debajo).
+- **Ordenar**: un elemento por línea, **en el orden correcto**; la app los desordena al proyectar. Si vienen numerados, se respeta el número.
+- **Clasificar**: cada categoría termina en dos puntos y lleva sus elementos, en la misma línea separados por comas o debajo:
+  ```
+  Mamíferos: perro, ballena, murciélago
+  Aves:
+  - cóndor
+  - pingüino
+  ```
+  También sirve una tabla con una columna por categoría.
+- El lector **nunca sugiere Ordenar** (una lista ordenada se ve igual que una lista para la ruleta): el profe lo elige.
 - Debe tolerar texto copiado de Word, Google Docs, Excel (tabulaciones) y ChatGPT (negritas `**`, numeración, títulos).
 - Ante una duda, el lector **sugiere** un tipo de bloque y muestra una vista previa; nunca falla en silencio.
 

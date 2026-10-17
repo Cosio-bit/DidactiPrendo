@@ -9,7 +9,7 @@ Además, medir si pagarían.
 - Pagos.
 - Inteligencia artificial integrada.
 - Servidor propio.
-- Más de 4 bloques.
+- ~~Más de 4 bloques.~~ Cambio de alcance (octubre 2026): se suman Parejas, Verdadero o falso, Ordenar y Clasificar para tener repertorio desde el piloto (ver Fase 4b). El marcador y el temporizador pasan a ser herramientas que acompañan a cualquier bloque.
 
 Cada fase tiene un objetivo, sus tareas, un criterio de "terminado" y una instrucción sugerida para pegarle a Claude Code. Las fases están pensadas para avanzar en sesiones cortas, en paralelo con el semestre.
 
@@ -113,6 +113,20 @@ Cada fase tiene un objetivo, sus tareas, un criterio de "terminado" y una instru
 
 ---
 
+## Fase 4b — Más bloques: Parejas, Verdadero o falso, Ordenar y Clasificar
+
+**Objetivo:** que el profe tenga repertorio desde el primer día, con el mismo flujo de pegar texto y proyectar.
+
+- [ ] El lector reconoce los cuatro formatos y sugiere el tipo (ver CLAUDE.md).
+- [ ] **Verdadero o falso:** una afirmación por pantalla, revelar, temporizador opcional e impresión de tarjetas V y F.
+- [ ] **Parejas:** memorice proyectado; se voltean dos tarjetas por turno con un toque o el teclado.
+- [ ] **Ordenar:** los elementos aparecen desordenados; el curso propone cuál va después y se comprueba, o se revela paso a paso.
+- [ ] **Clasificar:** los elementos aparecen sueltos y se llevan a su categoría; se comprueba o se revela uno por uno.
+
+**Terminado cuando:** cada bloque se crea pegando texto y se proyecta de principio a fin con teclado o toques, en 1024×768.
+
+---
+
 ## Fase 5 — Marcador por equipos y temporizador (1 a 2 sesiones)
 
 - [ ] Marcador para 2 a 8 equipos con nombre y color, y botones grandes de +1 y −1.
@@ -181,7 +195,7 @@ Cada fase tiene un objetivo, sus tareas, un criterio de "terminado" y una instru
 | Actividades creadas por profesor activo por semana | 2 o más |
 | Profesores que aceptan la preventa o el plan fundador | 25% o más |
 
-**Al cierre:** decidir qué bloques agregar (parejas, ordenar, clasificar, modo multigrado) y si se construyen cuentas, pagos con Webpay, Mercado Pago o Flow, y la IA integrada.
+**Al cierre:** decidir qué bloques agregar (dado, sorteo de equipos, modo multigrado) y si se construyen cuentas, pagos con Webpay, Mercado Pago o Flow, y la IA integrada.
 
 ---
 
@@ -193,7 +207,7 @@ Cada fase tiene un objetivo, sus tareas, un criterio de "terminado" y una instru
 - Pasar Vercel al plan Pro (uso comercial).
 - IA integrada en la app, con un servidor propio que proteja la clave y límites de uso por persona.
 - Más bloques:
-  - Parejas, ordenar, clasificar, verdadero o falso, dado, sorteo de equipos.
+  - Dado, sorteo de equipos.
   - Modo multigrado.
   - Lectura en voz alta y pictogramas para equipos PIE.
 - Revisar cumplimiento de la Ley 21.719 de protección de datos personales.
