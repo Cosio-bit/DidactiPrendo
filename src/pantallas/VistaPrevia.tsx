@@ -101,7 +101,7 @@ export function VistaPrevia({ lectura, hayTexto, onUsarEjemplo }: Props) {
         <div className="como-escribir">
           <h3>{textos.editor.comoEscribirlo}</h3>
           <p>{textos.editor.comoEscribir[lectura.tipo]}</p>
-          <Boton onClick={() => onUsarEjemplo(textos.editor.ejemplos[lectura.tipo])}>{textos.editor.probarEjemplo}</Boton>
+          <Boton variante="herramienta" onClick={() => onUsarEjemplo(textos.editor.ejemplos[lectura.tipo])}>{textos.editor.probarEjemplo}</Boton>
         </div>
       )}
 

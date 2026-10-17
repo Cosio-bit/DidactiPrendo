@@ -145,9 +145,9 @@ export function Editor({ id }: { id: string }) {
 
   const acciones = (
     <>
-      <Boton onClick={() => irA({ pantalla: 'mis-actividades' })}>{textos.editor.listo}</Boton>
+      <Boton variante="navegacion" onClick={() => irA({ pantalla: 'mis-actividades' })}>{textos.editor.listo}</Boton>
       {sePuedeImprimir(lectura.tipo) && (
-        <Boton disabled={!proyectable} onClick={() => irA({ pantalla: 'imprimir', id })}>
+        <Boton variante="herramienta" disabled={!proyectable} onClick={() => irA({ pantalla: 'imprimir', id })}>
           {textos.editor.imprimir}
         </Boton>
       )}
@@ -310,7 +310,7 @@ export function Editor({ id }: { id: string }) {
         )}
 
         <div className="pasos__navegacion">
-          {paso > 1 ? <Boton onClick={() => irAPaso(paso - 1)}>{t.atras}</Boton> : <span />}
+          {paso > 1 ? <Boton variante="navegacion" onClick={() => irAPaso(paso - 1)}>{t.atras}</Boton> : <span />}
           {paso < 3 && (
             <Boton variante="principal" disabled={!hayTexto} onClick={() => irAPaso(paso + 1)}>
               {t.siguiente}

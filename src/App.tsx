@@ -36,13 +36,14 @@ function App() {
             <span className="cabecera__nombre">{textos.app.nombre}</span>
           </span>
           {ruta.pantalla !== 'inicio' && (
-            <Boton onClick={() => irA({ pantalla: 'inicio' })}>
+            <Boton variante="navegacion" onClick={() => irA({ pantalla: 'inicio' })}>
               <span className="texto-largo">{textos.app.volverAlInicio}</span>
               <span className="texto-corto">{textos.app.inicio}</span>
             </Boton>
           )}
         </div>
         <Boton
+          variante="herramienta"
           aria-pressed={tema === 'alto-contraste'}
           onClick={() => setTema(tema === 'alto-contraste' ? 'normal' : 'alto-contraste')}
         >

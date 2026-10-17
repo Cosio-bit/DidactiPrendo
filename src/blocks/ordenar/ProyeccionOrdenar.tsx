@@ -50,10 +50,10 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
           {listo ? t.ordenTerminado : t.enSuLugar(orden.colocados, elementos.length)}
         </p>
         <div className="proyeccion__secundarios">
-          <Boton onClick={onSalir}>{textoVolver}</Boton>
-          <Boton onClick={() => setOrden(nuevoOrdenar(elementos.length))}>{t.volverAEmpezar}</Boton>
+          <Boton variante="navegacion" onClick={onSalir}>{textoVolver}</Boton>
+          <Boton variante="herramienta" onClick={() => setOrden(nuevoOrdenar(elementos.length))}>{t.volverAEmpezar}</Boton>
           {pantallaCompleta.disponible && (
-            <Boton onClick={pantallaCompleta.alternar}>
+            <Boton variante="herramienta" onClick={pantallaCompleta.alternar}>
               {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
             </Boton>
           )}
@@ -117,7 +117,7 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
       </div>
 
       <div className="proyeccion-preguntas__controles">
-        <Boton onClick={() => setOrden(deshacer)} disabled={orden.colocados === 0}>
+        <Boton variante="herramienta" onClick={() => setOrden(deshacer)} disabled={orden.colocados === 0}>
           {t.deshacerPaso}
         </Boton>
         <Boton

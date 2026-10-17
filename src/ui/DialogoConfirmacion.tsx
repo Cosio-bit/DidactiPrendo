@@ -47,7 +47,7 @@ export function DialogoConfirmacion({
       <p id={idMensaje}>{mensaje}</p>
       <div className="dialogo__acciones">
         {/* Cancelar recibe el foco: un Enter apurado no borra nada. */}
-        <Boton autoFocus onClick={onCancelar}>
+        <Boton variante="navegacion" autoFocus onClick={onCancelar}>
           {textoCancelar}
         </Boton>
         <Boton variante="peligro" onClick={onConfirmar}>

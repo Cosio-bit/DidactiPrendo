@@ -12,7 +12,7 @@ export function BarraGuardado() {
       <p className={error ? 'barra-guardado__aviso barra-guardado__aviso--error' : 'barra-guardado__aviso'} role="status">
         {aviso ?? textos.avisos.inicial}
       </p>
-      <Boton disabled={!puedeDeshacer} onClick={() => void pilaDeshacer.deshacer()}>
+      <Boton variante="herramienta" disabled={!puedeDeshacer} onClick={() => void pilaDeshacer.deshacer()}>
         {textos.avisos.deshacer}
       </Boton>
     </footer>

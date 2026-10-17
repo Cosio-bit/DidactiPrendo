@@ -94,6 +94,12 @@
   --aviso-fondo: var(--amarillo-suave);
   --aviso-borde: var(--amarillo);
   --elegido-fondo: var(--amarillo-suave);
+  /* Botones: fondo pálido del color y borde más oscuro, para que se distingan del papel (3:1). */
+  --navegacion-fondo: var(--amarillo-suave);
+  --navegacion-borde: #a68a00;
+  --herramienta-fondo: var(--celeste-suave);
+  --herramienta-borde: #3b8db5;
+  --presionado-fondo: var(--celeste);
   --correcta: #1b6e2a;
   /* Hoja de cuaderno: líneas celestes muy tenues que no compiten con el texto. */
   --cuadricula: rgb(88 196 242 / 0.17);
@@ -122,6 +128,11 @@
   --error-fondo: #4a0000;
   --aviso-fondo: #2b2200;
   --elegido-fondo: #2b2200;
+  --navegacion-fondo: #000000;
+  --navegacion-borde: #ffffff;
+  --herramienta-fondo: #000000;
+  --herramienta-borde: #ffffff;
+  --presionado-fondo: #2b2200;
   --correcta: #7dff8a;
   --cuadricula: transparent;
   --cuadricula-proyeccion: transparent;
@@ -290,6 +301,18 @@ h1:focus {
   color: var(--principal-texto);
 }
 
+/* Ir a otra pantalla o volver: Amarillo Idea, suave. */
+.boton--navegacion {
+  background: var(--navegacion-fondo);
+  border-color: var(--navegacion-borde);
+}
+
+/* Herramientas que actúan en la misma pantalla: Celeste Calma, suave. */
+.boton--herramienta {
+  background: var(--herramienta-fondo);
+  border-color: var(--herramienta-borde);
+}
+
 .boton--peligro {
   background: var(--peligro);
   border-color: var(--peligro);
@@ -304,8 +327,9 @@ h1:focus {
   box-shadow: 0 6px 0 rgb(23 32 43 / 0.12);
 }
 
+/* Herramienta encendida (alto contraste, mostrar todas…): celeste más intenso. */
 .boton[aria-pressed='true'] {
-  background: var(--elegido-fondo);
+  background: var(--presionado-fondo);
   border-color: var(--texto-color);
   color: var(--texto-color);
 }

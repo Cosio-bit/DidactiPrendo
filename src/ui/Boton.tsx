@@ -1,7 +1,14 @@
 import type { ButtonHTMLAttributes } from 'react'
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variante?: 'principal' | 'secundario' | 'peligro'
+  /**
+   * El color dice qué hace el botón:
+   * principal (celeste oscuro): la acción principal o avanzar;
+   * navegacion (amarillo suave): ir a otra pantalla o volver;
+   * herramienta (celeste suave): algo que actúa en la misma pantalla;
+   * peligro (rojo): borrar.
+   */
+  variante?: 'principal' | 'secundario' | 'navegacion' | 'herramienta' | 'peligro'
   grande?: boolean
 }
 

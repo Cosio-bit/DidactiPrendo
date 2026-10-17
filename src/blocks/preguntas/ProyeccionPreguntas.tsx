@@ -130,12 +130,12 @@ export function ProyeccionPreguntas({ preguntas, config, onSalir, textoVolver, v
           </p>
         )}
         <div className="proyeccion__secundarios">
-          <Boton onClick={onSalir}>{textoVolver}</Boton>
+          <Boton variante="navegacion" onClick={onSalir}>{textoVolver}</Boton>
           {conTiempo && !terminado && !revelada && !cuenta.terminada && (
-            <Boton onClick={alternarPausa}>{cuenta.corriendo ? t.pausar : t.seguir}</Boton>
+            <Boton variante="herramienta" onClick={alternarPausa}>{cuenta.corriendo ? t.pausar : t.seguir}</Boton>
           )}
           {pantallaCompleta.disponible && (
-            <Boton onClick={pantallaCompleta.alternar}>
+            <Boton variante="herramienta" onClick={pantallaCompleta.alternar}>
               {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
             </Boton>
           )}
@@ -147,7 +147,7 @@ export function ProyeccionPreguntas({ preguntas, config, onSalir, textoVolver, v
           <p className="proyeccion-preguntas__cierre-titulo">{t.terminaste}</p>
           <p>{textos.vistaPrevia.cantidad(verdaderoFalso ? 'verdadero-falso' : 'preguntas', preguntas.length)}</p>
           <div className="proyeccion__secundarios">
-            <Boton onClick={anterior}>{t.anterior}</Boton>
+            <Boton variante="navegacion" onClick={anterior}>{t.anterior}</Boton>
             <Boton variante="principal" onClick={volverAEmpezar}>
               {t.volverAEmpezar}
             </Boton>
@@ -193,11 +193,11 @@ export function ProyeccionPreguntas({ preguntas, config, onSalir, textoVolver, v
 
       {!terminado && (
         <div className="proyeccion-preguntas__controles">
-          <Boton onClick={anterior} disabled={actual === 0}>
+          <Boton variante="navegacion" onClick={anterior} disabled={actual === 0}>
             {t.anterior}
           </Boton>
           {!verdaderoFalso && (
-            <Boton onClick={alternarComentar} aria-pressed={eligiendoError || comentada !== null}>
+            <Boton variante="herramienta" onClick={alternarComentar} aria-pressed={eligiendoError || comentada !== null}>
               {comentada !== null ? t.quitarComentario : t.comentarError}
             </Boton>
           )}

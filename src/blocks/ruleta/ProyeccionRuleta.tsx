@@ -144,14 +144,14 @@ export function ProyeccionRuleta({ elementos, config, onSalir, textoVolver }: Pr
             </Boton>
           )}
           <div className="proyeccion__secundarios">
-            <Boton onClick={onSalir}>{textoVolver}</Boton>
+            <Boton variante="navegacion" onClick={onSalir}>{textoVolver}</Boton>
             {pantallaCompleta.disponible && (
-              <Boton onClick={pantallaCompleta.alternar}>
+              <Boton variante="herramienta" onClick={pantallaCompleta.alternar}>
                 {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
               </Boton>
             )}
             {!terminado && config.eliminarAlSalir && (
-              <Boton onClick={volverAEmpezar} disabled={girando || restantes === elementos.length}>
+              <Boton variante="herramienta" onClick={volverAEmpezar} disabled={girando || restantes === elementos.length}>
                 {t.volverAEmpezar}
               </Boton>
             )}

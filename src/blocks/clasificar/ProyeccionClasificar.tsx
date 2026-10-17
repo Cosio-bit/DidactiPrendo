@@ -56,10 +56,10 @@ export function ProyeccionClasificar({ titulo, categorias, onSalir, textoVolver 
           {listo ? t.clasificacionTerminada : t.ubicados(juego.ubicados.length, total)}
         </p>
         <div className="proyeccion__secundarios">
-          <Boton onClick={onSalir}>{textoVolver}</Boton>
-          <Boton onClick={() => setJuego(nuevoClasificar(categorias))}>{t.volverAEmpezar}</Boton>
+          <Boton variante="navegacion" onClick={onSalir}>{textoVolver}</Boton>
+          <Boton variante="herramienta" onClick={() => setJuego(nuevoClasificar(categorias))}>{t.volverAEmpezar}</Boton>
           {pantallaCompleta.disponible && (
-            <Boton onClick={pantallaCompleta.alternar}>
+            <Boton variante="herramienta" onClick={pantallaCompleta.alternar}>
               {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
             </Boton>
           )}
@@ -125,7 +125,7 @@ export function ProyeccionClasificar({ titulo, categorias, onSalir, textoVolver 
       </div>
 
       <div className="proyeccion-preguntas__controles">
-        <Boton onClick={() => setJuego(deshacer)} disabled={juego.ubicados.length === 0}>
+        <Boton variante="herramienta" onClick={() => setJuego(deshacer)} disabled={juego.ubicados.length === 0}>
           {t.deshacerPaso}
         </Boton>
         <Boton

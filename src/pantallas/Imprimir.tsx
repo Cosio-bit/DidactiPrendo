@@ -53,7 +53,7 @@ export function Imprimir({ id }: { id: string }) {
         <div className="editor__cabecera">
           {encabezado}
           <div className="editor__acciones">
-            <Boton onClick={() => irA({ pantalla: 'editor', id })}>{t.volver}</Boton>
+            <Boton variante="navegacion" onClick={() => irA({ pantalla: 'editor', id })}>{t.volver}</Boton>
             <Boton variante="principal" onClick={() => window.print()}>
               {t.imprimir}
             </Boton>

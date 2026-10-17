@@ -90,7 +90,7 @@ export function MisActividades() {
                     {textos.misActividades.proyectar}
                   </Boton>
                 )}
-                <Boton onClick={() => irA({ pantalla: 'editor', id: bloque.id })}>{textos.misActividades.editar}</Boton>
+                <Boton variante="navegacion" onClick={() => irA({ pantalla: 'editor', id: bloque.id })}>{textos.misActividades.editar}</Boton>
                 <Boton variante="peligro" onClick={() => setPorBorrar(bloque)}>
                   {textos.misActividades.borrar}
                 </Boton>

@@ -26,7 +26,7 @@ export function Inicio() {
         <Boton variante="principal" grande onClick={() => void crearActividad()}>
           {textos.inicio.crearActividad}
         </Boton>
-        <Boton grande onClick={() => irA({ pantalla: 'mis-actividades' })}>
+        <Boton variante="navegacion" grande onClick={() => irA({ pantalla: 'mis-actividades' })}>
           {textos.inicio.misActividades}
         </Boton>
       </div>

@@ -116,14 +116,14 @@ export function ProyeccionParejas({ parejas, onSalir, textoVolver }: Props) {
           {aviso}
         </p>
         <div className="proyeccion__secundarios">
-          <Boton onClick={onSalir}>{textoVolver}</Boton>
-          {memorice.ultimo === 'no-pareja' && <Boton onClick={() => setMemorice(tapar)}>{t.tapar}</Boton>}
-          <Boton onClick={() => setMostrarTodas((v) => !v)} aria-pressed={mostrarTodas}>
+          <Boton variante="navegacion" onClick={onSalir}>{textoVolver}</Boton>
+          {memorice.ultimo === 'no-pareja' && <Boton variante="herramienta" onClick={() => setMemorice(tapar)}>{t.tapar}</Boton>}
+          <Boton variante="herramienta" onClick={() => setMostrarTodas((v) => !v)} aria-pressed={mostrarTodas}>
             {t.mostrarTodas}
           </Boton>
-          <Boton onClick={volverAEmpezar}>{t.volverAEmpezar}</Boton>
+          <Boton variante="herramienta" onClick={volverAEmpezar}>{t.volverAEmpezar}</Boton>
           {pantallaCompleta.disponible && (
-            <Boton onClick={pantallaCompleta.alternar}>
+            <Boton variante="herramienta" onClick={pantallaCompleta.alternar}>
               {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
             </Boton>
           )}
