@@ -8,7 +8,8 @@ async function crearActividad() {
   try {
     const bloque = await almacen.crear({
       type: 'ruleta',
-      title: textos.editor.nombrePorDefecto,
+      title: '',
+      texto: '',
       items: [],
       config: {},
     })

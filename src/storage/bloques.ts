@@ -8,6 +8,14 @@ function nuevoId(): string {
   return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
 }
 
+/** Sin nombre ni texto: se creó y se abandonó sin escribir nada. */
+export function esVacio(bloque: Block): boolean {
+  return !bloque.title.trim() && !(bloque.texto ?? '').trim()
+}
+
+/** Las vacías más nuevas que esto se respetan: pueden estar abiertas en otra pestaña. */
+const ANTIGUEDAD_VACIAS_MS = 10 * 60 * 1000
+
 export function crearAlmacen(db: BaseDeDatos = dbPorDefecto) {
   return {
     async crear(datos: NuevoBloque): Promise<Block> {
@@ -50,6 +58,12 @@ export function crearAlmacen(db: BaseDeDatos = dbPorDefecto) {
         if (bloque) await db.bloques.delete(id)
         return bloque
       })
+    },
+
+    /** Borra las actividades vacías con más de 10 minutos. No hay nada que perder en ellas. */
+    borrarVacios(): Promise<number> {
+      const limite = Date.now() - ANTIGUEDAD_VACIAS_MS
+      return db.bloques.filter((b) => esVacio(b) && b.updatedAt < limite).delete()
     },
 
     /** Vuelve a guardar un bloque tal como estaba (para deshacer un borrado). */

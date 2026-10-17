@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { crearAlmacen, type Almacen } from '../../src/storage/bloques.ts'
+import { crearAlmacen, esVacio, type Almacen } from '../../src/storage/bloques.ts'
 import { BaseDeDatos } from '../../src/storage/db.ts'
 import { SCHEMA_VERSION, type NuevoBloque } from '../../src/storage/modelo.ts'
 
@@ -106,5 +106,21 @@ describe('almacenamiento de bloques', () => {
     const reabierta = new BaseDeDatos(db.name)
     expect(await crearAlmacen(reabierta).obtener(bloque.id)).toEqual(bloque)
     reabierta.close()
+  })
+
+  it('borra solo las actividades vacías con más de 10 minutos', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(0)
+    const vaciaVieja = await almacen.crear({ ...ruleta, title: ' ', texto: '' })
+    const conNombre = await almacen.crear({ ...ruleta, title: 'Con nombre' })
+    const conTexto = await almacen.crear({ ...ruleta, title: '', texto: 'Ana' })
+    vi.setSystemTime(11 * 60 * 1000)
+    const vaciaNueva = await almacen.crear({ ...ruleta, title: '' })
+
+    expect(esVacio(vaciaVieja)).toBe(true)
+    expect(await almacen.borrarVacios()).toBe(1)
+    expect((await almacen.listar()).map((b) => b.id).sort()).toEqual(
+      [conNombre.id, conTexto.id, vaciaNueva.id].sort(),
+    )
   })
 })

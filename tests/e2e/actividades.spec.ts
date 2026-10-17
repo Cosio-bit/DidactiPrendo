@@ -1,11 +1,10 @@
 import { expect, test } from '@playwright/test'
 
-test('crear, renombrar, borrar con confirmación y deshacer', async ({ page }) => {
+test('crear, nombrar, borrar con confirmación y deshacer', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('button', { name: 'Crear actividad' }).click()
 
-  const nombre = page.getByLabel('Nombre de la actividad')
-  await nombre.fill('Fracciones 6°B')
+  await page.getByLabel('Nombre de la actividad').fill('Fracciones 6°B')
   await expect(page.getByRole('status')).toHaveText('Guardado')
 
   await page.getByRole('button', { name: 'Listo' }).click()
@@ -29,17 +28,25 @@ test('crear, renombrar, borrar con confirmación y deshacer', async ({ page }) =
   await expect(page.getByRole('heading', { name: 'Fracciones 6°B' })).toBeVisible()
 })
 
+test('una actividad abierta y abandonada sin escribir no aparece en la lista', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Crear actividad' }).click()
+  await expect(page.getByLabel('Pega tu texto aquí')).toBeVisible()
+  await page.getByRole('button', { name: 'Listo' }).click()
+  await expect(page.getByText('Todavía no tienes actividades guardadas.')).toBeVisible()
+})
+
 test('deshacer devuelve el nombre anterior de la actividad', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('button', { name: 'Crear actividad' }).click()
   const nombre = page.getByLabel('Nombre de la actividad')
-  await expect(nombre).toHaveValue('Actividad sin nombre')
+  await expect(nombre).toHaveValue('')
 
   await nombre.fill('Repaso de verbos')
   await expect(page.getByRole('status')).toHaveText('Guardado')
   await page.getByRole('button', { name: 'Deshacer' }).click()
 
-  await expect(nombre).toHaveValue('Actividad sin nombre')
+  await expect(nombre).toHaveValue('')
   await expect(page.getByRole('status')).toHaveText('Se deshizo: cambio de nombre')
 })
 
@@ -47,10 +54,12 @@ test('lo escrito sigue ahí después de recargar la página', async ({ page }) =
   await page.goto('/')
   await page.getByRole('button', { name: 'Crear actividad' }).click()
   await page.getByLabel('Nombre de la actividad').fill('Tabla del 7')
+  await page.getByLabel('Pega tu texto aquí').fill('7 × 1\n7 × 2')
   await expect(page.getByRole('status')).toHaveText('Guardado')
 
   await page.reload()
   await expect(page.getByLabel('Nombre de la actividad')).toHaveValue('Tabla del 7')
+  await expect(page.getByLabel('Pega tu texto aquí')).toHaveValue('7 × 1\n7 × 2')
 })
 
 test('se puede usar solo con teclado', async ({ page }) => {
@@ -62,11 +71,13 @@ test('se puede usar solo con teclado', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Crear actividad' })).toBeFocused()
   await page.keyboard.press('Enter')
 
-  await expect(page.getByRole('heading', { name: 'Tu actividad' })).toBeFocused()
-  await page.getByLabel('Nombre de la actividad').focus()
-  await page.keyboard.press('Control+A')
-  await page.keyboard.type('Sumas')
-  await page.keyboard.press('Tab')
+  // La actividad nueva abre con el cuadro de texto listo para pegar.
+  await expect(page.getByLabel('Pega tu texto aquí')).toBeFocused()
+  await page.keyboard.type('Sumas\nRestas')
+  await page.keyboard.press('Shift+Tab')
+  await expect(page.getByLabel('Nombre de la actividad')).toBeFocused()
+  await page.keyboard.type('Operaciones')
+  await page.keyboard.press('Shift+Tab')
   await expect(page.getByRole('button', { name: 'Listo' })).toBeFocused()
   await page.keyboard.press('Enter')
 
@@ -76,5 +87,5 @@ test('se puede usar solo con teclado', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Cancelar' })).toBeFocused()
   await page.keyboard.press('Escape')
   await expect(page.getByRole('dialog')).toBeHidden()
-  await expect(page.getByRole('heading', { name: 'Sumas' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Operaciones' })).toBeVisible()
 })

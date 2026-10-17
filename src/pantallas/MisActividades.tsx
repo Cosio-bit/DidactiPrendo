@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { textos } from '../i18n/es-CL.ts'
 import { irA } from '../navegacion.ts'
-import { almacen } from '../storage/bloques.ts'
+import { almacen, esVacio } from '../storage/bloques.ts'
 import type { Block } from '../storage/modelo.ts'
 import { useConsulta } from '../storage/useConsulta.ts'
 import { Boton } from '../ui/Boton.tsx'
@@ -11,6 +11,16 @@ import { pilaDeshacer } from '../ui/deshacer.ts'
 
 function fecha(ms: number) {
   return new Date(ms).toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+
+function resumen(bloque: Block) {
+  const partes: string[] = []
+  if (bloque.type === 'ruleta' || bloque.type === 'preguntas') {
+    partes.push(textos.tipos[bloque.type])
+    if (Array.isArray(bloque.items)) partes.push(textos.vistaPrevia.cantidad(bloque.type, bloque.items.length))
+  }
+  partes.push(textos.misActividades.modificada(fecha(bloque.updatedAt)))
+  return partes.join(' · ')
 }
 
 async function borrar(bloque: Block) {
@@ -29,8 +39,13 @@ async function borrar(bloque: Block) {
 }
 
 export function MisActividades() {
-  const bloques = useConsulta(() => almacen.listar(), 'lista')
+  // Las actividades creadas y abandonadas sin escribir nada no se muestran.
+  const bloques = useConsulta(async () => (await almacen.listar()).filter((b) => !esVacio(b)), 'lista')
   const [porBorrar, setPorBorrar] = useState<Block | null>(null)
+
+  useEffect(() => {
+    almacen.borrarVacios().catch(() => {})
+  }, [])
 
   return (
     <section className="mis-actividades">
@@ -50,7 +65,7 @@ export function MisActividades() {
             <li key={bloque.id} className="actividad">
               <div className="actividad__datos">
                 <h2 className="actividad__nombre">{nombreVisible(bloque)}</h2>
-                <p className="actividad__fecha">{textos.misActividades.modificada(fecha(bloque.updatedAt))}</p>
+                <p className="actividad__fecha">{resumen(bloque)}</p>
               </div>
               <div className="actividad__acciones">
                 <Boton variante="principal" onClick={() => irA({ pantalla: 'editor', id: bloque.id })}>

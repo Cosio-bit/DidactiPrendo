@@ -91,6 +91,7 @@ interface Block {
   title: string;         // ej. "Fracciones 6°B"
   items: unknown;        // contenido según el tipo (ver parser)
   config: unknown;       // opciones según el tipo (ej. eliminar al salir)
+  texto?: string;        // texto tal como lo pegó el profe; de aquí salen los items
   course?: string;       // "6° básico"
   subject?: string;      // "Matemática"
   oa?: string;           // "OA 5"

@@ -1,40 +1,55 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useMemo, useState } from 'react'
 import { textos } from '../i18n/es-CL.ts'
 import { irA } from '../navegacion.ts'
+import { parseText } from '../parser/parseText.ts'
+import type { TipoLectura } from '../parser/tipos.ts'
 import { almacen } from '../storage/bloques.ts'
+import type { Block } from '../storage/modelo.ts'
 import { useConsulta } from '../storage/useConsulta.ts'
 import { Boton } from '../ui/Boton.tsx'
-import { pilaDeshacer } from '../ui/deshacer.ts'
+import { useEdicion } from './useEdicion.ts'
+import { VistaPrevia } from './VistaPrevia.tsx'
 
-/** Cambios seguidos con menos de esta pausa se deshacen de una sola vez. */
-const PAUSA_ENTRE_CAMBIOS_MS = 1500
+interface Estado {
+  titulo: string
+  texto: string
+  /** null: se usa el tipo que sugiere el lector. */
+  tipoManual: TipoLectura | null
+}
+
+function estadoDesde(bloque: Block): Estado {
+  const texto = bloque.texto ?? ''
+  const sugerido = parseText(texto).tipoSugerido
+  const tipo = bloque.type === 'ruleta' || bloque.type === 'preguntas' ? bloque.type : sugerido
+  return { titulo: bloque.title, texto, tipoManual: texto.trim() && tipo !== sugerido ? tipo : null }
+}
 
 export function Editor({ id }: { id: string }) {
   const guardado = useConsulta(() => almacen.obtener(id), id)
-  const [titulo, setTitulo] = useState<string | null>(null)
-  const idCampo = useId()
-
-  // Se guarda en cada tecla. Mientras hay guardados en curso, o si lo que llega
-  // de la base es más antiguo que lo último escrito, se ignora para no pisar lo que se está tecleando.
-  const escriturasEnCurso = useRef(0)
-  const ultimaEscritura = useRef(0)
-  const rafaga = useRef<number | undefined>(undefined)
+  const [estado, setEstado] = useState<Estado | null>(null)
+  const [nueva, setNueva] = useState(false)
+  const edicion = useEdicion(id)
+  const idNombre = useId()
+  const idTexto = useId()
+  const idAyuda = useId()
 
   useEffect(() => {
     if (!guardado.listo || !guardado.valor) return
-    if (escriturasEnCurso.current > 0 || guardado.valor.updatedAt <= ultimaEscritura.current) {
-      if (titulo !== null) return
-    }
-    setTitulo(guardado.valor.title)
+    if (estado === null) setNueva(!(guardado.valor.texto ?? '').trim())
+    else if (!edicion.debeMostrar(guardado.valor)) return
+    setEstado(estadoDesde(guardado.valor))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guardado])
 
-  useEffect(() => () => window.clearTimeout(rafaga.current), [])
+  const lectura = useMemo(
+    () => parseText(estado?.texto ?? '', estado?.tipoManual ?? undefined),
+    [estado?.texto, estado?.tipoManual],
+  )
 
   // El título se muestra desde el primer momento para que el foco tenga dónde llegar.
   const encabezado = <h1 tabIndex={-1}>{textos.editor.titulo}</h1>
 
-  if (!guardado.listo) {
+  if (!guardado.listo || (guardado.valor && !estado)) {
     return (
       <section className="editor">
         {encabezado}
@@ -43,7 +58,7 @@ export function Editor({ id }: { id: string }) {
     )
   }
 
-  if (!guardado.valor) {
+  if (!guardado.valor || !estado) {
     return (
       <section className="editor">
         {encabezado}
@@ -55,51 +70,82 @@ export function Editor({ id }: { id: string }) {
     )
   }
 
-  function cambiarTitulo(nuevo: string) {
-    if (rafaga.current === undefined) {
-      const anterior = titulo ?? ''
-      pilaDeshacer.registrar({
-        descripcion: textos.acciones.cambioNombre,
-        deshacer: () => {
-          window.clearTimeout(rafaga.current)
-          rafaga.current = undefined
-          return almacen.actualizar(id, { title: anterior })
-        },
-      })
-    } else {
-      window.clearTimeout(rafaga.current)
-    }
-    rafaga.current = window.setTimeout(() => (rafaga.current = undefined), PAUSA_ENTRE_CAMBIOS_MS)
+  const actual = estado
 
-    setTitulo(nuevo)
-    escriturasEnCurso.current++
-    almacen
-      .actualizar(id, { title: nuevo })
-      .then((bloque) => {
-        if (bloque) ultimaEscritura.current = bloque.updatedAt
-        pilaDeshacer.avisar(textos.avisos.guardado)
-      })
-      .catch(() => pilaDeshacer.avisar(textos.avisos.errorGuardar, true))
-      .finally(() => escriturasEnCurso.current--)
+  function cambiarTitulo(titulo: string) {
+    edicion.guardar('nombre', { title: titulo }, { title: actual.titulo }, textos.acciones.cambioNombre)
+    setEstado({ ...actual, titulo })
+  }
+
+  function cambiarTexto(texto: string) {
+    const lecturaNueva = parseText(texto, actual.tipoManual ?? undefined)
+    edicion.guardar(
+      'texto',
+      { texto, type: lecturaNueva.tipo, items: lecturaNueva.elementos },
+      { texto: actual.texto, type: lectura.tipo, items: lectura.elementos },
+      textos.acciones.cambioTexto,
+    )
+    setEstado({ ...actual, texto })
+  }
+
+  function cambiarTipo(tipo: TipoLectura) {
+    if (tipo === lectura.tipo) return
+    const lecturaNueva = parseText(actual.texto, tipo)
+    edicion.guardar(
+      'tipo',
+      { type: tipo, items: lecturaNueva.elementos },
+      { type: lectura.tipo, items: lectura.elementos },
+      textos.acciones.cambioTipo,
+      false,
+    )
+    setEstado({ ...actual, tipoManual: tipo === lectura.tipoSugerido ? null : tipo })
   }
 
   return (
     <section className="editor">
-      {encabezado}
-      <label htmlFor={idCampo} className="campo__etiqueta">
-        {textos.editor.nombre}
-      </label>
-      <input
-        id={idCampo}
-        className="campo__entrada"
-        value={titulo ?? ''}
-        onChange={(evento) => cambiarTitulo(evento.target.value)}
-        autoComplete="off"
-      />
-      <p className="nota">{textos.editor.proximamente}</p>
-      <Boton variante="principal" onClick={() => irA({ pantalla: 'mis-actividades' })}>
-        {textos.editor.listo}
-      </Boton>
+      <div className="editor__cabecera">
+        {encabezado}
+        <Boton variante="principal" onClick={() => irA({ pantalla: 'mis-actividades' })}>
+          {textos.editor.listo}
+        </Boton>
+      </div>
+
+      <div className="campo campo--en-linea">
+        <label htmlFor={idNombre} className="campo__etiqueta">
+          {textos.editor.nombre}
+        </label>
+        <input
+          id={idNombre}
+          className="campo__entrada"
+          value={actual.titulo}
+          placeholder={textos.editor.nombrePorDefecto}
+          onChange={(evento) => cambiarTitulo(evento.target.value)}
+          autoComplete="off"
+        />
+      </div>
+
+      <div className="editor__columnas">
+        <div className="editor__texto">
+          <label htmlFor={idTexto} className="campo__etiqueta">
+            {textos.editor.pegaTuTexto}
+          </label>
+          <textarea
+            id={idTexto}
+            className="campo__entrada editor__area"
+            value={actual.texto}
+            placeholder={textos.editor.ejemplo}
+            aria-describedby={idAyuda}
+            // Actividad recién creada: se puede pegar al tiro con Ctrl+V.
+            autoFocus={nueva}
+            spellCheck={false}
+            onChange={(evento) => cambiarTexto(evento.target.value)}
+          />
+          <p id={idAyuda} className="nota editor__ayuda">
+            {textos.editor.ayuda}
+          </p>
+        </div>
+        <VistaPrevia lectura={lectura} hayTexto={actual.texto.trim() !== ''} onCambiarTipo={cambiarTipo} />
+      </div>
     </section>
   )
 }

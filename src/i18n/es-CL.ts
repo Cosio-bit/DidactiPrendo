@@ -40,14 +40,35 @@ export const textos = {
     borrar: 'Borrar',
     modificada: (fecha: string) => `Modificada el ${fecha}`,
   },
+  tipos: {
+    ruleta: 'Ruleta',
+    preguntas: 'Preguntas con alternativas',
+    marcador: 'Marcador',
+    temporizador: 'Temporizador',
+  },
   editor: {
     titulo: 'Tu actividad',
     nombre: 'Nombre de la actividad',
     nombrePorDefecto: 'Actividad sin nombre',
-    proximamente: 'Pronto podrás pegar aquí tu lista o tus preguntas.',
+    pegaTuTexto: 'Pega tu texto aquí',
+    ejemplo: 'Por ejemplo:\nAna\nBenjamín\nCatalina',
+    ayuda:
+      'Un elemento por línea. Para preguntas: la pregunta, debajo las alternativas a), b), c) y un * antes de la correcta.',
     listo: 'Listo',
     cargando: 'Abriendo la actividad…',
     noEncontrada: 'Esta actividad ya no existe. Puede que la hayas borrado.',
+  },
+  vistaPrevia: {
+    titulo: 'Así quedará',
+    tipo: 'Tipo de actividad',
+    sugerido: 'sugerido',
+    vacia: 'Aquí verás tu actividad cuando pegues o escribas el texto.',
+    revisa: 'Revisa esto',
+    correcta: 'correcta',
+    cantidad: (tipo: 'ruleta' | 'preguntas', n: number) =>
+      tipo === 'ruleta'
+        ? `${n} ${n === 1 ? 'elemento' : 'elementos'}`
+        : `${n} ${n === 1 ? 'pregunta' : 'preguntas'}`,
   },
   confirmarBorrado: {
     titulo: '¿Borrar esta actividad?',
@@ -67,6 +88,8 @@ export const textos = {
   },
   acciones: {
     cambioNombre: 'cambio de nombre',
+    cambioTexto: 'cambio de texto',
+    cambioTipo: 'cambio de tipo de actividad',
     borrado: (nombre: string) => `borrado de «${nombre}»`,
   },
   lector: {

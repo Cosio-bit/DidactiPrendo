@@ -29,6 +29,8 @@
   --peligro-texto: #ffffff;
   --foco-color: #f2a900;
   --error-fondo: #fde7e6;
+  --aviso-fondo: #fff4d6;
+  --correcta: #1b6e2a;
 
   font-family: system-ui, 'Segoe UI', Roboto, Arial, sans-serif;
   font-size: var(--texto);
@@ -50,6 +52,8 @@
   --peligro-texto: #000000;
   --foco-color: #00e5ff;
   --error-fondo: #4a0000;
+  --aviso-fondo: #2b2200;
+  --correcta: #7dff8a;
   --borde: 3px;
 }
 
@@ -112,7 +116,7 @@ h1:focus {
   width: 100%;
   max-width: 960px;
   margin: 0 auto;
-  padding: var(--espacio-4) var(--espacio-3);
+  padding: var(--espacio-3);
 }
 
 /* Botón */
@@ -223,11 +227,21 @@ h1:focus {
 .editor {
   display: grid;
   gap: var(--espacio-2);
-  justify-items: start;
+}
+
+.editor__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+}
+
+.campo {
+  display: grid;
+  gap: var(--espacio-1);
 }
 
 .campo__etiqueta {
-  margin-top: var(--espacio-2);
   font-weight: 600;
 }
 
@@ -236,16 +250,179 @@ h1:focus {
   min-height: var(--boton-minimo);
   padding: var(--espacio-1) var(--espacio-2);
   font: inherit;
-  font-size: var(--texto-grande);
   color: var(--texto-color);
   background: var(--superficie);
   border: var(--borde) solid var(--borde-color);
   border-radius: var(--radio);
 }
 
+.campo__entrada::placeholder {
+  color: var(--texto-suave);
+  opacity: 0.8;
+}
+
+.editor__columnas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--espacio-3);
+  /* Alto fijo: cada columna se desplaza por dentro y la barra de Deshacer queda a la vista. */
+  height: max(360px, calc(100vh - 372px));
+}
+
+.editor__texto {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: var(--espacio-1);
+  min-height: 0;
+}
+
+.editor__area {
+  min-height: 0;
+  resize: none;
+  line-height: 1.35;
+}
+
+.editor__ayuda {
+  font-size: 20px;
+}
+
 .nota {
   color: var(--texto-suave);
-  margin-bottom: var(--espacio-2);
+}
+
+/* Vista previa */
+.vista-previa {
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--espacio-2);
+  border: var(--borde) solid var(--borde-color);
+  border-radius: var(--radio);
+  background: var(--superficie);
+  display: grid;
+  align-content: start;
+  gap: var(--espacio-2);
+}
+
+.vista-previa h2 {
+  font-size: var(--texto);
+}
+
+.selector-tipo {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: var(--espacio-1);
+}
+
+.selector-tipo legend {
+  padding: 0;
+  margin-bottom: var(--espacio-1);
+  color: var(--texto-suave);
+}
+
+.selector-tipo__opcion {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: var(--boton-minimo);
+  padding: var(--espacio-1) var(--espacio-2);
+  border: var(--borde) solid var(--borde-color);
+  border-radius: var(--radio);
+  cursor: pointer;
+}
+
+.selector-tipo__opcion--elegida {
+  border-color: var(--principal);
+  box-shadow: inset 0 0 0 2px var(--principal);
+  font-weight: 700;
+}
+
+.selector-tipo__opcion input {
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  flex: none;
+  accent-color: var(--principal);
+}
+
+.etiqueta {
+  font-weight: 400;
+  color: var(--texto-suave);
+}
+
+.advertencias {
+  padding: var(--espacio-2);
+  border-left: 6px solid var(--foco-color);
+  background: var(--aviso-fondo);
+}
+
+.advertencias h3 {
+  margin: 0 0 var(--espacio-1);
+  font-size: var(--texto);
+}
+
+.advertencias ul {
+  margin: 0;
+  padding-left: var(--espacio-3);
+  display: grid;
+  gap: var(--espacio-1);
+}
+
+.vista-previa__cantidad {
+  font-weight: 700;
+}
+
+.vista-previa__lista,
+.vista-previa__preguntas {
+  margin: 0;
+  padding-left: 2.2em;
+  overflow-wrap: anywhere;
+}
+
+.vista-previa__preguntas > li + li {
+  margin-top: var(--espacio-2);
+}
+
+.vista-previa__enunciado {
+  font-weight: 700;
+}
+
+.vista-previa__alternativas {
+  list-style: none;
+  margin: var(--espacio-1) 0 0;
+  padding: 0;
+}
+
+.alternativa--correcta {
+  font-weight: 700;
+}
+
+.etiqueta-correcta {
+  color: var(--correcta);
+}
+
+/* Nombre y su campo en la misma fila, para dejar más alto al texto. */
+.campo--en-linea {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+/* En pantallas angostas, una columna debajo de la otra. */
+@media (max-width: 800px) {
+  .campo--en-linea {
+    grid-template-columns: 1fr;
+  }
+
+  .editor__columnas {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .editor__area {
+    min-height: 240px;
+  }
 }
 
 /* Diálogo de confirmación */
