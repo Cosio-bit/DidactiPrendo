@@ -129,12 +129,13 @@ Cada fase tiene un objetivo, sus tareas, un criterio de "terminado" y una instru
 
 ## Fase 5 — Marcador por equipos y temporizador (1 a 2 sesiones)
 
-- [ ] Marcador para 2 a 8 equipos con nombre y color, y botones grandes de +1 y −1.
-- [ ] Puede mostrarse junto a la ruleta o a las preguntas.
-- [ ] Temporizador independiente:
-  - Inicio, pausa y reinicio.
-  - Aviso visual al terminar, además del sonoro.
-- [ ] Colores distinguibles por personas con daltonismo.
+- [x] Marcador para 2 a 8 equipos con nombre y color, y botones grandes de +1 y −1.
+  - Los equipos y sus puntos quedan guardados en el computador y siguen en la próxima actividad. "Dejar los puntos en 0" pide confirmación.
+- [x] Puede mostrarse junto a cualquier actividad: botones "Marcador" y "Temporizador" en el pie de la proyección (o teclas M y T).
+- [x] Temporizador independiente:
+  - Inicio, pausa y reinicio, y un minuto más o menos (también mientras corre).
+  - Aviso visual al terminar (número y borde de la pantalla en rojo), además del sonoro.
+- [x] Colores distinguibles por personas con daltonismo: paleta de Okabe e Ito y, además, una figura distinta por equipo.
 
 ---
 

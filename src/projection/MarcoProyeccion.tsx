@@ -1,0 +1,143 @@
+import { useCallback, useEffect, useState, type CSSProperties, type ReactNode } from 'react'
+import { leerMarcador, nuevoMarcador, type Marcador } from '../blocks/marcador/logica.ts'
+import { nombreDeColor } from '../blocks/marcador/nombres.ts'
+import { DialogoEquipos } from '../blocks/marcador/DialogoEquipos.tsx'
+import { PanelMarcador } from '../blocks/marcador/PanelMarcador.tsx'
+import { PanelTemporizador } from '../blocks/temporizador/PanelTemporizador.tsx'
+import { MINUTO_MS } from '../blocks/temporizador/logica.ts'
+import { textos } from '../i18n/es-CL.ts'
+import { ajustes } from '../storage/ajustes.ts'
+import { Boton } from '../ui/Boton.tsx'
+import { RanuraTeclas } from './ranuraTeclas.ts'
+import { useAtajos } from './useAtajos.ts'
+import { useTamano } from './useTamano.ts'
+
+const t = textos.herramientas
+
+interface Guardado {
+  marcadorVisible: boolean
+  temporizadorVisible: boolean
+  marcador: Marcador
+  totalMs: number
+}
+
+/** Lo que el profe dejó la última vez: equipos, puntos, qué estaba abierto y la duración del temporizador. */
+async function cargar(): Promise<Guardado> {
+  const [visibles, marcador, temporizador] = await Promise.all([
+    ajustes.leer('herramientas'),
+    ajustes.leer('marcador'),
+    ajustes.leer('temporizador'),
+  ])
+  const v = (visibles ?? {}) as { marcador?: unknown; temporizador?: unknown }
+  const total = (temporizador as { totalMs?: unknown } | undefined)?.totalMs
+  return {
+    marcadorVisible: v.marcador === true,
+    temporizadorVisible: v.temporizador === true,
+    marcador: leerMarcador(marcador) ?? nuevoMarcador(2, nombreDeColor),
+    totalMs: typeof total === 'number' && Number.isFinite(total) ? total : 3 * MINUTO_MS,
+  }
+}
+
+function guardar(clave: string, valor: unknown) {
+  // Si el navegador no deja guardar, la clase sigue igual.
+  ajustes.guardar(clave, valor).catch(() => undefined)
+}
+
+interface Props {
+  /** La actividad proyectada. */
+  children: ReactNode
+}
+
+/**
+ * Marco de toda proyección: la actividad arriba y, abajo, el marcador por equipos y el temporizador
+ * cuando el profe los abre. Acompañan a cualquier actividad y recuerdan cómo quedaron.
+ */
+export function MarcoProyeccion({ children }: Props) {
+  const [guardado, setGuardado] = useState<Guardado | null>(null)
+  useEffect(() => {
+    let vigente = true
+    cargar().then((g) => vigente && setGuardado(g))
+    return () => {
+      vigente = false
+    }
+  }, [])
+  // Hasta leer lo guardado no se muestra nada: así la actividad no cambia de tamaño al aparecer el marcador.
+  if (!guardado) return <div className="proyeccion" />
+  return <Marco guardado={guardado}>{children}</Marco>
+}
+
+function Marco({ guardado, children }: Props & { guardado: Guardado }) {
+  const [marcadorVisible, setMarcadorVisible] = useState(guardado.marcadorVisible)
+  const [temporizadorVisible, setTemporizadorVisible] = useState(guardado.temporizadorVisible)
+  const [marcador, setMarcador] = useState<Marcador>(guardado.marcador)
+  const [tiempoAcabado, setTiempoAcabado] = useState(false)
+  const [editandoEquipos, setEditandoEquipos] = useState(false)
+  /** Dónde va la ayuda de teclas de la actividad (en el pie). */
+  const [ranura, setRanura] = useState<HTMLElement | null>(null)
+  const [abajo, { alto }] = useTamano<HTMLDivElement>()
+
+  // Cada cambio queda guardado para la próxima actividad.
+  useEffect(() => {
+    guardar('herramientas', { marcador: marcadorVisible, temporizador: temporizadorVisible })
+  }, [marcadorVisible, temporizadorVisible])
+  useEffect(() => {
+    guardar('marcador', marcador)
+  }, [marcador])
+
+  const cambiarMarcador = useCallback((cambio: (m: Marcador) => Marcador) => setMarcador(cambio), [])
+  /** Última duración elegida: si se cierra y se vuelve a abrir el temporizador, parte con ella. */
+  const [totalMs, setTotalMs] = useState(guardado.totalMs)
+  const guardarTotal = useCallback((total: number) => {
+    setTotalMs(total)
+    guardar('temporizador', { totalMs: total })
+  }, [])
+
+  const alternarMarcador = () => setMarcadorVisible((v) => !v)
+  const alternarTemporizador = () => setTemporizadorVisible((v) => !v)
+  useAtajos({ otras: { m: alternarMarcador, t: alternarTemporizador } })
+
+  const abiertas = marcadorVisible || temporizadorVisible
+
+  return (
+    <div
+      className={abiertas ? 'proyeccion-marco proyeccion-marco--con-herramientas' : 'proyeccion-marco'}
+      data-tiempo-acabado={tiempoAcabado && temporizadorVisible}
+      style={{ '--alto-herramientas': `${alto}px` } as CSSProperties}
+    >
+      <RanuraTeclas.Provider value={ranura}>{children}</RanuraTeclas.Provider>
+      <div ref={abajo} className="proyeccion-marco__abajo">
+        {abiertas && (
+          <div className="herramientas">
+            {temporizadorVisible && (
+              <PanelTemporizador totalInicialMs={totalMs} onCambioTotal={guardarTotal} onFin={setTiempoAcabado} />
+            )}
+            {marcadorVisible && <PanelMarcador marcador={marcador} onCambiar={cambiarMarcador} />}
+          </div>
+        )}
+        {/* Pie: la ayuda de teclas de la actividad y los botones para abrir el marcador y el temporizador. */}
+        <div className="proyeccion-marco__pie">
+          <div ref={setRanura} className="proyeccion-marco__ayuda" />
+          <div className="proyeccion-marco__botones">
+            {marcadorVisible && (
+              <Boton variante="herramienta" onClick={() => setEditandoEquipos(true)}>
+                {t.editarEquipos}
+              </Boton>
+            )}
+            <Boton variante="herramienta" aria-pressed={marcadorVisible} onClick={alternarMarcador}>
+              {t.marcador}
+            </Boton>
+            <Boton variante="herramienta" aria-pressed={temporizadorVisible} onClick={alternarTemporizador}>
+              {t.temporizador}
+            </Boton>
+          </div>
+        </div>
+      </div>
+      <DialogoEquipos
+        abierto={editandoEquipos}
+        marcador={marcador}
+        onCambiar={cambiarMarcador}
+        onCerrar={() => setEditandoEquipos(false)}
+      />
+    </div>
+  )
+}

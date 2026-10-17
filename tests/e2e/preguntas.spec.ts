@@ -68,7 +68,7 @@ test('comentar el error antes de revelar, con el botón y un toque', async ({ pa
   await crearPreguntas(page)
   await page.getByRole('button', { name: 'Proyectar' }).click()
   await page.getByRole('button', { name: 'Comentar el error' }).click()
-  await expect(page.getByText('Toca la alternativa incorrecta que quieres comentar')).toBeVisible()
+  await expect(page.getByText('Toca la alternativa incorrecta para comentarla')).toBeVisible()
 
   // La correcta (B) no se puede marcar como error; la A sí.
   await expect(page.getByRole('button', { name: 'B 6' })).toHaveCount(0)

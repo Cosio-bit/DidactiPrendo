@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { textos } from '../../i18n/es-CL.ts'
 import type { Categoria } from '../../parser/tipos.ts'
 import { useArrastrar } from '../../projection/useArrastrar.ts'
+import { AyudaTeclas } from '../../projection/AyudaTeclas.tsx'
 import { useAtajos } from '../../projection/useAtajos.ts'
 import { usePantallaCompleta } from '../../projection/usePantallaCompleta.ts'
 import { useTextoAjustado } from '../../projection/useTextoAjustado.ts'
@@ -192,7 +193,9 @@ export function ProyeccionClasificar({ titulo, categorias, onSalir, textoVolver 
           {t.ubicarSiguiente}
         </Boton>
       </div>
-      <p className="proyeccion__teclas">{juego.elegido !== null ? t.elegirCategoria : t.teclasClasificar}</p>
+      <AyudaTeclas indicacion={juego.elegido !== null}>
+        {juego.elegido !== null ? t.elegirCategoria : t.teclasClasificar}
+      </AyudaTeclas>
     </div>
   )
 }

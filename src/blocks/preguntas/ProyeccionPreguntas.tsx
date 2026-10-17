@@ -3,6 +3,7 @@ import { textos } from '../../i18n/es-CL.ts'
 import type { Pregunta } from '../../parser/tipos.ts'
 import { prepararSonido, sonarAlarma } from '../../projection/sonido.ts'
 import { formatearTiempo } from '../../projection/tiempo.ts'
+import { AyudaTeclas } from '../../projection/AyudaTeclas.tsx'
 import { useAtajos } from '../../projection/useAtajos.ts'
 import { useCuentaRegresiva } from '../../projection/useCuentaRegresiva.ts'
 import { usePantallaCompleta } from '../../projection/usePantallaCompleta.ts'
@@ -230,7 +231,7 @@ export function ProyeccionPreguntas({ preguntas, config, onSalir, textoVolver, v
           </Boton>
         </div>
       )}
-      <p className="proyeccion__teclas">
+      <AyudaTeclas indicacion={eligiendoError}>
         {eligiendoError
           ? t.elegirError
           : verdaderoFalso
@@ -240,7 +241,7 @@ export function ProyeccionPreguntas({ preguntas, config, onSalir, textoVolver, v
             : conTiempo
               ? t.teclasPreguntasConTiempo
               : t.teclasPreguntas}
-      </p>
+      </AyudaTeclas>
     </div>
   )
 }

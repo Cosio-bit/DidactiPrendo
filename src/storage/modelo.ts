@@ -32,3 +32,9 @@ export type NuevoBloque = Pick<Block, 'type' | 'title' | 'items' | 'config'> &
 
 /** Campos que se pueden cambiar después de crear el bloque. */
 export type CambiosBloque = Partial<Omit<Block, 'id' | 'createdAt' | 'updatedAt' | 'schemaVersion'>>
+
+/** Un ajuste guardado en el computador, por ejemplo los equipos del marcador. */
+export interface Ajuste {
+  clave: string
+  valor: unknown
+}

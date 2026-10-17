@@ -108,6 +108,8 @@ interface Block {
 }
 ```
 
+El marcador y el temporizador no son bloques: acompañan a cualquier proyección. Sus equipos, puntos y la última duración del temporizador se guardan en la tabla `ajustes` de IndexedDB (clave → valor), no dentro de una actividad.
+
 ## Formato de texto que entiende el lector
 
 - **Lista simple** (ruleta, sorteo): una línea = un elemento. Se ignoran líneas vacías, viñetas (`-`, `•`, `1.`) y espacios sobrantes.

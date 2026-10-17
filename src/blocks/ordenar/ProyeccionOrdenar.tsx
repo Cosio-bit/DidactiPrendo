@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { textos } from '../../i18n/es-CL.ts'
 import { useArrastrar } from '../../projection/useArrastrar.ts'
+import { AyudaTeclas } from '../../projection/AyudaTeclas.tsx'
 import { useAtajos } from '../../projection/useAtajos.ts'
 import { usePantallaCompleta } from '../../projection/usePantallaCompleta.ts'
 import { useTextoAjustado } from '../../projection/useTextoAjustado.ts'
@@ -181,7 +182,7 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: P
           {t.revelarSiguiente}
         </Boton>
       </div>
-      <p className="proyeccion__teclas">{agarrado !== null ? t.tocarOrden : t.teclasOrdenar}</p>
+      <AyudaTeclas indicacion={agarrado !== null}>{agarrado !== null ? t.tocarOrden : t.teclasOrdenar}</AyudaTeclas>
     </div>
   )
 }

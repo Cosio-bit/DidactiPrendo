@@ -101,6 +101,8 @@
   --herramienta-borde: #3b8db5;
   --presionado-fondo: var(--celeste);
   --correcta: #1b6e2a;
+  /* Borde de las figuras de los equipos: así el amarillo se distingue del papel. */
+  --figura-borde: var(--tinta);
   /* Hoja de cuaderno: líneas celestes muy tenues que no compiten con el texto. */
   --cuadricula: rgb(88 196 242 / 0.17);
   --cuadricula-proyeccion: rgb(88 196 242 / 0.1);
@@ -134,6 +136,7 @@
   --herramienta-borde: #ffffff;
   --presionado-fondo: #2b2200;
   --correcta: #7dff8a;
+  --figura-borde: #ffffff;
   --cuadricula: transparent;
   --cuadricula-proyeccion: transparent;
   --borde: 3px;
@@ -767,8 +770,8 @@ h1:focus {
 }
 
 .proyeccion-ruleta__rueda {
-  width: min(calc(100vh - 48px), 58vw);
-  height: min(calc(100vh - 48px), 58vw);
+  width: min(calc(100vh - 48px - var(--alto-herramientas, 0px)), 58vw);
+  height: min(calc(100vh - 48px - var(--alto-herramientas, 0px)), 58vw);
 }
 
 .rueda {
@@ -818,8 +821,8 @@ h1:focus {
   }
 
   .proyeccion-ruleta__rueda {
-    width: min(90vw, 50vh);
-    height: min(90vw, 50vh);
+    width: min(90vw, calc(50vh - var(--alto-herramientas, 0px) / 2));
+    height: min(90vw, calc(50vh - var(--alto-herramientas, 0px) / 2));
   }
 
   .proyeccion-ruleta__panel {
@@ -1883,9 +1886,281 @@ h1:focus {
 
 /* En pantallas táctiles no hay teclado: la ayuda de teclas sobra. */
 @media (pointer: coarse) {
-  .proyeccion__teclas {
+  .proyeccion__teclas:not(.proyeccion__teclas--indicacion) {
     display: none;
   }
+}
+
+/*
+ * Marco de la proyección: la actividad arriba y, abajo, el marcador y el temporizador cuando están abiertos.
+ * La actividad ocupa el resto y ajusta su letra a ese espacio.
+ */
+.proyeccion-marco {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--fondo);
+  background-image:
+    linear-gradient(var(--cuadricula-proyeccion) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, var(--cuadricula-proyeccion) 1.5px, transparent 1.5px);
+  background-size: 40px 40px;
+  background-position: -1px -1px;
+}
+
+.proyeccion-marco > .proyeccion {
+  position: relative;
+  inset: auto;
+  flex: 1 1 0;
+  min-height: 0;
+  padding-bottom: var(--espacio-1);
+  background: none;
+}
+
+.proyeccion-marco__abajo {
+  flex: none;
+  display: grid;
+  gap: var(--espacio-1);
+  padding: 0 var(--espacio-3) var(--espacio-2);
+}
+
+/*
+ * Pie: la ayuda de teclas a la izquierda y los botones del marcador y el temporizador a la derecha.
+ * Su alto es fijo (dos líneas), para que la actividad no cambie de tamaño cuando cambia la ayuda.
+ */
+.proyeccion-marco__pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-1) var(--espacio-2);
+  min-height: 2.8em;
+}
+
+.proyeccion-marco__ayuda {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+.proyeccion-marco__ayuda .proyeccion__teclas {
+  text-align: left;
+  line-height: 1.4;
+}
+
+.proyeccion-marco__botones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--espacio-1);
+  margin-left: auto;
+}
+
+/* Con el marcador o el temporizador abiertos, la lista de teclas se esconde para dejar espacio. */
+.proyeccion-marco--con-herramientas .proyeccion__teclas:not(.proyeccion__teclas--indicacion) {
+  display: none;
+}
+
+.proyeccion__teclas--indicacion {
+  color: var(--texto-color);
+  font-weight: 600;
+}
+
+/* Se acabó el tiempo del temporizador: borde rojo grueso en toda la pantalla, visible desde el fondo. */
+.proyeccion-marco[data-tiempo-acabado='true']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  border: 12px solid var(--peligro);
+  pointer-events: none;
+}
+
+.herramientas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--espacio-1);
+}
+
+.temporizador-panel,
+.equipo {
+  border: var(--borde) solid var(--borde-color);
+  border-radius: var(--radio);
+  background: var(--superficie);
+}
+
+.temporizador-panel {
+  flex: none;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px var(--espacio-1);
+}
+
+.temporizador-panel .boton {
+  padding-inline: 12px;
+}
+
+.temporizador-panel__tiempo {
+  /* Ancho fijo: que el número no empuje los botones al cambiar ni al decir "¡Tiempo!". */
+  min-width: 4.4em;
+  padding: 0 6px;
+  font-family: var(--f-numeros);
+  font-size: 44px;
+  font-weight: 500;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.temporizador-panel__acciones {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.temporizador-panel__principal {
+  min-width: 5.5em;
+}
+
+.temporizador-panel--fin {
+  border-color: var(--peligro);
+}
+
+.temporizador-panel--fin .temporizador-panel__tiempo {
+  background: var(--peligro);
+  color: var(--peligro-texto);
+}
+
+.marcador {
+  flex: 0 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.marcador__equipos {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+ * Cada equipo, angosto para que quepan varios en una fila: nombre, figura y puntos, y abajo −1 y +1.
+ * El color va en la franja de arriba y en la figura (nunca solo en el color).
+ */
+.equipo {
+  width: 116px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: start;
+  gap: 2px 4px;
+  padding: 2px 2px 4px;
+  border-top: 8px solid var(--equipo-color);
+}
+
+.equipo__nombre {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-weight: 700;
+  line-height: 1.15;
+  /* Primero se corta entre palabras; partir una palabra queda como último recurso. */
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.equipo__puntos {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--f-numeros);
+  font-size: 40px;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+
+.equipo__puntos .figura {
+  width: 0.6em;
+  height: 0.6em;
+}
+
+.equipo__boton {
+  min-width: 0;
+  padding-inline: 0;
+  font-family: var(--f-numeros);
+}
+
+.figura {
+  width: 1em;
+  height: 1em;
+  flex: none;
+}
+
+/* Diálogo de equipos: una fila por equipo con color, nombre y quitar. */
+.dialogo-equipos {
+  width: min(640px, calc(100vw - 2 * var(--espacio-3)));
+  padding: var(--espacio-3);
+}
+
+.dialogo-equipos p {
+  margin: var(--espacio-1) 0 var(--espacio-2);
+  color: var(--texto-suave);
+}
+
+.dialogo-equipos__lista {
+  display: grid;
+  gap: var(--espacio-1);
+  margin: 0 0 var(--espacio-2);
+  padding: 0;
+  list-style: none;
+}
+
+.dialogo-equipos__lista[data-columnas='2'] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--espacio-3);
+}
+
+.dialogo-equipos:has(.dialogo-equipos__lista[data-columnas='2']) {
+  width: min(960px, calc(100vw - 2 * var(--espacio-3)));
+  max-width: none;
+}
+
+@media (max-width: 760px) {
+  .dialogo-equipos__lista[data-columnas='2'] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.dialogo-equipos__equipo {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--espacio-1);
+}
+
+.dialogo-equipos__color {
+  width: var(--boton-minimo);
+  padding: 0;
+  font-size: 32px;
+}
+
+.dialogo-equipos__acciones {
+  align-items: center;
+}
+
+.dialogo-equipos__nota {
+  color: var(--texto-suave);
 }
 
 /* Tomar y arrastrar (Clasificar y Ordenar). */
@@ -1933,12 +2208,53 @@ h1:focus {
   visibility: hidden;
 }
 
-/* La ayuda de abajo cambia de texto al jugar: reserva dos líneas para que el contenido no cambie de alto. */
-.proyeccion-ordenar .proyeccion__teclas,
-.proyeccion-preguntas .proyeccion__teclas {
-  min-height: 2.8em;
-}
-
 .proyeccion-parejas__aviso {
   white-space: nowrap;
+}
+
+/* Marcador y temporizador en el celular: más compactos, para dejarle espacio a la actividad. */
+@media (max-width: 600px), (max-height: 500px) {
+  .proyeccion-marco__abajo {
+    padding: 0 12px 12px;
+  }
+
+  .marcador {
+    flex-basis: 100%;
+    flex-wrap: wrap;
+  }
+
+  .equipo {
+    width: 112px;
+  }
+
+  /*
+   * En el celular no cabe todo a la vez: la actividad conserva un alto mínimo y, si el marcador
+   * no cabe debajo, se desplaza la pantalla completa (nunca un cuadro por dentro).
+   */
+  .proyeccion-marco--con-herramientas {
+    overflow-y: auto;
+  }
+
+  .proyeccion-marco--con-herramientas > .proyeccion {
+    flex: 0 0 auto;
+    height: max(80vh, calc(100% - var(--alto-herramientas, 0px)));
+  }
+
+  .equipo__puntos {
+    font-size: 28px;
+  }
+
+  .temporizador-panel {
+    flex: 1 1 100%;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .temporizador-panel__tiempo {
+    min-width: 0;
+    font-size: 32px;
+  }
+
+  .temporizador-panel .boton {
+    padding-inline: 8px;
+  }
 }

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { textos } from '../../i18n/es-CL.ts'
 import type { Pareja } from '../../parser/tipos.ts'
+import { AyudaTeclas } from '../../projection/AyudaTeclas.tsx'
 import { useAtajos } from '../../projection/useAtajos.ts'
 import { usePantallaCompleta } from '../../projection/usePantallaCompleta.ts'
 import { useTamano } from '../../projection/useTamano.ts'
@@ -149,7 +150,7 @@ export function ProyeccionParejas({ parejas, onSalir, textoVolver }: Props) {
         </div>
       </div>
 
-      <p className="proyeccion__teclas">{t.teclasParejas}</p>
+      <AyudaTeclas>{t.teclasParejas}</AyudaTeclas>
     </div>
   )
 }

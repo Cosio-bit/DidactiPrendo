@@ -14,6 +14,7 @@ import { comoPreguntas, esListaDeAfirmaciones } from '../blocks/preguntas/verdad
 import { textos } from '../i18n/es-CL.ts'
 import { destinoAlVolver, volverDeProyeccion } from '../navegacion.ts'
 import { entrarPantallaCompleta, salirPantallaCompleta } from '../projection/usePantallaCompleta.ts'
+import { MarcoProyeccion } from '../projection/MarcoProyeccion.tsx'
 import { useAtajos } from '../projection/useAtajos.ts'
 import { nombreVisible } from './nombreVisible.ts'
 import { almacen } from '../storage/bloques.ts'
@@ -67,11 +68,42 @@ export function Proyectar({ id }: { id: string }) {
   if (!bloque.listo) return <div className="proyeccion" />
   const b = bloque.valor
   if (!b) return <Aviso id={id} mensaje={textos.editor.noEncontrada} />
+  const aviso = mensajeSiNoSePuede(b)
+  if (aviso) return <Aviso id={id} mensaje={aviso} />
 
-  if (b.type === 'ruleta') {
-    if (!esListaDeTextos(b.items) || b.items.length < 2) {
-      return <Aviso id={id} mensaje={textos.proyeccion.ruletaPocosElementos} />
-    }
+  // El marcador y el temporizador acompañan a cualquier actividad.
+  return (
+    <MarcoProyeccion>
+      <Actividad bloque={b} />
+    </MarcoProyeccion>
+  )
+}
+
+/** Por qué no se puede proyectar, o undefined si se puede. */
+function mensajeSiNoSePuede(b: Block): string | undefined {
+  const t = textos.proyeccion
+  switch (b.type) {
+    case 'ruleta':
+      return esListaDeTextos(b.items) && b.items.length >= 2 ? undefined : t.ruletaPocosElementos
+    case 'preguntas':
+      return esListaDePreguntas(b.items) && b.items.length > 0 ? undefined : t.sinPreguntas
+    case 'verdadero-falso':
+      return esListaDeAfirmaciones(b.items) && b.items.length > 0 ? undefined : t.sinAfirmaciones
+    case 'parejas':
+      return esListaDeParejas(b.items) && b.items.length >= 2 ? undefined : t.sinParejas
+    case 'ordenar':
+      return esListaDeTextos(b.items) && b.items.length >= 2 ? undefined : t.sinElementosOrdenar
+    case 'clasificar':
+      return esListaDeCategorias(b.items) && sePuedeProyectar('clasificar', b.items) ? undefined : t.sinCategorias
+    default:
+      return t.tipoNoDisponible
+  }
+}
+
+function Actividad({ bloque: b }: { bloque: Block }) {
+  const id = b.id
+
+  if (b.type === 'ruleta' && esListaDeTextos(b.items)) {
     return (
       <ProyeccionRuleta
         key={b.id}
@@ -83,10 +115,7 @@ export function Proyectar({ id }: { id: string }) {
     )
   }
 
-  if (b.type === 'preguntas') {
-    if (!esListaDePreguntas(b.items) || b.items.length === 0) {
-      return <Aviso id={id} mensaje={textos.proyeccion.sinPreguntas} />
-    }
+  if (b.type === 'preguntas' && esListaDePreguntas(b.items)) {
     return (
       <ProyeccionPreguntas
         key={b.id}
@@ -98,10 +127,7 @@ export function Proyectar({ id }: { id: string }) {
     )
   }
 
-  if (b.type === 'verdadero-falso') {
-    if (!esListaDeAfirmaciones(b.items) || b.items.length === 0) {
-      return <Aviso id={id} mensaje={textos.proyeccion.sinAfirmaciones} />
-    }
+  if (b.type === 'verdadero-falso' && esListaDeAfirmaciones(b.items)) {
     return (
       <ProyeccionPreguntas
         key={b.id}
@@ -114,31 +140,42 @@ export function Proyectar({ id }: { id: string }) {
     )
   }
 
-  if (b.type === 'parejas') {
-    if (!esListaDeParejas(b.items) || b.items.length < 2) {
-      return <Aviso id={id} mensaje={textos.proyeccion.sinParejas} />
-    }
-    return <ProyeccionParejas key={b.id} parejas={b.items} onSalir={() => salir(id)}
-        textoVolver={textoVolver(id)} />
+  if (b.type === 'parejas' && esListaDeParejas(b.items)) {
+    return (
+      <ProyeccionParejas
+        key={b.id}
+        parejas={b.items}
+        onSalir={() => salir(id)}
+        textoVolver={textoVolver(id)}
+      />
+    )
   }
 
-  if (b.type === 'ordenar') {
-    if (!esListaDeTextos(b.items) || b.items.length < 2) {
-      return <Aviso id={id} mensaje={textos.proyeccion.sinElementosOrdenar} />
-    }
-    return <ProyeccionOrdenar key={b.id} titulo={nombreVisible(b)} elementos={b.items} onSalir={() => salir(id)}
-        textoVolver={textoVolver(id)} />
+  if (b.type === 'ordenar' && esListaDeTextos(b.items)) {
+    return (
+      <ProyeccionOrdenar
+        key={b.id}
+        titulo={nombreVisible(b)}
+        elementos={b.items}
+        onSalir={() => salir(id)}
+        textoVolver={textoVolver(id)}
+      />
+    )
   }
 
-  if (b.type === 'clasificar') {
-    if (!esListaDeCategorias(b.items) || !sePuedeProyectar('clasificar', b.items)) {
-      return <Aviso id={id} mensaje={textos.proyeccion.sinCategorias} />
-    }
+  if (b.type === 'clasificar' && esListaDeCategorias(b.items)) {
     // Las categorías sin elementos no aportan nada a la proyección.
     const categorias = b.items.filter((c) => c.elementos.length > 0)
-    return <ProyeccionClasificar key={b.id} titulo={nombreVisible(b)} categorias={categorias} onSalir={() => salir(id)}
-        textoVolver={textoVolver(id)} />
+    return (
+      <ProyeccionClasificar
+        key={b.id}
+        titulo={nombreVisible(b)}
+        categorias={categorias}
+        onSalir={() => salir(id)}
+        textoVolver={textoVolver(id)}
+      />
+    )
   }
 
-  return <Aviso id={id} mensaje={textos.proyeccion.tipoNoDisponible} />
+  return null
 }

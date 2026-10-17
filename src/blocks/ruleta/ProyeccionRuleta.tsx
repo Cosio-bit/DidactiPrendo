@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { textos } from '../../i18n/es-CL.ts'
 import { prepararSonido, sonarFin, sonarTic } from '../../projection/sonido.ts'
+import { AyudaTeclas } from '../../projection/AyudaTeclas.tsx'
 import { useAtajos } from '../../projection/useAtajos.ts'
 import { usePantallaCompleta } from '../../projection/usePantallaCompleta.ts'
 import { useTextoAjustado } from '../../projection/useTextoAjustado.ts'
@@ -156,7 +157,7 @@ export function ProyeccionRuleta({ elementos, config, onSalir, textoVolver }: Pr
               </Boton>
             )}
           </div>
-          <p className="proyeccion__teclas">{t.teclasRuleta}</p>
+          <AyudaTeclas>{t.teclasRuleta}</AyudaTeclas>
         </div>
       </div>
     </div>
