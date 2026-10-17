@@ -6,6 +6,7 @@ export type Ruta =
   | { pantalla: 'mis-actividades' }
   | { pantalla: 'editor'; id: string }
   | { pantalla: 'proyectar'; id: string }
+  | { pantalla: 'imprimir'; id: string }
 
 export function leerRuta(hash: string): Ruta {
   const partes = hash.replace(/^#\/?/, '').split('/')
@@ -15,6 +16,9 @@ export function leerRuta(hash: string): Ruta {
   }
   if (partes[0] === 'proyectar' && partes[1]) {
     return { pantalla: 'proyectar', id: decodeURIComponent(partes[1]) }
+  }
+  if (partes[0] === 'imprimir' && partes[1]) {
+    return { pantalla: 'imprimir', id: decodeURIComponent(partes[1]) }
   }
   return { pantalla: 'inicio' }
 }
@@ -29,6 +33,8 @@ export function hashDe(ruta: Ruta): string {
       return `#/actividad/${encodeURIComponent(ruta.id)}`
     case 'proyectar':
       return `#/proyectar/${encodeURIComponent(ruta.id)}`
+    case 'imprimir':
+      return `#/imprimir/${encodeURIComponent(ruta.id)}`
   }
 }
 

@@ -1,5 +1,6 @@
 import { useEffect, useId, useMemo, useState } from 'react'
-import { leerConfigRuleta, type ConfigRuleta } from '../blocks/ruleta/logica.ts'
+import { leerConfigPreguntas, OPCIONES_DE_TIEMPO } from '../blocks/preguntas/logica.ts'
+import { leerConfigRuleta } from '../blocks/ruleta/logica.ts'
 import { textos } from '../i18n/es-CL.ts'
 import { irA } from '../navegacion.ts'
 import { parseText } from '../parser/parseText.ts'
@@ -107,16 +108,19 @@ export function Editor({ id }: { id: string }) {
     setEstado({ ...actual, tipoManual: tipo === lectura.tipoSugerido ? null : tipo })
   }
 
-  function cambiarOpcion(opcion: keyof ConfigRuleta, valor: boolean) {
+  /** Las opciones de cada tipo conviven en `config`; cada bloque lee las suyas con sus valores iniciales. */
+  function cambiarOpcion(cambio: Record<string, boolean | number>) {
     const anterior = actual.config
-    const config = { ...leerConfigRuleta(anterior), [opcion]: valor }
+    const base = typeof anterior === 'object' && anterior !== null ? anterior : {}
+    const config = { ...base, ...cambio }
     edicion.guardar('opciones', { config }, { config: anterior }, textos.acciones.cambioOpciones, false)
     setEstado({ ...actual, config })
   }
 
   const esRuleta = lectura.tipo === 'ruleta'
   const configRuleta = leerConfigRuleta(actual.config)
-  const sePuedeProyectar = esRuleta && lectura.elementos.length >= 2
+  const configPreguntas = leerConfigPreguntas(actual.config)
+  const sePuedeProyectar = lectura.elementos.length >= (esRuleta ? 2 : 1)
 
   return (
     <section className="editor">
@@ -124,15 +128,14 @@ export function Editor({ id }: { id: string }) {
         {encabezado}
         <div className="editor__acciones">
           <Boton onClick={() => irA({ pantalla: 'mis-actividades' })}>{textos.editor.listo}</Boton>
-          {esRuleta && (
-            <Boton
-              variante="principal"
-              disabled={!sePuedeProyectar}
-              onClick={() => irA({ pantalla: 'proyectar', id })}
-            >
-              {textos.editor.proyectar}
+          {!esRuleta && (
+            <Boton disabled={!sePuedeProyectar} onClick={() => irA({ pantalla: 'imprimir', id })}>
+              {textos.editor.imprimir}
             </Boton>
           )}
+          <Boton variante="principal" disabled={!sePuedeProyectar} onClick={() => irA({ pantalla: 'proyectar', id })}>
+            {textos.editor.proyectar}
+          </Boton>
         </div>
       </div>
 
@@ -157,7 +160,7 @@ export function Editor({ id }: { id: string }) {
             <input
               type="checkbox"
               checked={configRuleta.eliminarAlSalir}
-              onChange={(evento) => cambiarOpcion('eliminarAlSalir', evento.target.checked)}
+              onChange={(evento) => cambiarOpcion({ eliminarAlSalir: evento.target.checked })}
             />
             {textos.ruleta.eliminarAlSalir}
           </label>
@@ -165,10 +168,40 @@ export function Editor({ id }: { id: string }) {
             <input
               type="checkbox"
               checked={configRuleta.sonido}
-              onChange={(evento) => cambiarOpcion('sonido', evento.target.checked)}
+              onChange={(evento) => cambiarOpcion({ sonido: evento.target.checked })}
             />
             {textos.ruleta.sonido}
           </label>
+        </fieldset>
+      )}
+
+      {!esRuleta && (
+        <fieldset className="opciones">
+          <legend className="solo-lector">{textos.preguntas.opciones}</legend>
+          <label className="opcion">
+            {textos.preguntas.temporizador}
+            <select
+              className="campo__entrada opcion__lista"
+              value={configPreguntas.segundosPorPregunta}
+              onChange={(evento) => cambiarOpcion({ segundosPorPregunta: Number(evento.target.value) })}
+            >
+              {OPCIONES_DE_TIEMPO.map((s) => (
+                <option key={s} value={s}>
+                  {s === 0 ? textos.preguntas.sinTiempo : textos.preguntas.segundos(s)}
+                </option>
+              ))}
+            </select>
+          </label>
+          {configPreguntas.segundosPorPregunta > 0 && (
+            <label className="opcion">
+              <input
+                type="checkbox"
+                checked={configPreguntas.sonido}
+                onChange={(evento) => cambiarOpcion({ sonido: evento.target.checked })}
+              />
+              {textos.preguntas.sonido}
+            </label>
+          )}
         </fieldset>
       )}
 

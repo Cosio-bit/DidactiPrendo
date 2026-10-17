@@ -64,6 +64,7 @@ test('lo escrito sigue ahí después de recargar la página', async ({ page }) =
 
 test('se puede usar solo con teclado', async ({ page }) => {
   await page.goto('/')
+  await expect(page.getByRole('button', { name: 'Crear actividad' })).toBeVisible()
 
   // Desde el inicio: Tab hasta "Crear actividad".
   await page.keyboard.press('Tab')

@@ -4,6 +4,7 @@ import { irA, useRuta } from './navegacion.ts'
 import { Editor } from './pantallas/Editor.tsx'
 import { Inicio } from './pantallas/Inicio.tsx'
 import { MisActividades } from './pantallas/MisActividades.tsx'
+import { Imprimir } from './pantallas/Imprimir.tsx'
 import { Proyectar } from './pantallas/Proyectar.tsx'
 import { BarraGuardado } from './ui/BarraGuardado.tsx'
 import { Boton } from './ui/Boton.tsx'
@@ -15,7 +16,11 @@ function App() {
   const principal = useRef<HTMLElement>(null)
 
   // Al cambiar de pantalla, el foco va al título para quien usa teclado o lector de pantalla.
+  // Al abrir la app no: el navegador ya parte desde el comienzo de la página.
+  const pantallaAnterior = useRef(ruta.pantalla)
   useEffect(() => {
+    if (pantallaAnterior.current === ruta.pantalla) return
+    pantallaAnterior.current = ruta.pantalla
     principal.current?.querySelector<HTMLElement>('h1')?.focus()
   }, [ruta.pantalla])
 
@@ -42,6 +47,7 @@ function App() {
         {ruta.pantalla === 'inicio' && <Inicio />}
         {ruta.pantalla === 'mis-actividades' && <MisActividades />}
         {ruta.pantalla === 'editor' && <Editor key={ruta.id} id={ruta.id} />}
+        {ruta.pantalla === 'imprimir' && <Imprimir key={ruta.id} id={ruta.id} />}
       </main>
 
       <BarraGuardado />

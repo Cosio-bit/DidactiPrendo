@@ -68,10 +68,10 @@ export function MisActividades() {
                 <p className="actividad__fecha">{resumen(bloque)}</p>
               </div>
               <div className="actividad__acciones">
-                {bloque.type === 'ruleta' && (
+                {(bloque.type === 'ruleta' || bloque.type === 'preguntas') && (
                   <Boton
                     variante="principal"
-                    disabled={!Array.isArray(bloque.items) || bloque.items.length < 2}
+                    disabled={!Array.isArray(bloque.items) || bloque.items.length < (bloque.type === 'ruleta' ? 2 : 1)}
                     onClick={() => irA({ pantalla: 'proyectar', id: bloque.id })}
                   >
                     {textos.misActividades.proyectar}

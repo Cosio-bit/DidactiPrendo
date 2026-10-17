@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { ProyeccionRuleta } from '../blocks/ruleta/ProyeccionRuleta.tsx'
 import { leerConfigRuleta } from '../blocks/ruleta/logica.ts'
+import { esListaDePreguntas, leerConfigPreguntas } from '../blocks/preguntas/logica.ts'
+import { ProyeccionPreguntas } from '../blocks/preguntas/ProyeccionPreguntas.tsx'
 import { textos } from '../i18n/es-CL.ts'
 import { volverDeProyeccion } from '../navegacion.ts'
 import { entrarPantallaCompleta, salirPantallaCompleta } from '../projection/usePantallaCompleta.ts'
@@ -65,6 +67,20 @@ export function Proyectar({ id }: { id: string }) {
         key={b.id}
         elementos={b.items}
         config={leerConfigRuleta(b.config)}
+        onSalir={() => salir(id)}
+      />
+    )
+  }
+
+  if (b.type === 'preguntas') {
+    if (!esListaDePreguntas(b.items) || b.items.length === 0) {
+      return <Aviso id={id} mensaje={textos.proyeccion.sinPreguntas} />
+    }
+    return (
+      <ProyeccionPreguntas
+        key={b.id}
+        preguntas={b.items}
+        config={leerConfigPreguntas(b.config)}
         onSalir={() => salir(id)}
       />
     )
