@@ -1,4 +1,26 @@
 // Todos los textos visibles de la aplicación. Nunca escribirlos directo en los componentes.
+
+/** "a", "a y b", "a, b y c" */
+function enumerar(cosas: string[]): string {
+  if (cosas.length <= 1) return cosas.join('')
+  return `${cosas.slice(0, -1).join(', ')} y ${cosas[cosas.length - 1]}`
+}
+
+/** «texto», recortado si es muy largo; muestra hasta 3 y cuenta el resto. */
+function citar(textos: string[]): string {
+  const recortar = (t: string) => (t.length > 50 ? `${t.slice(0, 49)}…` : t)
+  const citas = textos.slice(0, 3).map((t) => `«${recortar(t)}»`)
+  if (textos.length > 3) citas.push(`${textos.length - 3} más`)
+  return enumerar(citas)
+}
+
+/** "La pregunta 2" / "Las preguntas 1 y 4", con el verbo en singular o plural. */
+function preguntasN(numeros: number[], singular: string, plural: string): string {
+  return numeros.length === 1
+    ? `La pregunta ${numeros[0]} ${singular}`
+    : `Las preguntas ${enumerar(numeros.map(String))} ${plural}`
+}
+
 export const textos = {
   app: {
     nombre: 'DidactiPrendo',
@@ -46,5 +68,36 @@ export const textos = {
   acciones: {
     cambioNombre: 'cambio de nombre',
     borrado: (nombre: string) => `borrado de «${nombre}»`,
+  },
+  lector: {
+    sinElementos: 'No encontramos nada para usar. Escribe o pega un elemento por línea.',
+    sinPreguntas:
+      'No encontramos preguntas con alternativas. Escribe la pregunta y, debajo, sus alternativas a), b), c), con * antes de la correcta.',
+    lineasIgnoradasLista: (lineas: string[]) =>
+      lineas.length === 1
+        ? `No usamos esta línea porque parece un título o un comentario: ${citar(lineas)}.`
+        : `No usamos estas líneas porque parecen títulos o comentarios: ${citar(lineas)}.`,
+    lineasIgnoradasPreguntas: (lineas: string[]) =>
+      lineas.length === 1
+        ? `No usamos esta línea porque no es parte de una pregunta con alternativas: ${citar(lineas)}.`
+        : `No usamos estas líneas porque no son parte de una pregunta con alternativas: ${citar(lineas)}.`,
+    separadoPorComas: 'Separamos el texto en las comas. Si no era una lista, escribe un elemento por línea.',
+    repetidos: (elementos: string[]) =>
+      elementos.length === 1
+        ? `${citar(elementos)} aparece más de una vez. No lo borramos, por si es a propósito.`
+        : `${citar(elementos)} aparecen más de una vez. No los borramos, por si es a propósito.`,
+    pocosElementos: 'La ruleta necesita al menos 2 elementos.',
+    demasiadosElementos: (cantidad: number, maximo: number) =>
+      `Hay ${cantidad} elementos. La ruleta se lee bien con ${maximo} como máximo.`,
+    sinEnunciado: (numeros: number[]) =>
+      `${preguntasN(numeros, 'no tiene', 'no tienen')} enunciado. Escribe la pregunta en la línea de arriba de las alternativas.`,
+    sinCorrecta: (numeros: number[]) =>
+      `${preguntasN(numeros, 'no tiene', 'no tienen')} la respuesta correcta marcada. Pon un * antes de la correcta, por ejemplo: *b) 3/4`,
+    variasCorrectas: (numeros: number[]) =>
+      `${preguntasN(numeros, 'tiene', 'tienen')} más de una alternativa marcada como correcta.`,
+    pocasAlternativas: (numeros: number[]) =>
+      `${preguntasN(numeros, 'tiene', 'tienen')} una sola alternativa. Agrega al menos otra.`,
+    preguntasRepetidas: (numeros: number[]) =>
+      `${preguntasN(numeros, 'aparece', 'aparecen')} más de una vez. No las borramos, por si es a propósito.`,
   },
 } as const
