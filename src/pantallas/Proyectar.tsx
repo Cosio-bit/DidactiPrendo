@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { ProyeccionRuleta } from '../blocks/ruleta/ProyeccionRuleta.tsx'
 import { leerConfigRuleta } from '../blocks/ruleta/logica.ts'
 import { esListaDePreguntas, leerConfigPreguntas } from '../blocks/preguntas/logica.ts'
+import { esListaDeTextos } from '../blocks/ordenar/logica.ts'
+import { ProyeccionOrdenar } from '../blocks/ordenar/ProyeccionOrdenar.tsx'
 import { esListaDeParejas } from '../blocks/parejas/logica.ts'
 import { ProyeccionParejas } from '../blocks/parejas/ProyeccionParejas.tsx'
 import { ProyeccionPreguntas } from '../blocks/preguntas/ProyeccionPreguntas.tsx'
@@ -10,14 +12,11 @@ import { textos } from '../i18n/es-CL.ts'
 import { volverDeProyeccion } from '../navegacion.ts'
 import { entrarPantallaCompleta, salirPantallaCompleta } from '../projection/usePantallaCompleta.ts'
 import { useAtajos } from '../projection/useAtajos.ts'
+import { nombreVisible } from './nombreVisible.ts'
 import { almacen } from '../storage/bloques.ts'
 import type { Block } from '../storage/modelo.ts'
 import type { Resultado } from '../storage/useConsulta.ts'
 import { Boton } from '../ui/Boton.tsx'
-
-function esListaDeTextos(items: unknown): items is string[] {
-  return Array.isArray(items) && items.every((i) => typeof i === 'string')
-}
 
 function salir(id: string) {
   salirPantallaCompleta()
@@ -109,6 +108,13 @@ export function Proyectar({ id }: { id: string }) {
       return <Aviso id={id} mensaje={textos.proyeccion.sinParejas} />
     }
     return <ProyeccionParejas key={b.id} parejas={b.items} onSalir={() => salir(id)} />
+  }
+
+  if (b.type === 'ordenar') {
+    if (!esListaDeTextos(b.items) || b.items.length < 2) {
+      return <Aviso id={id} mensaje={textos.proyeccion.sinElementosOrdenar} />
+    }
+    return <ProyeccionOrdenar key={b.id} titulo={nombreVisible(b)} elementos={b.items} onSalir={() => salir(id)} />
   }
 
   return <Aviso id={id} mensaje={textos.proyeccion.tipoNoDisponible} />

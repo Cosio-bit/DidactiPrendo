@@ -1077,3 +1077,135 @@ h1:focus {
   outline: var(--foco) solid var(--foco-color);
   outline-offset: 3px;
 }
+
+/* Ordenar: casillas numeradas a la izquierda, fichas por ordenar a la derecha. */
+.proyeccion-ordenar {
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  gap: var(--espacio-1);
+}
+
+/* Arriba las casillas del orden; abajo, a todo el ancho, las fichas por ordenar. */
+.proyeccion-ordenar__contenido {
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  line-height: 1.2;
+}
+
+.proyeccion-ordenar__columna {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+}
+
+.proyeccion-ordenar__titulo {
+  font-size: 0.8em;
+  color: var(--texto-suave);
+}
+
+.proyeccion-ordenar__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.3em;
+}
+
+/* Varias columnas de casillas, numeradas de arriba abajo (1 a 4 en la primera, etc.). */
+.proyeccion-ordenar__casillas {
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  column-gap: 0.5em;
+}
+
+/* Las fichas por ordenar fluyen una al lado de la otra, como un banco de palabras. */
+.proyeccion-ordenar__fichas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 0.3em;
+}
+
+.proyeccion-ordenar__fichas .ficha {
+  width: auto;
+  max-width: 100%;
+}
+
+.casilla {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4em;
+  min-height: 1.4em;
+  padding: 0.1em 0.3em;
+  border: 2px dashed var(--borde-color);
+  border-radius: var(--radio);
+}
+
+.casilla__numero {
+  min-width: 1.4em;
+  font-weight: 800;
+  text-align: right;
+}
+
+.casilla__texto {
+  min-width: 0;
+}
+
+.casilla--llena {
+  border-style: solid;
+  border-color: var(--correcta);
+  font-weight: 700;
+}
+
+.casilla--siguiente {
+  border-color: var(--principal);
+  border-width: 3px;
+  color: var(--texto-suave);
+}
+
+.ficha {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4em;
+  width: 100%;
+  min-height: var(--boton-minimo);
+  padding: 0.1em 0.4em;
+  font: inherit;
+  text-align: left;
+  color: var(--texto-color);
+  background: var(--superficie);
+  border: 3px solid var(--borde-color);
+  border-radius: var(--radio);
+  cursor: pointer;
+}
+
+.ficha__letra {
+  display: inline-block;
+  flex: none;
+  min-width: 1.3em;
+  text-align: center;
+  font-weight: 800;
+  border: 2px solid currentColor;
+  border-radius: 0.3em;
+}
+
+.ficha--errada {
+  border-color: var(--peligro);
+  border-style: dashed;
+}
+
+.ficha__marca {
+  color: var(--peligro);
+  white-space: nowrap;
+}
+
+.ficha--elegida {
+  border-color: var(--principal);
+  box-shadow: inset 0 0 0 3px var(--principal);
+}
