@@ -672,6 +672,69 @@ h1:focus {
   gap: var(--espacio-2);
 }
 
+/* Respaldo en Mis actividades: descargar todas o abrir un archivo. */
+.respaldo {
+  display: grid;
+  gap: var(--espacio-1);
+  margin-top: var(--espacio-4);
+  padding-top: var(--espacio-3);
+  border-top: var(--borde) solid var(--borde-suave);
+}
+
+.respaldo__ayuda {
+  color: var(--texto-suave);
+}
+
+.respaldo__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+}
+
+/* Compartir: botones para copiar el enlace, enviarlo o descargar el archivo. */
+.dialogo-compartir__nota {
+  color: var(--texto-suave);
+}
+
+.dialogo .dialogo-compartir__nota {
+  margin-top: 0;
+}
+
+.dialogo-compartir {
+  width: min(720px, calc(100vw - 2 * var(--espacio-3)));
+  max-width: none;
+}
+
+.dialogo-compartir__acciones {
+  justify-content: flex-start;
+}
+
+.dialogo .dialogo-compartir__aviso {
+  min-height: 1.4em;
+  margin: var(--espacio-2) 0 0;
+  font-weight: 700;
+}
+
+/* Actividad recibida por enlace. */
+.recibir {
+  display: grid;
+  gap: var(--espacio-3);
+  max-width: 900px;
+}
+
+.recibir__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+}
+
+.aviso-error {
+  padding: var(--espacio-2);
+  background: var(--error-fondo);
+  border-left: 6px solid var(--peligro);
+  border-radius: var(--radio);
+}
+
 /* Barra de guardado y deshacer: siempre visible */
 .barra-guardado {
   display: flex;
@@ -2256,5 +2319,43 @@ h1:focus {
 
   .temporizador-panel .boton {
     padding-inline: 8px;
+  }
+}
+
+/* Compartir en el celular: botones uno bajo otro, a todo el ancho, y menos espacio entre párrafos. */
+@media (max-width: 600px), (max-height: 500px) {
+  /* Ocupa la pantalla completa, como una página: si algo no cabe, se desplaza la pantalla, no un cuadro. */
+  .dialogo-compartir {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: var(--espacio-2);
+    border: none;
+    border-radius: 0;
+  }
+
+  .dialogo .dialogo-compartir__aviso:empty {
+    display: none;
+  }
+
+  .dialogo-compartir p {
+    margin: var(--espacio-1) 0;
+  }
+
+  /* Copiar y descargar a todo el ancho; Enviar y Cerrar, que son cortos, lado a lado al final. */
+  .dialogo-compartir__acciones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--espacio-1);
+  }
+
+  .dialogo-compartir__ancho {
+    grid-column: 1 / -1;
+  }
+
+  .dialogo-compartir__corto {
+    order: 1;
   }
 }

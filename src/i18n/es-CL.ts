@@ -58,6 +58,50 @@ export const textos = {
     ayer: 'ayer',
     elDia: (fecha: string) => `el ${fecha}`,
   },
+  /** Compartir una actividad por enlace o archivo. */
+  compartir: {
+    boton: 'Compartir',
+    titulo: (nombre: string) => `Compartir «${nombre}»`,
+    explicacion: 'Copia el enlace y envíalo por WhatsApp o correo. Quien lo abra podrá guardar y proyectar la actividad, sin crear cuenta.',
+    privacidad: 'La actividad va dentro del enlace, sin pasar por servidores de DidactiPrendo. Ojo si tiene nombres de estudiantes.',
+    preparando: 'Preparando el enlace…',
+    copiarEnlace: 'Copiar enlace',
+    copiado: 'Enlace copiado. Ahora pégalo en el mensaje.',
+    noSePudoCopiar: 'No se pudo copiar el enlace. Descarga el archivo y envíalo.',
+    enviar: 'Enviar…',
+    mensaje: (nombre: string) => `Te comparto la actividad «${nombre}» de DidactiPrendo:`,
+    descargarArchivo: 'Descargar archivo',
+    enlaceLargo: 'Este enlace es largo. Si al abrirlo no funciona, mejor envía el archivo.',
+    cerrar: 'Cerrar',
+  },
+  /** Descargar las actividades en un archivo y traerlas de vuelta (o a otro computador). */
+  respaldo: {
+    descargarTodas: 'Descargar todas en un archivo',
+    abrirArchivo: 'Abrir un archivo',
+    ayuda: 'Para guardar una copia o pasar tus actividades a otro computador.',
+    nombreArchivoTodas: (fecha: string) => `actividades-didactiprendo-${fecha}.json`,
+    nombreArchivo: (nombre: string) => `${nombre}.json`,
+    descargado: 'Archivo descargado. Lo encuentras en la carpeta Descargas.',
+    agregadas: (n: number, yaEstaban: number) =>
+      (n === 1 ? 'Se agregó 1 actividad desde el archivo.' : `Se agregaron ${n} actividades desde el archivo.`) +
+      (yaEstaban === 0 ? '' : yaEstaban === 1 ? ' 1 ya estaba.' : ` ${yaEstaban} ya estaban.`),
+    yaEstaban: 'Esas actividades ya estaban en Mis actividades.',
+    archivoVacio: 'Ese archivo no trae actividades.',
+    archivoInvalido: 'Ese archivo no es de DidactiPrendo o está dañado.',
+  },
+  /** Pantalla que se abre con un enlace compartido. */
+  recibir: {
+    titulo: 'Te compartieron una actividad',
+    cargando: 'Abriendo la actividad…',
+    guardarYProyectar: 'Guardar y proyectar',
+    guardar: 'Guardar en Mis actividades',
+    noGuardar: 'No guardar',
+    yaLaTienes: 'Ya tienes esta actividad en Mis actividades.',
+    guardada: (nombre: string) => `Se guardó «${nombre}» en Mis actividades`,
+    danado:
+      'Este enlace no se pudo abrir. Puede que se haya cortado al copiarlo: pide que te lo envíen de nuevo o que te manden el archivo.',
+    navegadorAntiguo: 'Este navegador es muy antiguo para abrir el enlace. Actualiza Chrome o pide que te manden el archivo.',
+  },
   tipos: {
     ruleta: 'Ruleta',
     preguntas: 'Selección múltiple',
@@ -297,6 +341,7 @@ export const textos = {
     cambioTipo: 'cambio de tipo de actividad',
     cambioOpciones: 'cambio de opciones',
     borrado: (nombre: string) => `borrado de «${nombre}»`,
+    importacion: 'actividades traídas del archivo',
   },
   lector: {
     sinElementos: 'No encontramos nada para usar. Escribe o pega un elemento por línea.',

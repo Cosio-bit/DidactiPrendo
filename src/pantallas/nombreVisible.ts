@@ -28,6 +28,6 @@ export function nombreAutomatico(bloque: Pick<Block, 'type' | 'items'>): string 
   return recortar(contenido)
 }
 
-export function nombreVisible(bloque: Block) {
+export function nombreVisible(bloque: Pick<Block, 'title' | 'type' | 'items'>) {
   return bloque.title.trim() || nombreAutomatico(bloque)
 }

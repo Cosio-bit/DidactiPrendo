@@ -75,7 +75,7 @@ test('se puede usar solo con teclado', async ({ page }) => {
   // La actividad nueva abre con el cuadro de texto listo para pegar.
   await expect(page.getByLabel('Pega tu texto aquí')).toBeFocused()
   await page.keyboard.type('Sumas\nRestas')
-  // Hacia atrás: opciones de la ruleta, tipo de actividad, nombre, Proyectar y Listo.
+  // Hacia atrás: opciones de la ruleta, tipo de actividad, nombre, Proyectar, Compartir y Listo.
   await page.keyboard.press('Shift+Tab')
   await expect(page.getByLabel('Sonido al girar')).toBeFocused()
   await page.keyboard.press('Shift+Tab')
@@ -88,6 +88,8 @@ test('se puede usar solo con teclado', async ({ page }) => {
   await page.keyboard.type('Operaciones')
   await page.keyboard.press('Shift+Tab')
   await expect(page.getByRole('button', { name: 'Proyectar' })).toBeFocused()
+  await page.keyboard.press('Shift+Tab')
+  await expect(page.getByRole('button', { name: 'Compartir' })).toBeFocused()
   await page.keyboard.press('Shift+Tab')
   await expect(page.getByRole('button', { name: 'Listo' })).toBeFocused()
   await page.keyboard.press('Enter')

@@ -6,6 +6,7 @@ import { Inicio } from './pantallas/Inicio.tsx'
 import { MisActividades } from './pantallas/MisActividades.tsx'
 import { Imprimir } from './pantallas/Imprimir.tsx'
 import { Proyectar } from './pantallas/Proyectar.tsx'
+import { Recibir } from './pantallas/Recibir.tsx'
 import { BarraGuardado } from './ui/BarraGuardado.tsx'
 import { Boton } from './ui/Boton.tsx'
 import { useTema } from './ui/tema.ts'
@@ -56,6 +57,7 @@ function App() {
         {ruta.pantalla === 'mis-actividades' && <MisActividades />}
         {ruta.pantalla === 'editor' && <Editor key={ruta.id} id={ruta.id} />}
         {ruta.pantalla === 'imprimir' && <Imprimir key={ruta.id} id={ruta.id} />}
+        {ruta.pantalla === 'recibir' && <Recibir key={ruta.datos} datos={ruta.datos} />}
       </main>
 
       <BarraGuardado />

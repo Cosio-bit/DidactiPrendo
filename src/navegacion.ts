@@ -7,6 +7,8 @@ export type Ruta =
   | { pantalla: 'editor'; id: string }
   | { pantalla: 'proyectar'; id: string }
   | { pantalla: 'imprimir'; id: string }
+  /** Actividad compartida por enlace: viene completa en `datos` (nunca pasa por un servidor). */
+  | { pantalla: 'recibir'; datos: string }
 
 export function leerRuta(hash: string): Ruta {
   const partes = hash.replace(/^#\/?/, '').split('/')
@@ -19,6 +21,9 @@ export function leerRuta(hash: string): Ruta {
   }
   if (partes[0] === 'imprimir' && partes[1]) {
     return { pantalla: 'imprimir', id: decodeURIComponent(partes[1]) }
+  }
+  if (partes[0] === 'recibir' && partes[1]) {
+    return { pantalla: 'recibir', datos: partes.slice(1).join('/') }
   }
   return { pantalla: 'inicio' }
 }
@@ -35,6 +40,8 @@ export function hashDe(ruta: Ruta): string {
       return `#/proyectar/${encodeURIComponent(ruta.id)}`
     case 'imprimir':
       return `#/imprimir/${encodeURIComponent(ruta.id)}`
+    case 'recibir':
+      return `#/recibir/${ruta.datos}`
   }
 }
 

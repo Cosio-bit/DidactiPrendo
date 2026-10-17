@@ -143,8 +143,12 @@ Cada fase tiene un objetivo, sus tareas, un criterio de "terminado" y una instru
 
 - [ ] Lista de actividades con búsqueda y filtros por curso, asignatura y OA.
 - [ ] Duplicar una actividad ("Hacer otra versión").
-- [ ] **Exportar e importar** como archivo, para respaldo o para cambiar de computador.
-- [ ] **Compartir por enlace sin servidor:** el contenido del bloque va comprimido dentro del propio enlace, después del símbolo `#`. Así se puede mandar por WhatsApp a un colega y el contenido nunca pasa por un servidor.
+- [x] **Exportar e importar** como archivo, para respaldo o para cambiar de computador.
+  - En Mis actividades: "Descargar todas en un archivo" y "Abrir un archivo". Una sola actividad se descarga desde "Compartir".
+  - Abrir un archivo nunca reemplaza nada: lo que ya está igual no se repite y lo distinto entra como copia aparte. Se puede deshacer.
+- [x] **Compartir por enlace sin servidor:** el contenido del bloque va comprimido dentro del propio enlace, después del símbolo `#`. Así se puede mandar por WhatsApp a un colega y el contenido nunca pasa por un servidor.
+  - Botón "Compartir" en Mis actividades y en el editor: copiar el enlace, enviarlo con el menú del celular o descargar el archivo.
+  - Quien abre el enlace ve la vista previa y elige "Guardar y proyectar". Si ya la tenía, no se duplica. Un enlace cortado avisa en vez de fallar.
 
 **Terminado cuando:** un profesor le manda una actividad a otro por WhatsApp y este la abre y la proyecta sin crear cuenta.
 

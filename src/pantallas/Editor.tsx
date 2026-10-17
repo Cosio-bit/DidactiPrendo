@@ -16,6 +16,7 @@ import { useEdicion } from './useEdicion.ts'
 import { nombreAutomatico, nombreVisible } from './nombreVisible.ts'
 import { SelectorTipo } from './SelectorTipo.tsx'
 import { VistaPrevia } from './VistaPrevia.tsx'
+import { DialogoCompartir } from './DialogoCompartir.tsx'
 
 interface Estado {
   titulo: string
@@ -56,6 +57,7 @@ export function Editor({ id }: { id: string }) {
   const cuadroTexto = useAltoAutomatico(estado?.texto ?? '')
   const celular = useEsCelular()
   const [paso, setPaso] = useState(1)
+  const [compartiendo, setCompartiendo] = useState(false)
   const tituloPaso = useRef<HTMLHeadingElement>(null)
 
   /** Cambia de paso y lleva el foco (y la vista) al título del paso nuevo. */
@@ -146,6 +148,9 @@ export function Editor({ id }: { id: string }) {
   const acciones = (
     <>
       <Boton variante="navegacion" onClick={() => irA({ pantalla: 'mis-actividades' })}>{textos.editor.listo}</Boton>
+      <Boton variante="herramienta" disabled={!proyectable} onClick={() => setCompartiendo(true)}>
+        {textos.compartir.boton}
+      </Boton>
       {sePuedeImprimir(lectura.tipo) && (
         <Boton variante="herramienta" disabled={!proyectable} onClick={() => irA({ pantalla: 'imprimir', id })}>
           {textos.editor.imprimir}
@@ -257,6 +262,18 @@ export function Editor({ id }: { id: string }) {
     </div>
   )
 
+  // Se comparte tal como está en pantalla (ya quedó guardado).
+  const dialogoCompartir = (
+    <DialogoCompartir
+      bloque={
+        compartiendo
+          ? { ...guardado.valor, title: actual.titulo, texto: actual.texto, type: lectura.tipo, items: lectura.elementos, config: actual.config }
+          : null
+      }
+      onCerrar={() => setCompartiendo(false)}
+    />
+  )
+
   const vistaPrevia = <VistaPrevia lectura={lectura} hayTexto={hayTexto} onUsarEjemplo={cambiarTexto} />
 
   if (celular) {
@@ -318,6 +335,7 @@ export function Editor({ id }: { id: string }) {
           )}
         </div>
         {paso === 1 && !hayTexto && <p className="nota">{t.escribeParaSeguir}</p>}
+        {dialogoCompartir}
       </section>
     )
   }
@@ -337,6 +355,7 @@ export function Editor({ id }: { id: string }) {
         {cuadroDeTexto}
         {vistaPrevia}
       </div>
+      {dialogoCompartir}
     </section>
   )
 }
