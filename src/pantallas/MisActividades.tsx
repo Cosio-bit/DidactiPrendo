@@ -68,9 +68,16 @@ export function MisActividades() {
                 <p className="actividad__fecha">{resumen(bloque)}</p>
               </div>
               <div className="actividad__acciones">
-                <Boton variante="principal" onClick={() => irA({ pantalla: 'editor', id: bloque.id })}>
-                  {textos.misActividades.abrir}
-                </Boton>
+                {bloque.type === 'ruleta' && (
+                  <Boton
+                    variante="principal"
+                    disabled={!Array.isArray(bloque.items) || bloque.items.length < 2}
+                    onClick={() => irA({ pantalla: 'proyectar', id: bloque.id })}
+                  >
+                    {textos.misActividades.proyectar}
+                  </Boton>
+                )}
+                <Boton onClick={() => irA({ pantalla: 'editor', id: bloque.id })}>{textos.misActividades.editar}</Boton>
                 <Boton variante="peligro" onClick={() => setPorBorrar(bloque)}>
                   {textos.misActividades.borrar}
                 </Boton>

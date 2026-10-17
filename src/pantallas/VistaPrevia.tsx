@@ -48,7 +48,12 @@ export function VistaPrevia({ lectura, hayTexto, onCambiarTipo }: Props) {
         ))}
       </fieldset>
 
-      {!hayTexto && <p className="nota">{t.vacia}</p>}
+      {!hayTexto && (
+        <>
+          <p className="nota">{t.vacia}</p>
+          <p className="nota">{textos.editor.ayuda}</p>
+        </>
+      )}
 
       {lectura.advertencias.length > 0 && (
         <div className="advertencias">

@@ -94,9 +94,9 @@ h1:focus {
 
 /* Estructura */
 .app {
-  min-height: 100vh;
+  height: 100vh;
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
 }
 
 .cabecera {
@@ -112,11 +112,11 @@ h1:focus {
   font-weight: 700;
 }
 
+/* Solo el contenido se desplaza: la cabecera y la barra de Deshacer quedan siempre a la vista. */
 .principal {
-  width: 100%;
-  max-width: 960px;
-  margin: 0 auto;
-  padding: var(--espacio-3);
+  overflow-y: auto;
+  padding-block: var(--espacio-3);
+  padding-inline: max(var(--espacio-3), calc((100% - 912px) / 2));
 }
 
 /* Botón */
@@ -225,8 +225,39 @@ h1:focus {
 
 /* Editor */
 .editor {
-  display: grid;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   gap: var(--espacio-2);
+}
+
+.editor__acciones {
+  display: flex;
+  gap: var(--espacio-2);
+}
+
+.opciones {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-1) var(--espacio-4);
+}
+
+.opcion {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: var(--boton-minimo);
+  cursor: pointer;
+}
+
+.opcion input {
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  accent-color: var(--principal);
 }
 
 .editor__cabecera {
@@ -265,8 +296,9 @@ h1:focus {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--espacio-3);
-  /* Alto fijo: cada columna se desplaza por dentro y la barra de Deshacer queda a la vista. */
-  height: max(360px, calc(100vh - 372px));
+  /* Ocupa el alto que queda; cada columna se desplaza por dentro. */
+  flex: 1;
+  min-height: 300px;
 }
 
 .editor__texto {
@@ -280,10 +312,6 @@ h1:focus {
   min-height: 0;
   resize: none;
   line-height: 1.35;
-}
-
-.editor__ayuda {
-  font-size: 20px;
 }
 
 .nota {
@@ -452,8 +480,6 @@ h1:focus {
 
 /* Barra de guardado y deshacer: siempre visible */
 .barra-guardado {
-  position: sticky;
-  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -470,7 +496,119 @@ h1:focus {
   font-weight: 700;
 }
 
-/* Modo proyección (lo usan los bloques desde la Fase 3) */
+/* Solo para lectores de pantalla. */
+.solo-lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Modo proyección: toda la pantalla, letra grande, nada que distraiga. */
 .proyeccion {
-  font-size: var(--texto-proyeccion);
+  position: fixed;
+  inset: 0;
+  display: grid;
+  gap: var(--espacio-3);
+  padding: var(--espacio-3);
+  color: var(--texto-color);
+  background: var(--fondo);
+}
+
+.proyeccion--aviso {
+  place-content: center;
+  justify-items: center;
+  text-align: center;
+  font-size: var(--texto-grande);
+}
+
+.proyeccion__controles {
+  display: grid;
+  gap: var(--espacio-1);
+}
+
+.proyeccion__girar {
+  min-height: 88px;
+  font-size: 40px;
+}
+
+.proyeccion__secundarios {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--espacio-1);
+}
+
+.proyeccion__teclas {
+  text-align: center;
+  color: var(--texto-suave);
+}
+
+/* Ruleta proyectada: la rueda a la izquierda y el resultado bien grande a la derecha. */
+.proyeccion-ruleta {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+}
+
+.proyeccion-ruleta__rueda {
+  width: min(calc(100vh - 48px), 58vw);
+  height: min(calc(100vh - 48px), 58vw);
+}
+
+.rueda {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.proyeccion-ruleta__panel {
+  height: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  gap: var(--espacio-2);
+}
+
+.proyeccion-ruleta__resultado {
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  text-align: center;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.proyeccion-ruleta__resultado--espera {
+  color: var(--texto-suave);
+  font-weight: 600;
+}
+
+.proyeccion-ruleta__contador {
+  text-align: center;
+  font-size: var(--texto-grande);
+  font-weight: 700;
+}
+
+/* Pantalla vertical o muy angosta: rueda arriba, resultado abajo. */
+@media (max-aspect-ratio: 1/1) {
+  .proyeccion-ruleta {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    justify-items: center;
+  }
+
+  .proyeccion-ruleta__rueda {
+    width: min(90vw, 50vh);
+    height: min(90vw, 50vh);
+  }
+
+  .proyeccion-ruleta__panel {
+    width: 100%;
+  }
 }

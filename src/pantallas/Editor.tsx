@@ -1,4 +1,5 @@
 import { useEffect, useId, useMemo, useState } from 'react'
+import { leerConfigRuleta, type ConfigRuleta } from '../blocks/ruleta/logica.ts'
 import { textos } from '../i18n/es-CL.ts'
 import { irA } from '../navegacion.ts'
 import { parseText } from '../parser/parseText.ts'
@@ -15,13 +16,19 @@ interface Estado {
   texto: string
   /** null: se usa el tipo que sugiere el lector. */
   tipoManual: TipoLectura | null
+  config: unknown
 }
 
 function estadoDesde(bloque: Block): Estado {
   const texto = bloque.texto ?? ''
   const sugerido = parseText(texto).tipoSugerido
   const tipo = bloque.type === 'ruleta' || bloque.type === 'preguntas' ? bloque.type : sugerido
-  return { titulo: bloque.title, texto, tipoManual: texto.trim() && tipo !== sugerido ? tipo : null }
+  return {
+    titulo: bloque.title,
+    texto,
+    tipoManual: texto.trim() && tipo !== sugerido ? tipo : null,
+    config: bloque.config,
+  }
 }
 
 export function Editor({ id }: { id: string }) {
@@ -31,7 +38,6 @@ export function Editor({ id }: { id: string }) {
   const edicion = useEdicion(id)
   const idNombre = useId()
   const idTexto = useId()
-  const idAyuda = useId()
 
   useEffect(() => {
     if (!guardado.listo || !guardado.valor) return
@@ -101,13 +107,33 @@ export function Editor({ id }: { id: string }) {
     setEstado({ ...actual, tipoManual: tipo === lectura.tipoSugerido ? null : tipo })
   }
 
+  function cambiarOpcion(opcion: keyof ConfigRuleta, valor: boolean) {
+    const anterior = actual.config
+    const config = { ...leerConfigRuleta(anterior), [opcion]: valor }
+    edicion.guardar('opciones', { config }, { config: anterior }, textos.acciones.cambioOpciones, false)
+    setEstado({ ...actual, config })
+  }
+
+  const esRuleta = lectura.tipo === 'ruleta'
+  const configRuleta = leerConfigRuleta(actual.config)
+  const sePuedeProyectar = esRuleta && lectura.elementos.length >= 2
+
   return (
     <section className="editor">
       <div className="editor__cabecera">
         {encabezado}
-        <Boton variante="principal" onClick={() => irA({ pantalla: 'mis-actividades' })}>
-          {textos.editor.listo}
-        </Boton>
+        <div className="editor__acciones">
+          <Boton onClick={() => irA({ pantalla: 'mis-actividades' })}>{textos.editor.listo}</Boton>
+          {esRuleta && (
+            <Boton
+              variante="principal"
+              disabled={!sePuedeProyectar}
+              onClick={() => irA({ pantalla: 'proyectar', id })}
+            >
+              {textos.editor.proyectar}
+            </Boton>
+          )}
+        </div>
       </div>
 
       <div className="campo campo--en-linea">
@@ -124,6 +150,28 @@ export function Editor({ id }: { id: string }) {
         />
       </div>
 
+      {esRuleta && (
+        <fieldset className="opciones">
+          <legend className="solo-lector">{textos.ruleta.opciones}</legend>
+          <label className="opcion">
+            <input
+              type="checkbox"
+              checked={configRuleta.eliminarAlSalir}
+              onChange={(evento) => cambiarOpcion('eliminarAlSalir', evento.target.checked)}
+            />
+            {textos.ruleta.eliminarAlSalir}
+          </label>
+          <label className="opcion">
+            <input
+              type="checkbox"
+              checked={configRuleta.sonido}
+              onChange={(evento) => cambiarOpcion('sonido', evento.target.checked)}
+            />
+            {textos.ruleta.sonido}
+          </label>
+        </fieldset>
+      )}
+
       <div className="editor__columnas">
         <div className="editor__texto">
           <label htmlFor={idTexto} className="campo__etiqueta">
@@ -134,15 +182,11 @@ export function Editor({ id }: { id: string }) {
             className="campo__entrada editor__area"
             value={actual.texto}
             placeholder={textos.editor.ejemplo}
-            aria-describedby={idAyuda}
             // Actividad recién creada: se puede pegar al tiro con Ctrl+V.
             autoFocus={nueva}
             spellCheck={false}
             onChange={(evento) => cambiarTexto(evento.target.value)}
           />
-          <p id={idAyuda} className="nota editor__ayuda">
-            {textos.editor.ayuda}
-          </p>
         </div>
         <VistaPrevia lectura={lectura} hayTexto={actual.texto.trim() !== ''} onCambiarTipo={cambiarTipo} />
       </div>

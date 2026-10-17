@@ -70,6 +70,9 @@ test('la pantalla de pegar texto cabe en 1024×768', async ({ page }) => {
   await page.getByLabel('Pega tu texto aquí').fill(nombres.join('\n'))
 
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1024)
-  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(768)
+  // Nada que desplazar: la pantalla entera se ve de una vez, con la barra de Deshacer.
+  const principal = page.locator('main')
+  expect(await principal.evaluate((m) => m.scrollHeight - m.clientHeight)).toBeLessThanOrEqual(0)
   await expect(page.getByRole('button', { name: 'Deshacer' })).toBeInViewport()
+  await expect(page.getByRole('button', { name: 'Proyectar' })).toBeInViewport()
 })

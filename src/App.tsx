@@ -4,6 +4,7 @@ import { irA, useRuta } from './navegacion.ts'
 import { Editor } from './pantallas/Editor.tsx'
 import { Inicio } from './pantallas/Inicio.tsx'
 import { MisActividades } from './pantallas/MisActividades.tsx'
+import { Proyectar } from './pantallas/Proyectar.tsx'
 import { BarraGuardado } from './ui/BarraGuardado.tsx'
 import { Boton } from './ui/Boton.tsx'
 import { useTema } from './ui/tema.ts'
@@ -17,6 +18,9 @@ function App() {
   useEffect(() => {
     principal.current?.querySelector<HTMLElement>('h1')?.focus()
   }, [ruta.pantalla])
+
+  // La proyección ocupa toda la pantalla, sin cabecera ni barra de guardado.
+  if (ruta.pantalla === 'proyectar') return <Proyectar key={ruta.id} id={ruta.id} />
 
   return (
     <div className="app">
