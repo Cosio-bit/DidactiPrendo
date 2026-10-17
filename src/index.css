@@ -1,7 +1,49 @@
 /*
- * Sistema de diseño. Todo tamaño y color sale de estas variables.
+ * Sistema de diseño, con la identidad de DidactiPrendo: hoja de cuaderno cuadriculado,
+ * colores primarios (Amarillo Idea, Rojo Libro, Celeste Calma) y letra Atkinson Hyperlegible,
+ * diseñada para leerse con baja visión. Todo tamaño y color sale de estas variables.
  * Pensado para leerse desde el fondo de la sala con un proyector de poca luz.
  */
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fuentes/atkinson-hyperlegible-next.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fuentes/atkinson-hyperlegible-next-italica.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fuentes/atkinson-hyperlegible-mono.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Besley';
+  font-style: normal;
+  font-weight: 700 800;
+  font-display: swap;
+  src: url('/fuentes/besley.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Besley';
+  font-style: italic;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fuentes/besley-italica.woff2') format('woff2');
+}
+
 :root {
   /* Tamaños */
   --texto: 24px; /* mínimo en toda la app, también al proyectar */
@@ -13,39 +55,65 @@
   --espacio-2: 16px;
   --espacio-3: 24px;
   --espacio-4: 40px;
-  --radio: 12px;
+  --radio: 14px;
+  --radio-grande: 20px;
   --borde: 2px;
   --foco: 4px;
 
-  /* Colores: tema normal */
-  --fondo: #fafafa;
-  --superficie: #ffffff;
-  --texto-color: #141414;
-  --texto-suave: #3d3d3d;
-  --borde-color: #6b6b6b;
-  --principal: #0a4fbf;
-  --principal-texto: #ffffff;
-  --peligro: #b3261e;
-  --peligro-texto: #ffffff;
-  --foco-color: #f2a900;
-  --error-fondo: #fde7e6;
-  --aviso-fondo: #fff4d6;
-  --correcta: #1b6e2a;
+  /* Tipografías */
+  --f-texto: 'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', 'Segoe UI', system-ui, Arial, sans-serif;
+  --f-titulo: 'Besley', 'Century Schoolbook', Georgia, serif;
+  --f-numeros: 'Atkinson Hyperlegible Mono', Consolas, 'Courier New', monospace;
 
-  font-family: system-ui, 'Segoe UI', Roboto, Arial, sans-serif;
+  /* Colores de la marca */
+  --amarillo: #f2d94a; /* Amarillo Idea */
+  --rojo: #e53a22; /* Rojo Libro */
+  --celeste: #58c4f2; /* Celeste Calma */
+  --tinta: #17202b;
+  --grafito: #4f5b68;
+  --papel: #ffffff;
+  --rojo-tinta: #bf2a15;
+  --celeste-tinta: #0a6591;
+  --rojo-suave: #fdede9;
+  --celeste-suave: #e9f6fd;
+  --amarillo-suave: #fcf4cf;
+
+  /* Colores de uso: tema normal */
+  --fondo: var(--papel);
+  --superficie: var(--papel);
+  --texto-color: var(--tinta);
+  --texto-suave: var(--grafito);
+  --borde-color: #69737d;
+  --borde-suave: rgb(23 32 43 / 0.14);
+  --principal: var(--celeste-tinta);
+  --principal-texto: #ffffff;
+  --peligro: var(--rojo-tinta);
+  --peligro-texto: #ffffff;
+  --foco-color: var(--celeste-tinta);
+  --error-fondo: var(--rojo-suave);
+  --aviso-fondo: var(--amarillo-suave);
+  --aviso-borde: var(--amarillo);
+  --elegido-fondo: var(--amarillo-suave);
+  --correcta: #1b6e2a;
+  /* Hoja de cuaderno: líneas celestes muy tenues que no compiten con el texto. */
+  --cuadricula: rgb(88 196 242 / 0.17);
+  --cuadricula-proyeccion: rgb(88 196 242 / 0.1);
+
+  font-family: var(--f-texto);
   font-size: var(--texto);
   line-height: 1.4;
   color: var(--texto-color);
   background: var(--fondo);
 }
 
-/* Alto contraste: blanco sobre negro, bordes gruesos. */
+/* Alto contraste: blanco sobre negro, bordes gruesos, sin cuadrícula. */
 :root[data-tema='alto-contraste'] {
   --fondo: #000000;
   --superficie: #000000;
   --texto-color: #ffffff;
   --texto-suave: #ffffff;
   --borde-color: #ffffff;
+  --borde-suave: #ffffff;
   --principal: #ffd400;
   --principal-texto: #000000;
   --peligro: #ff8a80;
@@ -53,7 +121,10 @@
   --foco-color: #00e5ff;
   --error-fondo: #4a0000;
   --aviso-fondo: #2b2200;
+  --elegido-fondo: #2b2200;
   --correcta: #7dff8a;
+  --cuadricula: transparent;
+  --cuadricula-proyeccion: transparent;
   --borde: 3px;
 }
 
@@ -66,6 +137,7 @@
 body {
   margin: 0;
   background: var(--fondo);
+  -webkit-font-smoothing: antialiased;
 }
 
 h1,
@@ -75,8 +147,11 @@ p {
 }
 
 h1 {
+  font-family: var(--f-titulo);
   font-size: var(--texto-titulo);
-  line-height: 1.15;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
 }
 
 h2 {
@@ -92,6 +167,40 @@ h1:focus {
   outline: none;
 }
 
+/* Hoja de cuaderno cuadriculado: el fondo de las pantallas. */
+.cuadricula {
+  background-color: var(--fondo);
+  background-image:
+    linear-gradient(var(--cuadricula) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, var(--cuadricula) 1.5px, transparent 1.5px);
+  background-size: 32px 32px;
+  background-position: -1px -1px;
+}
+
+/* Marca de crayón amarilla detrás de una palabra clave (filtro #crayon en index.html). */
+.crayon {
+  position: relative;
+  white-space: nowrap;
+  isolation: isolate;
+}
+
+.crayon::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: -0.12em;
+  right: -0.12em;
+  top: 0.52em;
+  bottom: -0.04em;
+  background: var(--amarillo);
+  filter: url(#crayon);
+  transform: rotate(-1.3deg);
+}
+
+:root[data-tema='alto-contraste'] .crayon::before {
+  display: none;
+}
+
 /* Estructura */
 .app {
   height: 100vh;
@@ -100,12 +209,33 @@ h1:focus {
 }
 
 .cabecera {
+  position: relative;
+  /* La banda de crayón se sale a los lados a propósito; se recorta aquí para no crear barra horizontal. */
+  overflow: hidden;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: var(--espacio-2);
   padding: var(--espacio-2) var(--espacio-3);
-  border-bottom: var(--borde) solid var(--borde-color);
+  background: var(--superficie);
+  border-bottom: var(--borde) solid var(--borde-suave);
+}
+
+/* Detalle de la marca: una banda de crayón amarillo en el borde superior. */
+.cabecera::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -20px;
+  right: -20px;
+  height: 10px;
+  background: var(--amarillo);
+  filter: url(#crayon);
+  pointer-events: none;
+}
+
+:root[data-tema='alto-contraste'] .cabecera::before {
+  display: none;
 }
 
 .cabecera__inicio {
@@ -120,16 +250,16 @@ h1:focus {
   gap: var(--espacio-1);
 }
 
-/* Placa blanca: con alto contraste (fondo negro) los trazos negros del logo seguirían viéndose. */
+/* La mascota trae un borde blanco: se ve también con alto contraste (fondo negro). */
 .cabecera__logo {
   display: block;
   width: 56px;
   height: 56px;
-  background: #ffffff;
-  border-radius: var(--radio);
 }
 
 .cabecera__nombre {
+  font-family: var(--f-titulo);
+  font-size: 28px;
   font-weight: 700;
 }
 
@@ -146,7 +276,7 @@ h1:focus {
   min-height: var(--boton-minimo);
   padding: var(--espacio-1) var(--espacio-3);
   font: inherit;
-  font-weight: 600;
+  font-weight: 700;
   border: var(--borde) solid var(--borde-color);
   border-radius: var(--radio);
   background: var(--superficie);
@@ -167,14 +297,17 @@ h1:focus {
 }
 
 .boton--grande {
-  min-height: 200px;
+  min-height: 160px;
   padding: var(--espacio-3);
   font-size: var(--texto-grande);
+  border-radius: var(--radio-grande);
+  box-shadow: 0 6px 0 rgb(23 32 43 / 0.12);
 }
 
 .boton[aria-pressed='true'] {
-  background: var(--texto-color);
-  color: var(--fondo);
+  background: var(--elegido-fondo);
+  border-color: var(--texto-color);
+  color: var(--texto-color);
 }
 
 .boton:disabled {
@@ -185,7 +318,7 @@ h1:focus {
 /* Inicio */
 .inicio {
   display: grid;
-  gap: var(--espacio-4);
+  gap: var(--espacio-3);
 }
 
 .inicio__acciones {
@@ -215,9 +348,15 @@ h1:focus {
   justify-content: space-between;
   gap: var(--espacio-2);
   padding: var(--espacio-2) var(--espacio-3);
-  border: var(--borde) solid var(--borde-color);
-  border-radius: var(--radio);
+  border: var(--borde) solid var(--borde-suave);
+  border-radius: var(--radio-grande);
   background: var(--superficie);
+  box-shadow: 0 2px 0 rgb(23 32 43 / 0.05);
+}
+
+.actividad__nombre {
+  font-family: var(--f-titulo);
+  font-weight: 700;
 }
 
 .actividad__datos {
@@ -243,8 +382,9 @@ h1:focus {
   justify-items: start;
   gap: var(--espacio-2);
   padding: var(--espacio-4) var(--espacio-3);
+  background: var(--superficie);
   border: var(--borde) dashed var(--borde-color);
-  border-radius: var(--radio);
+  border-radius: var(--radio-grande);
 }
 
 /* Editor */
@@ -348,8 +488,8 @@ h1:focus {
 .vista-previa {
   min-height: 240px;
   padding: var(--espacio-2);
-  border: var(--borde) solid var(--borde-color);
-  border-radius: var(--radio);
+  border: var(--borde) solid var(--borde-suave);
+  border-radius: var(--radio-grande);
   background: var(--superficie);
   display: grid;
   align-content: start;
@@ -386,8 +526,9 @@ h1:focus {
 }
 
 .selector-tipo__opcion--elegida {
-  border-color: var(--principal);
-  box-shadow: inset 0 0 0 2px var(--principal);
+  border-color: var(--texto-color);
+  box-shadow: inset 0 0 0 2px var(--texto-color);
+  background: var(--elegido-fondo);
   font-weight: 700;
 }
 
@@ -406,7 +547,8 @@ h1:focus {
 
 .advertencias {
   padding: var(--espacio-2);
-  border-left: 6px solid var(--foco-color);
+  border-left: 6px solid var(--aviso-borde, var(--foco-color));
+  border-radius: 0 var(--radio) var(--radio) 0;
   background: var(--aviso-fondo);
 }
 
@@ -479,8 +621,13 @@ h1:focus {
   padding: var(--espacio-4);
   color: var(--texto-color);
   background: var(--superficie);
-  border: var(--borde) solid var(--borde-color);
-  border-radius: var(--radio);
+  border: var(--borde) solid var(--borde-suave);
+  border-radius: var(--radio-grande);
+  box-shadow: 0 22px 48px rgb(23 32 43 / 0.18);
+}
+
+.dialogo h2 {
+  font-family: var(--f-titulo);
 }
 
 .dialogo::backdrop {
@@ -506,7 +653,7 @@ h1:focus {
   gap: var(--espacio-2);
   padding: var(--espacio-2) var(--espacio-3);
   background: var(--superficie);
-  border-top: var(--borde) solid var(--borde-color);
+  border-top: var(--borde) solid var(--borde-suave);
 }
 
 .barra-guardado__aviso--error {
@@ -534,7 +681,13 @@ h1:focus {
   gap: var(--espacio-3);
   padding: var(--espacio-3);
   color: var(--texto-color);
-  background: var(--fondo);
+  /* Cuadrícula más tenue que en el resto: en la sala, lo importante es el texto. */
+  background-color: var(--fondo);
+  background-image:
+    linear-gradient(var(--cuadricula-proyeccion) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, var(--cuadricula-proyeccion) 1.5px, transparent 1.5px);
+  background-size: 40px 40px;
+  background-position: -1px -1px;
 }
 
 .proyeccion--aviso {
@@ -668,8 +821,9 @@ h1:focus {
 .temporizador {
   min-width: 3.4em;
   padding: 0 var(--espacio-2);
+  font-family: var(--f-numeros);
   font-size: 44px;
-  font-weight: 800;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
   text-align: center;
   border: var(--borde) solid var(--borde-color);
@@ -791,6 +945,7 @@ h1:focus {
 }
 
 .proyeccion-preguntas__cierre-titulo {
+  font-family: var(--f-titulo);
   font-size: var(--texto-proyeccion);
   font-weight: 800;
 }
@@ -1224,8 +1379,9 @@ h1:focus {
 }
 
 .ficha--elegida {
-  border-color: var(--principal);
-  box-shadow: inset 0 0 0 3px var(--principal);
+  border-color: var(--texto-color);
+  background: var(--elegido-fondo);
+  box-shadow: inset 0 0 0 0.1em var(--texto-color);
 }
 
 /* Clasificar: cajas de categorías arriba, elementos sueltos abajo. */
@@ -1287,9 +1443,38 @@ h1:focus {
 }
 
 /* Inicio: qué es la app y cómo se usa, en una frase y tres pasos. */
+/* Saludo a la izquierda y el logo completo (con el eslogan) a la derecha. */
+.inicio__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+}
+
 .inicio__presentacion {
   display: grid;
   gap: var(--espacio-1);
+}
+
+.inicio__logo {
+  flex: none;
+  width: auto;
+  height: 180px;
+}
+
+:root[data-tema='alto-contraste'] .inicio__logo {
+  background: #ffffff;
+  border-radius: var(--radio);
+}
+
+/* Etiqueta pequeña en mayúsculas, como en la presentación de la marca. Solo para rótulos secundarios. */
+.ceja {
+  font-family: var(--f-texto);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--texto-suave);
 }
 
 .inicio__descripcion {
@@ -1297,8 +1482,7 @@ h1:focus {
 }
 
 .inicio__pasos h2 {
-  font-size: var(--texto);
-  color: var(--texto-suave);
+  margin-bottom: var(--espacio-1);
 }
 
 .inicio__pasos ol {
@@ -1324,9 +1508,10 @@ h1:focus {
   height: 1.6em;
   display: grid;
   place-items: center;
+  font-family: var(--f-titulo);
   font-weight: 800;
-  color: var(--principal-texto);
-  background: var(--principal);
+  color: var(--tinta);
+  background: var(--amarillo);
   border-radius: 50%;
 }
 

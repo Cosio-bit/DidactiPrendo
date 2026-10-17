@@ -1,14 +1,15 @@
 import { memo } from 'react'
 
-// Colores distinguibles por personas con daltonismo (paleta Okabe-Ito), con texto legible encima.
+// Colores de la marca (Amarillo Idea, Celeste Calma, Rojo Libro y su celeste oscuro) más tres de la
+// paleta Okabe-Ito, para que los segmentos vecinos se distingan también con daltonismo.
 const COLORES = [
-  { fondo: '#E69F00', texto: '#000000' },
-  { fondo: '#56B4E9', texto: '#000000' },
-  { fondo: '#009E73', texto: '#000000' },
-  { fondo: '#F0E442', texto: '#000000' },
-  { fondo: '#0072B2', texto: '#FFFFFF' },
-  { fondo: '#D55E00', texto: '#000000' },
-  { fondo: '#CC79A7', texto: '#000000' },
+  { fondo: '#F2D94A', texto: '#17202B' },
+  { fondo: '#58C4F2', texto: '#17202B' },
+  { fondo: '#E53A22', texto: '#17202B' },
+  { fondo: '#009E73', texto: '#17202B' },
+  { fondo: '#0A6591', texto: '#FFFFFF' },
+  { fondo: '#E69F00', texto: '#17202B' },
+  { fondo: '#CC79A7', texto: '#17202B' },
 ]
 
 /** Con más segmentos que esto, los nombres no caben en la rueda: se leen en el resultado. */

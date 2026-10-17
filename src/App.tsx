@@ -47,7 +47,7 @@ function App() {
         </Boton>
       </header>
 
-      <main ref={principal} className="principal">
+      <main ref={principal} className="principal cuadricula">
         {ruta.pantalla === 'inicio' && <Inicio />}
         {ruta.pantalla === 'mis-actividades' && <MisActividades />}
         {ruta.pantalla === 'editor' && <Editor key={ruta.id} id={ruta.id} />}

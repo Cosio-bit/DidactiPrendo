@@ -1,0 +1,7 @@
+Fuentes incluidas en DidactiPrendo (copiadas de la presentación de marca DidactiPrendo_v2):
+
+- Atkinson Hyperlegible Next y Atkinson Hyperlegible Mono, del Braille Institute of America.
+- Besley, de indestructible type*.
+
+Todas se distribuyen bajo la SIL Open Font License, versión 1.1:
+https://openfontlicense.org/open-font-license-official-text/

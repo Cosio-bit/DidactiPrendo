@@ -31,6 +31,10 @@ export const textos = {
   },
   inicio: {
     saludo: 'Hola, profe',
+    /** El saludo en dos partes, para marcar "profe" con crayón. */
+    saludoInicio: 'Hola, ',
+    saludoDestacado: 'profe',
+    logoCompleto: 'DidactiPrendo: así de fácil, enseño y aprendo',
     descripcion: 'Convierte tus listas y preguntas en actividades para proyectar en la sala.',
     comoFunciona: 'Así funciona',
     pasos: [
