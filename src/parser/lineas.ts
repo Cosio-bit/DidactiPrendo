@@ -22,6 +22,9 @@ const ESPACIOS_DUROS = /[\u00A0\u2007\u202F]/g
 const CELDA_NUMERO = /^\(?\d{1,3}\)?(?:\.-|[.)-])?$/
 const CELDA_VINETA = /^(?:[•·◦▪▫●○■□►▶➢➤→§Ø*+o\-–—]|[\uE000-\uF8FF])$/
 const CELDA_ENCABEZADO = /^(?:n[°º.]?|nro\.?|núm\.?|num\.?|#|número|numero)$/i
+/** Títulos de columna típicos de una lista de curso copiada de Excel. */
+const COLUMNA_DE_LISTA =
+  /^(?:n[°º.]?|nro\.?|#|n[uú]mero|nombres?|apellidos?|estudiantes?|alumn[oa]s?|curso|rut|correo|e-?mail)$/i
 
 const VINETA = /^(?:[•·◦▪▫●○■□►▶➢➤→\uE000-\uF8FF]\s*|[-–—*+]\s+)/
 const NUMERO = /^(?:\(\d{1,3}\)|\d{1,3}(?:\.-|[.)-]))\s+/
@@ -81,7 +84,7 @@ export function limpiarLinea(original: string, numero: number): Linea {
     .map((c) => c.replace(/\s+/g, ' ').trim())
     .filter(Boolean)
   if (celdas.length > 1) {
-    if (CELDA_ENCABEZADO.test(celdas[0])) linea.titulo = true
+    if (CELDA_ENCABEZADO.test(celdas[0]) || celdas.every((c) => COLUMNA_DE_LISTA.test(c))) linea.titulo = true
     else if (CELDA_NUMERO.test(celdas[0])) {
       linea.numerada = true
       celdas.shift()

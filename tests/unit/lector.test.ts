@@ -62,6 +62,12 @@ describe('lector: listas', () => {
     expect(l.advertencias[0].lineas).toEqual([1])
   })
 
+  it('5b. Excel con títulos de columna "Nombre" y "Apellido"', () => {
+    const l = parseText('Nombre\tApellido\nAna\tPérez\nBenjamín\tSoto')
+    expect(lista(l)).toEqual(['Ana Pérez', 'Benjamín Soto'])
+    expect(l.advertencias[0].mensaje).toContain('«Nombre Apellido»')
+  })
+
   it('6. una sola columna de Excel con celdas vacías al final', () => {
     expect(lista(parseText('Pedro\t\nJuan\t\nDiego\t'))).toEqual(['Pedro', 'Juan', 'Diego'])
   })
