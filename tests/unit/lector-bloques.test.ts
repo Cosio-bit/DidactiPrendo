@@ -178,6 +178,14 @@ describe('lector: clasificar', () => {
     expect(l.advertencias).toEqual([])
   })
 
+  it('un elemento largo no hace que la categoría se pierda', () => {
+    const texto = 'Mamíferos: puma, huemul, pudú\nAves: cóndor, loica\nReptiles: lagartija, culebra de cola larga\nPeces: congrio, jurel'
+    const l = parseText(texto)
+    expect(l.tipoSugerido).toBe('clasificar')
+    expect(categorias(l).map((c) => c.nombre)).toEqual(['Mamíferos', 'Aves', 'Reptiles', 'Peces'])
+    expect(categorias(l)[2].elementos).toEqual(['lagartija', 'culebra de cola larga'])
+  })
+
   it('títulos de ChatGPT con viñetas debajo', () => {
     const l = parseText('### Mamíferos\n- perro\n- ballena\n- murciélago\n\n---\n\n### Aves\n- cóndor\n* pingüino\n* loica')
     expect(l.tipoSugerido).toBe('clasificar')

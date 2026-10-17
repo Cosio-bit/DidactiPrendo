@@ -8,13 +8,20 @@ export const MAXIMO_CATEGORIAS = 4
 /** "Mamíferos: perro, ballena, murciélago" */
 const CATEGORIA_EN_LINEA = /^([^:]{1,40}):\s+(.+)$/
 
-/** Separa "perro, ballena y murciélago" si todos son cortos; si no, es una sola cosa. */
+/** "perro, ballena, murciélago" → tres elementos. */
 function separarElementos(texto: string): string[] {
-  const partes = texto
+  return texto
     .split(/\s*[,;]\s*/)
     .map((p) => p.trim().replace(/\.$/, ''))
     .filter(Boolean)
-  return partes.every((p) => p.split(/\s+/).length <= 3) ? partes : [texto.trim()]
+}
+
+/**
+ * Una categoría en línea "se nota" si tiene dos o más elementos cortos.
+ * Así "Sustantivo: palabra que nombra personas, animales o cosas" no se confunde con una categoría.
+ */
+function pareceCategoria(elementos: string[]) {
+  return elementos.length >= 2 && elementos.every((e) => e.split(/\s+/).length <= 3)
 }
 
 function esEncabezado(linea: Linea) {
@@ -54,10 +61,9 @@ export function leerClasificar(lineas: Linea[], hayTexto: boolean): LecturaClasi
     let porEncabezado = 0
     const enLinea: Categoria[] = []
     for (const linea of contenido) {
-      const m = linea.texto.match(CATEGORIA_EN_LINEA)
-      const elementosEnLinea = m ? separarElementos(m[2]) : []
-      if (m && elementosEnLinea.length >= 2) {
-        actual = { nombre: m[1].trim(), elementos: elementosEnLinea }
+      const m = linea.titulo ? null : linea.texto.match(CATEGORIA_EN_LINEA)
+      if (m && !esCharla(linea.texto)) {
+        actual = { nombre: m[1].trim(), elementos: separarElementos(m[2]) }
         categorias.push(actual)
         enLinea.push(actual)
       } else if (esEncabezado(linea) && !esCharla(linea.texto)) {
@@ -71,8 +77,9 @@ export function leerClasificar(lineas: Linea[], hayTexto: boolean): LecturaClasi
       }
     }
     const conElementos = categorias.filter((c) => c.elementos.length > 0).length
-    // Solo categorías en línea: puede ser una lista de definiciones con comas; se exige que se note.
-    const enLineaClaras = enLinea.filter((c) => c.elementos.length >= 3).length >= enLinea.length / 2
+    // Solo categorías en línea: puede ser una lista de definiciones; se exige que se note.
+    const notorias = enLinea.filter((c) => pareceCategoria(c.elementos)).length
+    const enLineaClaras = notorias >= 2 && notorias >= enLinea.length / 2
     if (conElementos >= 2) claridad = porEncabezado > 0 || enLineaClaras ? 'clara' : 'dudosa'
   }
 
