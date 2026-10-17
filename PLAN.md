@@ -59,16 +59,17 @@ Cada fase tiene un objetivo, sus tareas, un criterio de "terminado" y una instru
 
 **Objetivo:** pegar cualquier texto razonable y obtener los elementos limpios, junto con el tipo de bloque sugerido.
 
-- [ ] Función `parseText(texto) → { tipoSugerido, elementos, advertencias }`.
-- [ ] Limpiar:
+- [x] Función `parseText(texto) → { tipoSugerido, elementos, advertencias }`.
+- [x] Limpiar:
   - Viñetas y numeración.
   - Negritas de ChatGPT (`**`).
   - Tabulaciones de Excel.
   - Líneas vacías y espacios dobles.
-- [ ] Detectar preguntas con alternativas y la correcta marcada con `*`.
-- [ ] Detectar duplicados y avisar sin borrarlos.
-- [ ] Pantalla **"Pega tu texto aquí"**: un cuadro grande, vista previa inmediata a la derecha y el tipo sugerido con opción de cambiarlo.
+- [x] Detectar preguntas con alternativas y la correcta marcada con `*`.
+- [x] Detectar duplicados y avisar sin borrarlos.
+- [x] Pantalla **"Pega tu texto aquí"**: un cuadro grande, vista previa inmediata a la derecha y el tipo sugerido con opción de cambiarlo.
 - [ ] Batería de pruebas con **textos reales**: pedirle a 3 o 4 profesores que te manden listas tal como las tienen en Word o en sus guías.
+  - Ya hay 34 textos de ejemplo en `tests/unit/lector.test.ts`. Los reales se agregan como `.txt` en `tests/unit/textos-reales/` (ver su `LEEME.md`).
 
 **Terminado cuando:** las pruebas cubren al menos 20 textos reales distintos y el lector nunca falla sin explicar qué no entendió.
 
