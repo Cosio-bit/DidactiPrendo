@@ -58,3 +58,23 @@ test('en la ruleta ningún nombre queda de cabeza', async ({ page }) => {
   // Ningún texto girado más de 90° hacia cualquier lado (se leería al revés).
   for (const giro of giros) expect(Math.abs(giro)).toBeLessThanOrEqual(90)
 })
+
+test('el botón para salir de la proyección dice adónde vuelve', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Crear actividad' }).click()
+  await page.getByLabel('Pega tu texto aquí').fill('Ana\nBenjamín\nCatalina')
+  await expect(page.getByRole('status')).toHaveText('Guardado')
+
+  // Desde el editor: vuelve a editar.
+  await page.getByRole('button', { name: 'Proyectar' }).click()
+  await expect(page.getByRole('button', { name: 'Salir' })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Volver a editar' }).click()
+  await expect(page.getByLabel('Pega tu texto aquí')).toHaveValue('Ana\nBenjamín\nCatalina')
+
+  // Desde Mis actividades: vuelve a la lista.
+  await page.getByRole('button', { name: 'Listo' }).click()
+  await page.getByRole('button', { name: 'Proyectar' }).click()
+  await expect(page.getByText('Esc: volver')).toBeVisible()
+  await page.getByRole('button', { name: 'Volver a Mis actividades' }).click()
+  await expect(page.getByRole('heading', { name: 'Mis actividades' })).toBeVisible()
+})

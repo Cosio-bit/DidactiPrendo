@@ -145,6 +145,6 @@ test('se puede proyectar directo desde Mis actividades', async ({ page }) => {
   await page.getByRole('button', { name: 'Listo' }).click()
   await page.getByRole('button', { name: 'Proyectar' }).click()
   await expect(page.getByRole('img', { name: 'Ruleta con 5 elementos' })).toBeVisible()
-  await page.getByRole('button', { name: 'Salir' }).click()
+  await page.getByRole('button', { name: 'Volver a Mis actividades' }).click()
   await expect(page.getByRole('heading', { name: 'Mis actividades' })).toBeVisible()
 })

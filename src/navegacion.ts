@@ -41,6 +41,24 @@ export function hashDe(ruta: Ruta): string {
 // Cuántas pantallas se recorrieron dentro de la app en esta visita (para saber si "Atrás" sigue en la app).
 let pasosDentroDeLaApp = 0
 
+// La pantalla anterior, para que la proyección diga adónde vuelve ("Volver a Mis actividades").
+let rutaActual: Ruta = typeof location === 'undefined' ? { pantalla: 'inicio' } : leerRuta(location.hash)
+let rutaAnterior: Ruta | null = null
+if (typeof window !== 'undefined') {
+  window.addEventListener('hashchange', () => {
+    rutaAnterior = rutaActual
+    rutaActual = leerRuta(location.hash)
+  })
+}
+
+/** Adónde lleva "volver" desde la proyección: a donde estaba el profe o, si llegó por un enlace, a la actividad. */
+export function destinoAlVolver(id: string): Ruta {
+  if (rutaAnterior && (rutaAnterior.pantalla === 'mis-actividades' || rutaAnterior.pantalla === 'editor')) {
+    return rutaAnterior
+  }
+  return { pantalla: 'editor', id }
+}
+
 export function irA(ruta: Ruta) {
   if (location.hash === hashDe(ruta)) return
   pasosDentroDeLaApp++
@@ -49,11 +67,12 @@ export function irA(ruta: Ruta) {
 
 /** Al salir de la proyección se vuelve a donde estaba el profe; si llegó por un enlace, a la actividad. */
 export function volverDeProyeccion(id: string) {
-  if (pasosDentroDeLaApp > 0) {
+  const destino = destinoAlVolver(id)
+  if (pasosDentroDeLaApp > 0 && rutaAnterior && hashDe(rutaAnterior) === hashDe(destino)) {
     pasosDentroDeLaApp--
     history.back()
   } else {
-    location.replace(hashDe({ pantalla: 'editor', id }))
+    location.replace(hashDe(destino))
   }
 }
 

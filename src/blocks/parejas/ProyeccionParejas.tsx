@@ -56,9 +56,11 @@ function CartaMemorice({ carta, numero, visible, encontrada, onVoltear, onTecla,
 interface Props {
   parejas: Pareja[]
   onSalir: () => void
+  /** "Volver a Mis actividades" o "Volver a editar", según de dónde se llegó. */
+  textoVolver: string
 }
 
-export function ProyeccionParejas({ parejas, onSalir }: Props) {
+export function ProyeccionParejas({ parejas, onSalir, textoVolver }: Props) {
   const [memorice, setMemorice] = useState<Memorice>(() => nuevoMemorice(parejas))
   const [mostrarTodas, setMostrarTodas] = useState(false)
   const pantallaCompleta = usePantallaCompleta()
@@ -114,6 +116,7 @@ export function ProyeccionParejas({ parejas, onSalir }: Props) {
           {aviso}
         </p>
         <div className="proyeccion__secundarios">
+          <Boton onClick={onSalir}>{textoVolver}</Boton>
           {memorice.ultimo === 'no-pareja' && <Boton onClick={() => setMemorice(tapar)}>{t.tapar}</Boton>}
           <Boton onClick={() => setMostrarTodas((v) => !v)} aria-pressed={mostrarTodas}>
             {t.mostrarTodas}
@@ -122,7 +125,6 @@ export function ProyeccionParejas({ parejas, onSalir }: Props) {
           <Boton onClick={pantallaCompleta.alternar}>
             {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
           </Boton>
-          <Boton onClick={onSalir}>{t.salir}</Boton>
         </div>
       </div>
 

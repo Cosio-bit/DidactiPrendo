@@ -31,11 +31,13 @@ interface Props {
   preguntas: Pregunta[]
   config: ConfigPreguntas
   onSalir: () => void
+  /** "Volver a Mis actividades" o "Volver a editar", según de dónde se llegó. */
+  textoVolver: string
   /** Verdadero o falso: letras V y F, sin "comentar el error" (solo hay una incorrecta). */
   verdaderoFalso?: boolean
 }
 
-export function ProyeccionPreguntas({ preguntas, config, onSalir, verdaderoFalso = false }: Props) {
+export function ProyeccionPreguntas({ preguntas, config, onSalir, textoVolver, verdaderoFalso = false }: Props) {
   const etiqueta = (i: number) => (verdaderoFalso ? LETRAS_VF[i] : letra(i))
   const [repaso, setRepaso] = useState<Repaso>(() => nuevoRepaso(preguntas.length))
   const [eligiendoError, setEligiendoError] = useState(false)
@@ -128,13 +130,13 @@ export function ProyeccionPreguntas({ preguntas, config, onSalir, verdaderoFalso
           </p>
         )}
         <div className="proyeccion__secundarios">
+          <Boton onClick={onSalir}>{textoVolver}</Boton>
           {conTiempo && !terminado && !revelada && !cuenta.terminada && (
             <Boton onClick={alternarPausa}>{cuenta.corriendo ? t.pausar : t.seguir}</Boton>
           )}
           <Boton onClick={pantallaCompleta.alternar}>
             {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
           </Boton>
-          <Boton onClick={onSalir}>{t.salir}</Boton>
         </div>
       </div>
 

@@ -12,7 +12,7 @@ import { ProyeccionParejas } from '../blocks/parejas/ProyeccionParejas.tsx'
 import { ProyeccionPreguntas } from '../blocks/preguntas/ProyeccionPreguntas.tsx'
 import { comoPreguntas, esListaDeAfirmaciones } from '../blocks/preguntas/verdaderoFalso.ts'
 import { textos } from '../i18n/es-CL.ts'
-import { volverDeProyeccion } from '../navegacion.ts'
+import { destinoAlVolver, volverDeProyeccion } from '../navegacion.ts'
 import { entrarPantallaCompleta, salirPantallaCompleta } from '../projection/usePantallaCompleta.ts'
 import { useAtajos } from '../projection/useAtajos.ts'
 import { nombreVisible } from './nombreVisible.ts'
@@ -20,6 +20,11 @@ import { almacen } from '../storage/bloques.ts'
 import type { Block } from '../storage/modelo.ts'
 import type { Resultado } from '../storage/useConsulta.ts'
 import { Boton } from '../ui/Boton.tsx'
+
+function textoVolver(id: string) {
+  const destino = destinoAlVolver(id).pantalla
+  return destino === 'mis-actividades' ? textos.proyeccion.volverA['mis-actividades'] : textos.proyeccion.volverA.editor
+}
 
 function salir(id: string) {
   salirPantallaCompleta()
@@ -33,7 +38,7 @@ function Aviso({ id, mensaje }: { id: string; mensaje: string }) {
     <div className="proyeccion proyeccion--aviso">
       <p>{mensaje}</p>
       <Boton variante="principal" onClick={() => salir(id)}>
-        {textos.proyeccion.salir}
+        {textoVolver(id)}
       </Boton>
     </div>
   )
@@ -73,6 +78,7 @@ export function Proyectar({ id }: { id: string }) {
         elementos={b.items}
         config={leerConfigRuleta(b.config)}
         onSalir={() => salir(id)}
+        textoVolver={textoVolver(id)}
       />
     )
   }
@@ -87,6 +93,7 @@ export function Proyectar({ id }: { id: string }) {
         preguntas={b.items}
         config={leerConfigPreguntas(b.config)}
         onSalir={() => salir(id)}
+        textoVolver={textoVolver(id)}
       />
     )
   }
@@ -101,6 +108,7 @@ export function Proyectar({ id }: { id: string }) {
         preguntas={comoPreguntas(b.items)}
         config={leerConfigPreguntas(b.config)}
         onSalir={() => salir(id)}
+        textoVolver={textoVolver(id)}
         verdaderoFalso
       />
     )
@@ -110,14 +118,16 @@ export function Proyectar({ id }: { id: string }) {
     if (!esListaDeParejas(b.items) || b.items.length < 2) {
       return <Aviso id={id} mensaje={textos.proyeccion.sinParejas} />
     }
-    return <ProyeccionParejas key={b.id} parejas={b.items} onSalir={() => salir(id)} />
+    return <ProyeccionParejas key={b.id} parejas={b.items} onSalir={() => salir(id)}
+        textoVolver={textoVolver(id)} />
   }
 
   if (b.type === 'ordenar') {
     if (!esListaDeTextos(b.items) || b.items.length < 2) {
       return <Aviso id={id} mensaje={textos.proyeccion.sinElementosOrdenar} />
     }
-    return <ProyeccionOrdenar key={b.id} titulo={nombreVisible(b)} elementos={b.items} onSalir={() => salir(id)} />
+    return <ProyeccionOrdenar key={b.id} titulo={nombreVisible(b)} elementos={b.items} onSalir={() => salir(id)}
+        textoVolver={textoVolver(id)} />
   }
 
   if (b.type === 'clasificar') {
@@ -126,7 +136,8 @@ export function Proyectar({ id }: { id: string }) {
     }
     // Las categorías sin elementos no aportan nada a la proyección.
     const categorias = b.items.filter((c) => c.elementos.length > 0)
-    return <ProyeccionClasificar key={b.id} titulo={nombreVisible(b)} categorias={categorias} onSalir={() => salir(id)} />
+    return <ProyeccionClasificar key={b.id} titulo={nombreVisible(b)} categorias={categorias} onSalir={() => salir(id)}
+        textoVolver={textoVolver(id)} />
   }
 
   return <Aviso id={id} mensaje={textos.proyeccion.tipoNoDisponible} />

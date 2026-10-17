@@ -18,9 +18,11 @@ interface Props {
   titulo: string
   elementos: string[]
   onSalir: () => void
+  /** "Volver a Mis actividades" o "Volver a editar", según de dónde se llegó. */
+  textoVolver: string
 }
 
-export function ProyeccionOrdenar({ titulo, elementos, onSalir }: Props) {
+export function ProyeccionOrdenar({ titulo, elementos, onSalir, textoVolver }: Props) {
   const [orden, setOrden] = useState<Ordenar>(() => nuevoOrdenar(elementos.length))
   const pantallaCompleta = usePantallaCompleta()
   const listo = terminado(orden)
@@ -48,11 +50,11 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir }: Props) {
           {listo ? t.ordenTerminado : t.enSuLugar(orden.colocados, elementos.length)}
         </p>
         <div className="proyeccion__secundarios">
+          <Boton onClick={onSalir}>{textoVolver}</Boton>
           <Boton onClick={() => setOrden(nuevoOrdenar(elementos.length))}>{t.volverAEmpezar}</Boton>
           <Boton onClick={pantallaCompleta.alternar}>
             {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
           </Boton>
-          <Boton onClick={onSalir}>{t.salir}</Boton>
         </div>
       </div>
 

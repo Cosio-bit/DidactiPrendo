@@ -21,9 +21,11 @@ interface Props {
   titulo: string
   categorias: Categoria[]
   onSalir: () => void
+  /** "Volver a Mis actividades" o "Volver a editar", según de dónde se llegó. */
+  textoVolver: string
 }
 
-export function ProyeccionClasificar({ titulo, categorias, onSalir }: Props) {
+export function ProyeccionClasificar({ titulo, categorias, onSalir, textoVolver }: Props) {
   const [juego, setJuego] = useState<Clasificar>(() => nuevoClasificar(categorias))
   const pantallaCompleta = usePantallaCompleta()
   const listo = terminado(juego)
@@ -54,11 +56,11 @@ export function ProyeccionClasificar({ titulo, categorias, onSalir }: Props) {
           {listo ? t.clasificacionTerminada : t.ubicados(juego.ubicados.length, total)}
         </p>
         <div className="proyeccion__secundarios">
+          <Boton onClick={onSalir}>{textoVolver}</Boton>
           <Boton onClick={() => setJuego(nuevoClasificar(categorias))}>{t.volverAEmpezar}</Boton>
           <Boton onClick={pantallaCompleta.alternar}>
             {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
           </Boton>
-          <Boton onClick={onSalir}>{t.salir}</Boton>
         </div>
       </div>
 

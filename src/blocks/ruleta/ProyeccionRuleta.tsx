@@ -30,9 +30,11 @@ interface Props {
   elementos: string[]
   config: ConfigRuleta
   onSalir: () => void
+  /** "Volver a Mis actividades" o "Volver a editar", según de dónde se llegó. */
+  textoVolver: string
 }
 
-export function ProyeccionRuleta({ elementos, config, onSalir }: Props) {
+export function ProyeccionRuleta({ elementos, config, onSalir, textoVolver }: Props) {
   const [sorteo, setSorteo] = useState<Sorteo>(() => nuevoSorteo(elementos.length))
   const [rotacion, setRotacion] = useState(0)
   const [bajoPuntero, setBajoPuntero] = useState<number | null>(null)
@@ -142,6 +144,7 @@ export function ProyeccionRuleta({ elementos, config, onSalir }: Props) {
             </Boton>
           )}
           <div className="proyeccion__secundarios">
+            <Boton onClick={onSalir}>{textoVolver}</Boton>
             <Boton onClick={pantallaCompleta.alternar}>
             {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
           </Boton>
@@ -150,7 +153,6 @@ export function ProyeccionRuleta({ elementos, config, onSalir }: Props) {
                 {t.volverAEmpezar}
               </Boton>
             )}
-            <Boton onClick={onSalir}>{t.salir}</Boton>
           </div>
           <p className="proyeccion__teclas">{t.teclasRuleta}</p>
         </div>
