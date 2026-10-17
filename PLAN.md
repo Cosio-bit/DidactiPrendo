@@ -81,15 +81,15 @@ Cada fase tiene un objetivo, sus tareas, un criterio de "terminado" y una instru
 
 **Objetivo:** el primer bloque completo, de la creación a la proyección.
 
-- [ ] Editor: título, lista de elementos (pegada o escrita) y opciones:
+- [x] Editor: título, lista de elementos (pegada o escrita) y opciones:
   - Eliminar el elemento que sale.
   - Sonido sí o no.
-- [ ] Vista de proyección a pantalla completa:
+- [x] Vista de proyección a pantalla completa:
   - Girar con barra espaciadora o con un toque.
   - Resultado en letra muy grande.
   - Contador de elementos restantes.
-- [ ] Animación de giro de 2 a 4 segundos, sin adornos.
-- [ ] Funciona con 2 a 60 elementos; los textos largos se ajustan sin cortarse.
+- [x] Animación de giro de 2 a 4 segundos, sin adornos.
+- [x] Funciona con 2 a 60 elementos; los textos largos se ajustan sin cortarse.
 
 **Terminado cuando:** un profesor puede pegar los nombres de su curso y girar la ruleta proyectada en menos de 1 minuto.
 
