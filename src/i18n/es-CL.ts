@@ -39,7 +39,7 @@ export const textos = {
     descripcion: 'Convierte tus listas y preguntas en actividades para proyectar en la sala.',
     comoFunciona: 'Así funciona',
     pasos: [
-      'Pega el texto que ya tienes: de Word, Excel o ChatGPT.',
+      'Pega el texto que ya tienes: de Word o Excel.',
       'Elige la actividad: ruleta, preguntas, memorice y más.',
       'Proyecta y juega con el curso.',
     ],
