@@ -11,6 +11,7 @@ import type { Block } from '../storage/modelo.ts'
 import { useConsulta } from '../storage/useConsulta.ts'
 import { Boton } from '../ui/Boton.tsx'
 import { useEdicion } from './useEdicion.ts'
+import { nombreAutomatico } from './nombreVisible.ts'
 import { SelectorTipo } from './SelectorTipo.tsx'
 import { VistaPrevia } from './VistaPrevia.tsx'
 
@@ -29,7 +30,7 @@ function estadoDesde(bloque: Block): Estado {
   return {
     titulo: bloque.title,
     texto,
-    tipoManual: texto.trim() && tipo !== sugerido ? tipo : null,
+    tipoManual: tipo !== sugerido ? tipo : null,
     config: bloque.config,
   }
 }
@@ -149,7 +150,7 @@ export function Editor({ id }: { id: string }) {
           id={idNombre}
           className="campo__entrada"
           value={actual.titulo}
-          placeholder={textos.editor.nombrePorDefecto}
+          placeholder={nombreAutomatico({ type: lectura.tipo, items: lectura.elementos })}
           onChange={(evento) => cambiarTitulo(evento.target.value)}
           autoComplete="off"
         />
@@ -222,14 +223,14 @@ export function Editor({ id }: { id: string }) {
             id={idTexto}
             className="campo__entrada editor__area"
             value={actual.texto}
-            placeholder={textos.editor.ejemplo}
+            placeholder={textos.editor.porEjemplo(textos.editor.ejemplos[lectura.tipo])}
             // Actividad recién creada: se puede pegar al tiro con Ctrl+V.
             autoFocus={nueva}
             spellCheck={false}
             onChange={(evento) => cambiarTexto(evento.target.value)}
           />
         </div>
-        <VistaPrevia lectura={lectura} hayTexto={actual.texto.trim() !== ''} />
+        <VistaPrevia lectura={lectura} hayTexto={actual.texto.trim() !== ''} onUsarEjemplo={cambiarTexto} />
       </div>
     </section>
   )

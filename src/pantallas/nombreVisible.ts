@@ -1,6 +1,33 @@
+import { esTipoConTexto } from '../blocks/catalogo.ts'
 import { textos } from '../i18n/es-CL.ts'
 import type { Block } from '../storage/modelo.ts'
 
+const LARGO_MAXIMO = 48
+
+/** Los primeros elementos en palabras, para reconocer la actividad sin abrirla. */
+function primerosElementos(bloque: Pick<Block, 'items'>): string {
+  const items = Array.isArray(bloque.items) ? bloque.items : []
+  const textosDe = items.map((item: unknown) => {
+    if (typeof item === 'string') return item
+    if (typeof item !== 'object' || item === null) return ''
+    const i = item as Record<string, unknown>
+    return String(i.enunciado ?? i.texto ?? i.nombre ?? i.a ?? '')
+  })
+  return textosDe.filter(Boolean).join(', ')
+}
+
+function recortar(texto: string) {
+  if (texto.length <= LARGO_MAXIMO) return texto
+  return `${texto.slice(0, LARGO_MAXIMO - 1).replace(/[\s,;:]+$/, '')}…`
+}
+
+/** Nombre que se pone solo si el profe no escribió uno: lo primero que contiene. */
+export function nombreAutomatico(bloque: Pick<Block, 'type' | 'items'>): string {
+  const contenido = primerosElementos(bloque)
+  if (!contenido || !esTipoConTexto(bloque.type)) return textos.editor.nombrePorDefecto
+  return recortar(contenido)
+}
+
 export function nombreVisible(bloque: Block) {
-  return bloque.title.trim() || textos.editor.nombrePorDefecto
+  return bloque.title.trim() || nombreAutomatico(bloque)
 }

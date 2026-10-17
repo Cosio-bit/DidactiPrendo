@@ -7,11 +7,20 @@ import type { Block } from '../storage/modelo.ts'
 import { useConsulta } from '../storage/useConsulta.ts'
 import { Boton } from '../ui/Boton.tsx'
 import { DialogoConfirmacion } from '../ui/DialogoConfirmacion.tsx'
+import { crearActividad } from './crearActividad.ts'
 import { nombreVisible } from './nombreVisible.ts'
 import { pilaDeshacer } from '../ui/deshacer.ts'
 
+/** "hoy", "ayer", "el 3 de octubre" (con el año solo si no es este año). */
 function fecha(ms: number) {
-  return new Date(ms).toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' })
+  const dia = new Date(ms)
+  const hoy = new Date()
+  const ayer = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() - 1)
+  if (dia.toDateString() === hoy.toDateString()) return textos.misActividades.hoy
+  if (dia.toDateString() === ayer.toDateString()) return textos.misActividades.ayer
+  const conAno = dia.getFullYear() !== hoy.getFullYear()
+  const texto = dia.toLocaleDateString('es-CL', { day: 'numeric', month: 'long', ...(conAno && { year: 'numeric' }) })
+  return textos.misActividades.elDia(texto)
 }
 
 function resumen(bloque: Block) {
@@ -57,6 +66,9 @@ export function MisActividades() {
       {bloques.listo && bloques.valor.length === 0 && (
         <div className="vacio">
           <p>{textos.misActividades.vacio}</p>
+          <Boton variante="principal" onClick={() => void crearActividad()}>
+            {textos.inicio.crearActividad}
+          </Boton>
         </div>
       )}
 

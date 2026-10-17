@@ -131,8 +131,8 @@ export function ProyeccionPreguntas({ preguntas, config, onSalir, verdaderoFalso
           {conTiempo && !terminado && !revelada && !cuenta.terminada && (
             <Boton onClick={alternarPausa}>{cuenta.corriendo ? t.pausar : t.seguir}</Boton>
           )}
-          <Boton onClick={pantallaCompleta.alternar} aria-pressed={pantallaCompleta.activa}>
-            {t.pantallaCompleta}
+          <Boton onClick={pantallaCompleta.alternar}>
+            {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
           </Boton>
           <Boton onClick={onSalir}>{t.salir}</Boton>
         </div>

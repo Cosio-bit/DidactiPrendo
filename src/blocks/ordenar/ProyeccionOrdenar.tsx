@@ -32,7 +32,7 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir }: Props) {
     pantallaCompleta: pantallaCompleta.alternar,
   })
 
-  const contenido = useTextoAjustado<HTMLDivElement>(`${orden.colocados}-${orden.errado}`, 40)
+  const contenido = useTextoAjustado<HTMLDivElement>(`${orden.colocados}-${orden.errado}`, 56)
 
   // Cada elemento conserva la letra con que apareció, aunque los demás se muevan.
   const porOrdenar = orden.desorden.map((indice, posicion) => ({ indice, letra: letra(posicion) }))
@@ -41,14 +41,16 @@ export function ProyeccionOrdenar({ titulo, elementos, onSalir }: Props) {
   return (
     <div className="proyeccion proyeccion-ordenar">
       <div className="proyeccion-preguntas__barra">
-        <p className="proyeccion-preguntas__numero">{titulo}</p>
+        <p className="proyeccion-preguntas__numero proyeccion__titulo" title={titulo}>
+          {titulo}
+        </p>
         <p className="proyeccion-parejas__aviso" aria-live="polite">
           {listo ? t.ordenTerminado : t.enSuLugar(orden.colocados, elementos.length)}
         </p>
         <div className="proyeccion__secundarios">
           <Boton onClick={() => setOrden(nuevoOrdenar(elementos.length))}>{t.volverAEmpezar}</Boton>
-          <Boton onClick={pantallaCompleta.alternar} aria-pressed={pantallaCompleta.activa}>
-            {t.pantallaCompleta}
+          <Boton onClick={pantallaCompleta.alternar}>
+            {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
           </Boton>
           <Boton onClick={onSalir}>{t.salir}</Boton>
         </div>

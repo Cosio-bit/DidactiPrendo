@@ -239,6 +239,9 @@ h1:focus {
 }
 
 .vacio {
+  display: grid;
+  justify-items: start;
+  gap: var(--espacio-2);
   padding: var(--espacio-4) var(--espacio-3);
   border: var(--borde) dashed var(--borde-color);
   border-radius: var(--radio);
@@ -1275,4 +1278,69 @@ h1:focus {
   font-weight: 700;
   border: 2px solid var(--correcta);
   border-radius: 0.3em;
+}
+
+/* Ayuda del editor vacío: cómo se escribe el tipo elegido, con un ejemplo. */
+.como-escribir {
+  display: grid;
+  justify-items: start;
+  gap: var(--espacio-1);
+}
+
+.como-escribir h3 {
+  margin: var(--espacio-1) 0 0;
+  font-size: var(--texto);
+}
+
+/* Inicio: qué es la app y cómo se usa, en una frase y tres pasos. */
+.inicio__presentacion {
+  display: grid;
+  gap: var(--espacio-1);
+}
+
+.inicio__descripcion {
+  color: var(--texto-suave);
+}
+
+.inicio__pasos h2 {
+  font-size: var(--texto);
+  color: var(--texto-suave);
+}
+
+.inicio__pasos ol {
+  margin: var(--espacio-1) 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: paso;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--espacio-2);
+}
+
+.inicio__pasos li {
+  counter-increment: paso;
+  display: flex;
+  gap: var(--espacio-1);
+}
+
+.inicio__pasos li::before {
+  content: counter(paso);
+  flex: none;
+  width: 1.6em;
+  height: 1.6em;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: var(--principal-texto);
+  background: var(--principal);
+  border-radius: 50%;
+}
+
+/* El nombre de la actividad en la proyección: una sola línea, acortado si no cabe. */
+.proyeccion__titulo {
+  flex: 1 1 0;
+  min-width: 8em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

@@ -41,20 +41,22 @@ export function ProyeccionClasificar({ titulo, categorias, onSalir }: Props) {
     otras: numeros,
   })
 
-  const contenido = useTextoAjustado<HTMLDivElement>(`${juego.ubicados.length}-${juego.elegido}-${juego.errado?.categoria}`, 36)
+  const contenido = useTextoAjustado<HTMLDivElement>(`${juego.ubicados.length}-${juego.elegido}-${juego.errado?.categoria}`, 56)
   const sueltos = juego.elementos.map((e, i) => ({ ...e, indice: i })).filter((e) => !juego.ubicados.includes(e.indice))
 
   return (
     <div className="proyeccion proyeccion-ordenar proyeccion-clasificar">
       <div className="proyeccion-preguntas__barra">
-        <p className="proyeccion-preguntas__numero">{titulo}</p>
+        <p className="proyeccion-preguntas__numero proyeccion__titulo" title={titulo}>
+          {titulo}
+        </p>
         <p className="proyeccion-parejas__aviso" aria-live="polite">
           {listo ? t.clasificacionTerminada : t.ubicados(juego.ubicados.length, total)}
         </p>
         <div className="proyeccion__secundarios">
           <Boton onClick={() => setJuego(nuevoClasificar(categorias))}>{t.volverAEmpezar}</Boton>
-          <Boton onClick={pantallaCompleta.alternar} aria-pressed={pantallaCompleta.activa}>
-            {t.pantallaCompleta}
+          <Boton onClick={pantallaCompleta.alternar}>
+            {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
           </Boton>
           <Boton onClick={onSalir}>{t.salir}</Boton>
         </div>

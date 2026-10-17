@@ -83,7 +83,7 @@ test('comentar el error antes de revelar, con el botón y un toque', async ({ pa
 test('temporizador por pregunta: cuenta, avisa al terminar y se detiene al revelar', async ({ page }) => {
   await page.clock.install()
   await crearPreguntas(page)
-  await page.getByLabel('Tiempo por pregunta').selectOption('15')
+  await page.getByLabel('Tiempo para responder').selectOption('15')
   await expect(page.getByLabel('Sonido al acabarse el tiempo')).toBeChecked()
   await page.getByLabel('Sonido al acabarse el tiempo').uncheck()
   await expect(page.getByRole('status')).toHaveText('Guardado')

@@ -1,10 +1,12 @@
 import { useId } from 'react'
 import { textos } from '../i18n/es-CL.ts'
+import { Boton } from '../ui/Boton.tsx'
 import type { Lectura } from '../parser/tipos.ts'
 
 interface Props {
   lectura: Lectura
   hayTexto: boolean
+  onUsarEjemplo: (ejemplo: string) => void
 }
 
 const t = textos.vistaPrevia
@@ -80,7 +82,7 @@ function Elementos({ lectura }: { lectura: Lectura }) {
   }
 }
 
-export function VistaPrevia({ lectura, hayTexto }: Props) {
+export function VistaPrevia({ lectura, hayTexto, onUsarEjemplo }: Props) {
   const idTitulo = useId()
 
   return (
@@ -89,10 +91,11 @@ export function VistaPrevia({ lectura, hayTexto }: Props) {
 
 
       {!hayTexto && (
-        <>
-          <p className="nota">{t.vacia}</p>
-          <p className="nota">{textos.editor.ayuda}</p>
-        </>
+        <div className="como-escribir">
+          <h3>{textos.editor.comoEscribirlo}</h3>
+          <p>{textos.editor.comoEscribir[lectura.tipo]}</p>
+          <Boton onClick={() => onUsarEjemplo(textos.editor.ejemplos[lectura.tipo])}>{textos.editor.probarEjemplo}</Boton>
+        </div>
       )}
 
       {lectura.advertencias.length > 0 && (

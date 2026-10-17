@@ -142,9 +142,9 @@ export function ProyeccionRuleta({ elementos, config, onSalir }: Props) {
             </Boton>
           )}
           <div className="proyeccion__secundarios">
-            <Boton onClick={pantallaCompleta.alternar} aria-pressed={pantallaCompleta.activa}>
-              {t.pantallaCompleta}
-            </Boton>
+            <Boton onClick={pantallaCompleta.alternar}>
+            {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
+          </Boton>
             {!terminado && config.eliminarAlSalir && (
               <Boton onClick={volverAEmpezar} disabled={girando || restantes === elementos.length}>
                 {t.volverAEmpezar}

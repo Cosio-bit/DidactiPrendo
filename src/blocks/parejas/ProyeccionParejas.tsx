@@ -119,8 +119,8 @@ export function ProyeccionParejas({ parejas, onSalir }: Props) {
             {t.mostrarTodas}
           </Boton>
           <Boton onClick={volverAEmpezar}>{t.volverAEmpezar}</Boton>
-          <Boton onClick={pantallaCompleta.alternar} aria-pressed={pantallaCompleta.activa}>
-            {t.pantallaCompleta}
+          <Boton onClick={pantallaCompleta.alternar}>
+            {pantallaCompleta.activa ? t.salirPantallaCompleta : t.pantallaCompleta}
           </Boton>
           <Boton onClick={onSalir}>{t.salir}</Boton>
         </div>

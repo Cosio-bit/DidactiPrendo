@@ -1,28 +1,15 @@
 import { textos } from '../i18n/es-CL.ts'
 import { irA } from '../navegacion.ts'
-import { almacen } from '../storage/bloques.ts'
 import { Boton } from '../ui/Boton.tsx'
-import { pilaDeshacer } from '../ui/deshacer.ts'
-
-async function crearActividad() {
-  try {
-    const bloque = await almacen.crear({
-      type: 'ruleta',
-      title: '',
-      texto: '',
-      items: [],
-      config: {},
-    })
-    irA({ pantalla: 'editor', id: bloque.id })
-  } catch {
-    pilaDeshacer.avisar(textos.avisos.errorGuardar, true)
-  }
-}
+import { crearActividad } from './crearActividad.ts'
 
 export function Inicio() {
   return (
     <section className="inicio">
-      <h1 tabIndex={-1}>{textos.inicio.saludo}</h1>
+      <div className="inicio__presentacion">
+        <h1 tabIndex={-1}>{textos.inicio.saludo}</h1>
+        <p className="inicio__descripcion">{textos.inicio.descripcion}</p>
+      </div>
       <div className="inicio__acciones">
         <Boton variante="principal" grande onClick={() => void crearActividad()}>
           {textos.inicio.crearActividad}
@@ -31,6 +18,14 @@ export function Inicio() {
           {textos.inicio.misActividades}
         </Boton>
       </div>
+      <section className="inicio__pasos" aria-labelledby="como-funciona">
+        <h2 id="como-funciona">{textos.inicio.comoFunciona}</h2>
+        <ol>
+          {textos.inicio.pasos.map((paso) => (
+            <li key={paso}>{paso}</li>
+          ))}
+        </ol>
+      </section>
     </section>
   )
 }

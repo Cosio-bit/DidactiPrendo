@@ -60,7 +60,8 @@ const Segmentos = memo(function Segmentos({ elementos }: { elementos: string[] }
             )}
             {conNombres && (
               <text
-                transform={`rotate(${medio - 90}) translate(${R * 0.58} 0)`}
+                // En la mitad izquierda el texto se da vuelta para no quedar de cabeza.
+                transform={`rotate(${medio - 90}) translate(${R * 0.58} 0)${medio > 180 ? ' rotate(180)' : ''}`}
                 textAnchor="middle"
                 dominantBaseline="central"
                 fontSize={tamanoLetra}
