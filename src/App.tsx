@@ -30,11 +30,15 @@ function App() {
   return (
     <div className="app">
       <header className="cabecera">
-        {ruta.pantalla === 'inicio' ? (
-          <span className="cabecera__nombre">{textos.app.nombre}</span>
-        ) : (
-          <Boton onClick={() => irA({ pantalla: 'inicio' })}>{textos.app.volverAlInicio}</Boton>
-        )}
+        <div className="cabecera__inicio">
+          <span className="cabecera__marca">
+            <img className="cabecera__logo" src="/logo.png" alt="" width={56} height={56} />
+            <span className="cabecera__nombre">{textos.app.nombre}</span>
+          </span>
+          {ruta.pantalla !== 'inicio' && (
+            <Boton onClick={() => irA({ pantalla: 'inicio' })}>{textos.app.volverAlInicio}</Boton>
+          )}
+        </div>
         <Boton
           aria-pressed={tema === 'alto-contraste'}
           onClick={() => setTema(tema === 'alto-contraste' ? 'normal' : 'alto-contraste')}

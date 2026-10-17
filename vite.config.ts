@@ -12,7 +12,7 @@ export default defineConfig({
       // al estar en el inicio o en Mis actividades, nunca en medio de una clase.
       registerType: 'prompt',
       injectRegister: false,
-      includeAssets: ['icono.svg', 'apple-touch-icon.png'],
+      includeAssets: ['favicon-32.png', 'favicon-48.png', 'apple-touch-icon.png', 'logo.png'],
       manifest: {
         name: 'DidactiPrendo',
         short_name: 'DidactiPrendo',
