@@ -106,6 +106,14 @@
   /* Hoja de cuaderno: líneas celestes muy tenues que no compiten con el texto. */
   --cuadricula: rgb(88 196 242 / 0.17);
   --cuadricula-proyeccion: rgb(88 196 242 / 0.1);
+  /* Un color por tipo de actividad, para reconocerla en la lista sin leer. */
+  --tipo-ruleta: #d9a400;
+  --tipo-preguntas: #1f8fd1;
+  --tipo-parejas: var(--rojo);
+  --tipo-verdadero-falso: #2e9e4a;
+  --tipo-ordenar: #7b5cd6;
+  --tipo-clasificar: #d6409f;
+  --icono-tipo-opacidad: 0.35;
 
   font-family: var(--f-texto);
   font-size: var(--texto);
@@ -137,6 +145,13 @@
   --presionado-fondo: #2b2200;
   --correcta: #7dff8a;
   --figura-borde: #ffffff;
+  --tipo-ruleta: #ffd400;
+  --tipo-preguntas: #58c4f2;
+  --tipo-parejas: #ff6b5a;
+  --tipo-verdadero-falso: #5fd37a;
+  --tipo-ordenar: #b39dff;
+  --tipo-clasificar: #ff7ac8;
+  --icono-tipo-opacidad: 0.5;
   --cuadricula: transparent;
   --cuadricula-proyeccion: transparent;
   --borde: 3px;
@@ -429,6 +444,41 @@ h1:focus {
   box-shadow: 0 2px 0 rgb(23 32 43 / 0.05);
 }
 
+/*
+ * Marca de agua del tipo de actividad: el dibujo del juego, tenue y cortado por el borde derecho,
+ * como fondo. Va detrás de todo (isolation + z-index), así nunca tapa el texto ni los botones.
+ * El corte lo hace su propio marco, no la caja: así un botón que no quepa nunca queda escondido.
+ * La caja que la lleva define --marca-tamano y --marca-corte (cuánto sobresale a la derecha).
+ */
+.con-marca-tipo {
+  position: relative;
+  isolation: isolate;
+}
+
+.marca-tipo {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.marca-tipo__icono {
+  position: absolute;
+  right: var(--marca-corte);
+  top: 50%;
+  width: var(--marca-tamano);
+  height: var(--marca-tamano);
+  transform: translateY(-50%);
+  opacity: var(--icono-tipo-opacidad);
+}
+
+.actividad {
+  --marca-tamano: 150px;
+  --marca-corte: -16px;
+}
+
 .actividad__nombre {
   font-family: var(--f-titulo);
   font-weight: 700;
@@ -449,6 +499,7 @@ h1:focus {
 
 .actividad__acciones {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--espacio-2);
 }
 
@@ -1254,8 +1305,12 @@ h1:focus {
   gap: var(--espacio-2);
 }
 
+/* El dibujo de cada juego, tenue detrás del nombre: el mismo que se ve en Mis actividades. */
 .selector-tipo--fila-completa .selector-tipo__opcion {
+  --marca-tamano: 54px;
+  --marca-corte: -10px;
   position: relative;
+  isolation: isolate;
   justify-content: center;
   padding: 4px var(--espacio-1);
   font-size: 20px;
@@ -1920,6 +1975,11 @@ h1:focus {
 
   .actividad {
     padding: 12px var(--espacio-2);
+  }
+
+  .actividad {
+    --marca-tamano: 110px;
+    --marca-corte: -12px;
   }
 
   .actividad__acciones,

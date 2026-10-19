@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { textos } from '../i18n/es-CL.ts'
 import { irA } from '../navegacion.ts'
 import { esTipoConTexto, sePuedeProyectar } from '../blocks/catalogo.ts'
+import { MarcaTipo } from '../blocks/IconoTipo.tsx'
 import { almacen, esVacio } from '../storage/bloques.ts'
 import type { Block } from '../storage/modelo.ts'
 import { useConsulta } from '../storage/useConsulta.ts'
@@ -102,7 +103,9 @@ export function MisActividades() {
       {bloques.listo && bloques.valor.length > 0 && (
         <ul className="lista-actividades">
           {bloques.valor.map((bloque) => (
-            <li key={bloque.id} className="actividad">
+            <li key={bloque.id} className="actividad con-marca-tipo">
+              {/* El dibujo del tipo, tenue y a la derecha: se reconoce el juego sin leer. */}
+              {esTipoConTexto(bloque.type) && <MarcaTipo tipo={bloque.type} />}
               <div className="actividad__datos">
                 <h2 className="actividad__nombre">{nombreVisible(bloque)}</h2>
                 <p className="actividad__fecha">{resumen(bloque)}</p>

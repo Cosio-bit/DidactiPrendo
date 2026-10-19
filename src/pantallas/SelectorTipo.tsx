@@ -1,5 +1,6 @@
 import { useId } from 'react'
 import { TIPOS_CON_TEXTO } from '../blocks/catalogo.ts'
+import { MarcaTipo } from '../blocks/IconoTipo.tsx'
 import { textos } from '../i18n/es-CL.ts'
 import type { TipoLectura } from '../parser/tipos.ts'
 
@@ -31,6 +32,7 @@ export function SelectorTipo({ elegido, sugerido, onCambiar }: Props) {
               {textos.tipos[tipo]}
               {sugerido === tipo && <span className="etiqueta"> ({textos.vistaPrevia.sugerido})</span>}
             </span>
+            <MarcaTipo tipo={tipo} />
           </label>
         ))}
       </div>
