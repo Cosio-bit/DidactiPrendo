@@ -38,13 +38,25 @@ export const textos = {
     saludoDestacado: 'profe',
     descripcion: 'Convierte tus listas y preguntas en actividades para proyectar en la sala.',
     comoFunciona: 'Así funciona',
+    /** Los mismos nombres de los pasos del editor, para que el profe los reconozca al crear. */
     pasos: [
-      'Pega el texto que ya tienes: de Word o Excel.',
-      'Elige la actividad: ruleta, preguntas, memorice y más.',
-      'Proyecta y juega con el curso.',
+      { titulo: 'Pega tu texto', detalle: 'De Word, Excel o ChatGPT' },
+      { titulo: 'Elige la actividad', detalle: 'Ruleta, memorice y más' },
+      { titulo: 'Proyecta', detalle: 'Y juega con el curso' },
     ],
     crearActividad: 'Crear actividad',
     misActividades: 'Mis actividades',
+    queCrear: '¿Qué puedes crear?',
+    queCrearAyuda: 'Toca una para empezar con ella.',
+    /** Para qué sirve cada actividad, con lo que el profe ya tiene a mano. */
+    usos: {
+      ruleta: 'Sortea nombres de la lista del curso',
+      preguntas: 'Las preguntas de tu prueba, con alternativas',
+      parejas: 'Memorice de conceptos y definiciones',
+      'verdadero-falso': 'Afirmaciones para responder V o F',
+      ordenar: 'Pasos o fechas para poner en orden',
+      clasificar: 'Elementos para separar en grupos',
+    } satisfies Record<TipoConTexto, string>,
     cargarTitulo: '¿Te pasaron un archivo de actividades?',
     cargarAyuda: 'Arrástralo a esta página o búscalo en tu computador.',
   },
