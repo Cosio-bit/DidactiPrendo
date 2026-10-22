@@ -8,6 +8,8 @@ const LARGO_MAXIMO = {
   alternativa: 90,
   afirmacion: 160,
   carta: 60,
+  termino: 40,
+  definicion: 140,
   clasificar: 30,
 }
 
@@ -27,6 +29,11 @@ export function textosLargos(lectura: Lectura): string[] {
       return lectura.elementos.flatMap((a) => largo(a.texto, LARGO_MAXIMO.afirmacion))
     case 'parejas':
       return lectura.elementos.flatMap((p) => [...largo(p.a, LARGO_MAXIMO.carta), ...largo(p.b, LARGO_MAXIMO.carta)])
+    case 'terminos-pareados':
+      return lectura.elementos.flatMap((p) => [
+        ...largo(p.a, LARGO_MAXIMO.termino),
+        ...largo(p.b, LARGO_MAXIMO.definicion),
+      ])
     case 'clasificar':
       return lectura.elementos.flatMap((c) => [
         ...largo(c.nombre, LARGO_MAXIMO.clasificar),

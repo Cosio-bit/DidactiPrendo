@@ -3,7 +3,15 @@ import type { TipoLectura } from '../parser/tipos.ts'
 import type { BlockType } from '../storage/modelo.ts'
 
 /** Los tipos que se arman pegando texto, en el orden en que se ofrecen al profe. */
-export const TIPOS_CON_TEXTO: TipoLectura[] = ['ruleta', 'preguntas', 'parejas', 'verdadero-falso', 'ordenar', 'clasificar']
+export const TIPOS_CON_TEXTO: TipoLectura[] = [
+  'ruleta',
+  'preguntas',
+  'parejas',
+  'terminos-pareados',
+  'verdadero-falso',
+  'ordenar',
+  'clasificar',
+]
 
 export function esTipoConTexto(tipo: BlockType): tipo is TipoLectura {
   return (TIPOS_CON_TEXTO as string[]).includes(tipo)
@@ -15,6 +23,7 @@ export function sePuedeProyectar(tipo: BlockType, items: unknown): boolean {
   switch (tipo) {
     case 'ruleta':
     case 'parejas':
+    case 'terminos-pareados':
     case 'ordenar':
       return items.length >= 2
     case 'preguntas':

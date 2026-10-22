@@ -41,6 +41,24 @@ const DIBUJOS: Record<TipoLectura, { relleno: ReactNode; trazo: ReactNode }> = {
       </>
     ),
   },
+  // Dos columnas de casillas unidas por líneas que se cruzan.
+  'terminos-pareados': {
+    relleno: (
+      <>
+        <rect x="1.5" y="3" width="6.5" height="5" rx="1.2" />
+        <rect x="16" y="16" width="6.5" height="5" rx="1.2" />
+      </>
+    ),
+    trazo: (
+      <>
+        <rect x="1.5" y="3" width="6.5" height="5" rx="1.2" />
+        <rect x="16" y="3" width="6.5" height="5" rx="1.2" />
+        <rect x="1.5" y="16" width="6.5" height="5" rx="1.2" />
+        <rect x="16" y="16" width="6.5" height="5" rx="1.2" />
+        <path d="M8 5.5l8 13M8 18.5l8-13" />
+      </>
+    ),
+  },
   'verdadero-falso': {
     relleno: (
       <>
