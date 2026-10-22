@@ -148,3 +148,36 @@ test('se puede proyectar directo desde Mis actividades', async ({ page }) => {
   await page.getByRole('button', { name: 'Volver a Mis actividades' }).click()
   await expect(page.getByRole('heading', { name: 'Mis actividades' })).toBeVisible()
 })
+
+test('los nombres largos se leen enteros en la rueda, sin cortarse ni salirse de su segmento', async ({ page }) => {
+  const largos = ['Texto narrativo', 'Texto informativo', 'Texto argumentativo', 'Afiche publicitario', 'Poema', 'Noticia']
+  await crearRuleta(page, largos)
+  await proyectar(page)
+
+  const etiquetas = page.locator('svg.rueda text')
+  await expect(etiquetas).toHaveCount(largos.length)
+  // Cada nombre está completo (puede ir en varias líneas), sin "…".
+  const escritos = await etiquetas.evaluateAll((textos) =>
+    textos.map((t) => [...t.querySelectorAll('tspan')].map((l) => l.textContent).join(' ')),
+  )
+  expect(escritos).toEqual(largos)
+
+  // Ningún texto se sale del círculo de la rueda: se miran las cuatro esquinas reales de cada
+  // texto, ya girado (la caja recta que da el navegador es más grande que el texto inclinado).
+  const fuera = await page.evaluate(() => {
+    const borde = document.querySelector<SVGCircleElement>('svg.rueda circle[fill="none"]')!
+    const aPantalla = (elemento: SVGGraphicsElement, x: number, y: number) =>
+      new DOMPoint(x, y).matrixTransform(elemento.getScreenCTM()!)
+    const centro = aPantalla(borde, 0, 0)
+    const borde1 = aPantalla(borde, borde.r.baseVal.value, 0)
+    const radio = Math.hypot(borde1.x - centro.x, borde1.y - centro.y)
+    return [...document.querySelectorAll<SVGTextElement>('svg.rueda text')]
+      .filter((texto) => {
+        const { x, y, width, height } = texto.getBBox()
+        const esquinas = [aPantalla(texto, x, y), aPantalla(texto, x + width, y), aPantalla(texto, x, y + height), aPantalla(texto, x + width, y + height)]
+        return esquinas.some((p) => Math.hypot(p.x - centro.x, p.y - centro.y) > radio + 1)
+      })
+      .map((t) => t.textContent)
+  })
+  expect(fuera).toEqual([])
+})
