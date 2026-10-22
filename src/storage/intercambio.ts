@@ -2,7 +2,7 @@
 import type { Almacen } from './bloques.ts'
 import { SCHEMA_VERSION, type Block, type BlockType } from './modelo.ts'
 
-const TIPOS: BlockType[] = ['ruleta', 'preguntas', 'parejas', 'verdadero-falso', 'ordenar', 'clasificar', 'marcador', 'temporizador']
+const TIPOS: BlockType[] = ['ruleta', 'preguntas', 'parejas', 'terminos-pareados', 'verdadero-falso', 'ordenar', 'clasificar', 'marcador', 'temporizador']
 const APLICACION = 'DidactiPrendo'
 const FORMATO_ARCHIVO = 1
 

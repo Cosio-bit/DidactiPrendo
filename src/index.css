@@ -110,6 +110,7 @@
   --tipo-ruleta: #d9a400;
   --tipo-preguntas: #1f8fd1;
   --tipo-parejas: var(--rojo);
+  --tipo-terminos-pareados: #0f8a7e;
   --tipo-verdadero-falso: #2e9e4a;
   --tipo-ordenar: #7b5cd6;
   --tipo-clasificar: #d6409f;
@@ -148,6 +149,7 @@
   --tipo-ruleta: #ffd400;
   --tipo-preguntas: #58c4f2;
   --tipo-parejas: #ff6b5a;
+  --tipo-terminos-pareados: #3fe0cf;
   --tipo-verdadero-falso: #5fd37a;
   --tipo-ordenar: #b39dff;
   --tipo-clasificar: #ff7ac8;
@@ -1291,18 +1293,16 @@ h1:focus {
   }
 }
 
-/* Selector de tipo: los seis en una fila de ancho completo. */
+/* Selector de tipo: los siete en una fila de ancho completo, con su título arriba. */
 .selector-tipo--fila-completa {
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: var(--espacio-1);
 }
 
-/* "Tipo de actividad" a la izquierda y las seis opciones al lado, en una sola fila. */
 .selector-tipo-fila {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: var(--espacio-2);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--espacio-1);
 }
 
 /* El dibujo de cada juego, tenue detrás del nombre: el mismo que se ve en Mis actividades. */
@@ -1337,10 +1337,12 @@ h1:focus {
 }
 
 @media (max-width: 800px) {
-  .selector-tipo-fila {
-    grid-template-columns: 1fr;
+  .selector-tipo--fila-completa {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+}
 
+@media (max-width: 600px) {
   .selector-tipo--fila-completa {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -1681,6 +1683,102 @@ h1:focus {
   font-weight: 700;
   border: 2px solid var(--correcta);
   border-radius: 0.3em;
+}
+
+/* Términos pareados: conceptos numerados a la izquierda, definiciones desordenadas a la derecha
+   y, en el medio, una línea de color por cada pareja unida. */
+.proyeccion-pareados__contenido {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  align-content: center;
+  line-height: 1.2;
+}
+
+.proyeccion-pareados__columnas {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) 2.4em minmax(0, 3fr);
+  row-gap: 0.3em;
+}
+
+.proyeccion-pareados__encabezado {
+  grid-row: 1;
+  grid-column: 1;
+  font-size: 0.7em;
+  font-weight: 700;
+  color: var(--texto-suave);
+}
+
+.proyeccion-pareados__encabezado--definiciones {
+  grid-column: 3;
+}
+
+/* Las líneas van detrás de las tarjetas: solo se ven en el espacio del medio. */
+.proyeccion-pareados__lineas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.proyeccion-pareados__lineas line {
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.pareado {
+  position: relative;
+  z-index: 1;
+  grid-column: 1;
+  align-items: center;
+  /* El navegador no debe desplazar la pantalla mientras se arrastra con el dedo. */
+  touch-action: none;
+}
+
+.pareado--definicion {
+  grid-column: 3;
+}
+
+/* El espacio para el número del concepto, como en la prueba en papel. */
+.pareado__casilla {
+  flex: none;
+  min-width: 1.5em;
+  min-height: 1.3em;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  border: max(1px, 0.08em) dashed var(--borde-color);
+  border-radius: 0.3em;
+}
+
+/* Pareja unida: borde, número y casilla del color de su línea. */
+.pareado--unido {
+  border-color: var(--union);
+  box-shadow: inset 0 0 0 0.08em var(--union);
+  cursor: default;
+}
+
+.pareado--unido .ficha__letra,
+.pareado--unido .pareado__casilla {
+  color: var(--fondo);
+  background: var(--union);
+  border: max(1px, 0.08em) solid var(--union);
+}
+
+.pareado--destino {
+  border-color: var(--principal);
+  background: var(--herramienta-fondo);
+  box-shadow: inset 0 0 0 0.12em var(--principal);
+}
+
+/* En pantallas angostas, los conceptos (cortos) necesitan casi tanto ancho como las definiciones. */
+@media (max-width: 600px) {
+  .proyeccion-pareados__columnas {
+    grid-template-columns: minmax(0, 1fr) 1.4em minmax(0, 1.2fr);
+  }
 }
 
 /* Ayuda del editor vacío: cómo se escribe el tipo elegido, con un ejemplo. */

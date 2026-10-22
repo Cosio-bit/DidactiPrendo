@@ -1,4 +1,11 @@
-export type TipoLectura = 'ruleta' | 'preguntas' | 'parejas' | 'verdadero-falso' | 'ordenar' | 'clasificar'
+export type TipoLectura =
+  | 'ruleta'
+  | 'preguntas'
+  | 'parejas'
+  | 'terminos-pareados'
+  | 'verdadero-falso'
+  | 'ordenar'
+  | 'clasificar'
 
 export interface Alternativa {
   texto: string
@@ -68,6 +75,7 @@ export type Lectura =
   | (LecturaBase & { tipo: 'ruleta'; elementos: string[] })
   | (LecturaBase & { tipo: 'preguntas'; elementos: Pregunta[] })
   | (LecturaBase & { tipo: 'parejas'; elementos: Pareja[] })
+  | (LecturaBase & { tipo: 'terminos-pareados'; elementos: Pareja[] })
   | (LecturaBase & { tipo: 'verdadero-falso'; elementos: Afirmacion[] })
   | (LecturaBase & { tipo: 'ordenar'; elementos: string[] })
   | (LecturaBase & { tipo: 'clasificar'; elementos: Categoria[] })

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { parseText } from '../../src/parser/parseText.ts'
 import type { Afirmacion, Categoria, Lectura, Pareja } from '../../src/parser/tipos.ts'
 
-/* Textos de ejemplo para Parejas, Verdadero o falso, Ordenar y Clasificar. */
+/* Textos de ejemplo para Parejas, Términos pareados, Verdadero o falso, Ordenar y Clasificar. */
 
 function codigos(lectura: Lectura) {
   return lectura.advertencias.map((a) => a.codigo)
@@ -10,6 +10,11 @@ function codigos(lectura: Lectura) {
 
 function parejas(lectura: Lectura): Pareja[] {
   expect(lectura.tipo).toBe('parejas')
+  return lectura.elementos as Pareja[]
+}
+
+function pareados(lectura: Lectura): Pareja[] {
+  expect(lectura.tipo).toBe('terminos-pareados')
   return lectura.elementos as Pareja[]
 }
 
@@ -51,8 +56,9 @@ describe('lector: parejas', () => {
       'Adjetivo: palabra que describe al sustantivo',
     ].join('\n')
     const l = parseText(texto)
-    expect(l.tipoSugerido).toBe('parejas')
-    expect(parejas(l)[0]).toEqual(par('Sustantivo', 'palabra que nombra personas, animales o cosas'))
+    // Definiciones largas: se sugiere unirlas en términos pareados, pero se leen igual como memorice.
+    expect(l.tipoSugerido).toBe('terminos-pareados')
+    expect(parejas(parseText(texto, 'parejas'))[0]).toEqual(par('Sustantivo', 'palabra que nombra personas, animales o cosas'))
   })
 
   it('ChatGPT con numeración, negritas y flechas', () => {
@@ -62,7 +68,7 @@ describe('lector: parejas', () => {
       '2. **Célula** → unidad básica de los seres vivos',
     ].join('\n')
     const l = parseText(texto)
-    expect(parejas(l)).toEqual([
+    expect(pareados(l)).toEqual([
       par('Fotosíntesis', 'proceso con que las plantas producen su alimento'),
       par('Célula', 'unidad básica de los seres vivos'),
     ])
@@ -256,7 +262,52 @@ describe('lector: textos demasiado largos para proyectar', () => {
   })
 
   it('en el memorice, una definición larga también se avisa', () => {
-    const l = parseText('perro = dog\ncélula = la unidad más pequeña de los seres vivos, capaz de funcionar de manera independiente')
+    const l = parseText(
+      'perro = dog\ncélula = la unidad más pequeña de los seres vivos, capaz de funcionar de manera independiente',
+      'parejas',
+    )
     expect(codigos(l)).toEqual(['texto-largo'])
+  })
+})
+
+describe('lector: términos pareados', () => {
+  it('una tabla de ChatGPT con la fila de títulos: los títulos no se toman como pareja', () => {
+    const texto = [
+      '| Concepto | Definición |',
+      '|---|---|',
+      '| Texto narrativo | Relata hechos reales o imaginarios |',
+      '| Texto informativo | Entrega datos sobre un tema |',
+    ].join('\n')
+    const l = parseText(texto)
+    expect(l.tipoSugerido).toBe('terminos-pareados')
+    expect(pareados(l)).toEqual([
+      par('Texto narrativo', 'Relata hechos reales o imaginarios'),
+      par('Texto informativo', 'Entrega datos sobre un tema'),
+    ])
+    expect(codigos(l)).toEqual([])
+  })
+
+  it('concepto | definición, sin las barras de los bordes', () => {
+    const l = parseText('Concepto | Definición\nSustantivo | Palabra que nombra\nVerbo | Palabra que indica una acción', 'terminos-pareados')
+    expect(pareados(l)).toEqual([par('Sustantivo', 'Palabra que nombra'), par('Verbo', 'Palabra que indica una acción')])
+  })
+
+  it('dos columnas copiadas de Docs o Excel, con títulos', () => {
+    const l = parseText('Término\tSignificado\nÁtomo\tLa partícula más pequeña de un elemento químico\nMolécula\tUnión de dos o más átomos', 'terminos-pareados')
+    expect(pareados(l).map((p) => p.a)).toEqual(['Átomo', 'Molécula'])
+  })
+
+  it('con definiciones de pocas palabras sigue sugiriendo el memorice', () => {
+    expect(parseText('perro = dog\ngato = cat\ncasa = house').tipoSugerido).toBe('parejas')
+  })
+
+  it('explica qué falta con palabras de términos pareados, no de memorice', () => {
+    const l = parseText('Sustantivo', 'terminos-pareados')
+    expect(l.advertencias.find((a) => a.codigo === 'sin-parejas')?.mensaje).toMatch(/unir conceptos/)
+  })
+
+  it('avisa si hay demasiados conceptos para leerlos en la sala', () => {
+    const texto = Array.from({ length: 11 }, (_, i) => `Concepto ${i + 1} | Definición número ${i + 1}`).join('\n')
+    expect(codigos(parseText(texto, 'terminos-pareados'))).toContain('demasiadas-parejas')
   })
 })

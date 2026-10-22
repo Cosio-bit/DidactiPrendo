@@ -1,6 +1,13 @@
 // Todos los textos visibles de la aplicación. Nunca escribirlos directo en los componentes.
 
-type TipoConTexto = 'ruleta' | 'preguntas' | 'parejas' | 'verdadero-falso' | 'ordenar' | 'clasificar'
+type TipoConTexto =
+  | 'ruleta'
+  | 'preguntas'
+  | 'parejas'
+  | 'terminos-pareados'
+  | 'verdadero-falso'
+  | 'ordenar'
+  | 'clasificar'
 
 /** "a", "a y b", "a, b y c" */
 function enumerar(cosas: string[]): string {
@@ -52,7 +59,8 @@ export const textos = {
     usos: {
       ruleta: 'Sortea nombres de la lista del curso',
       preguntas: 'Las preguntas de tu prueba, con alternativas',
-      parejas: 'Memorice de conceptos y definiciones',
+      parejas: 'Memorice: voltear cartas y encontrar parejas',
+      'terminos-pareados': 'Unir cada concepto con su definición',
       'verdadero-falso': 'Afirmaciones para responder V o F',
       ordenar: 'Pasos o fechas para poner en orden',
       clasificar: 'Elementos para separar en grupos',
@@ -122,6 +130,7 @@ export const textos = {
     ruleta: 'Ruleta',
     preguntas: 'Selección múltiple',
     parejas: 'Parejas',
+    'terminos-pareados': 'Términos pareados',
     'verdadero-falso': 'Verdadero o falso',
     ordenar: 'Ordenar',
     clasificar: 'Clasificar',
@@ -150,6 +159,8 @@ export const textos = {
       ruleta: 'Ana\nBenjamín\nCatalina\nDiego',
       preguntas: '¿Cuánto es 1/2 + 1/4?\na) 2/6\n*b) 3/4\nc) 1/8',
       parejas: 'perro = dog\ngato = cat\ncasa = house',
+      'terminos-pareados':
+        'Texto narrativo | Relata hechos reales o imaginarios\nTexto informativo | Entrega datos sobre un tema\nTexto argumentativo | Defiende una opinión con razones',
       'verdadero-falso': 'La ballena es un mamífero (V)\nEl Sol es un planeta (F)',
       ordenar: 'Semilla\nGerminación\nPlanta\nFlor\nFruto',
       clasificar: 'Mamíferos: perro, ballena, puma\nAves: cóndor, loica, pingüino',
@@ -158,6 +169,8 @@ export const textos = {
       ruleta: 'Un elemento por línea: nombres del curso, temas, preguntas para conversar.',
       preguntas: 'La pregunta y debajo sus alternativas a), b), c). Pon un * antes de la correcta.',
       parejas: 'Una pareja por línea, separada por =. También sirven dos columnas copiadas de Word o Excel.',
+      'terminos-pareados':
+        'Un concepto y su definición por línea, separados por | o =. También sirve una tabla de dos columnas copiada de Docs, Word, Excel o ChatGPT.',
       'verdadero-falso': 'Una afirmación por línea, con (V) o (F) al final.',
       ordenar: 'Un elemento por línea, en el orden correcto. Al proyectar aparecen desordenados.',
       clasificar: 'Cada categoría con dos puntos y sus elementos separados por comas.',
@@ -244,6 +257,15 @@ export const textos = {
     teclasOrdenar: 'Arrastra o toca cada elemento y luego su lugar · Espacio: el que sigue · ←: deshacer · Esc: volver',
     elegirLugar: 'Ahora toca su lugar en el orden (o presiona su número). Esc para soltarlo',
     sinElementosOrdenar: 'Esta actividad necesita al menos 2 elementos para ordenar. Sal y revisa el texto.',
+    unidos: (n: number, total: number) => `${n} de ${total} unidos`,
+    pareadosTerminado: '¡Todo unido!',
+    noEsSuDefinicion: 'No es su definición',
+    columnaConceptos: 'Conceptos',
+    columnaDefiniciones: 'Definiciones',
+    teclasPareados: 'Toca un concepto y luego su definición, o arrástralo · Espacio: el que sigue · ←: deshacer · Esc: volver',
+    elegirDefinicion: 'Ahora toca su definición (o presiona Esc para soltarlo)',
+    elegirConcepto: 'Ahora toca su concepto (o presiona Esc para soltarla)',
+    sinTerminos: 'Esta actividad necesita al menos 2 conceptos con su definición. Sal y revisa el texto.',
     ubicados: (n: number, total: number) => `${n} de ${total} clasificados`,
     clasificacionTerminada: '¡Todo clasificado!',
     categoriaBoton: (n: number, nombre: string) => `${n}: ${nombre}`,
@@ -325,6 +347,7 @@ export const textos = {
         ordenar: ['elemento', 'elementos'],
         preguntas: ['pregunta', 'preguntas'],
         parejas: ['pareja', 'parejas'],
+        'terminos-pareados': ['concepto', 'conceptos'],
         'verdadero-falso': ['afirmación', 'afirmaciones'],
         clasificar: ['categoría', 'categorías'],
       }[tipo]
@@ -394,6 +417,10 @@ export const textos = {
     sinParejas: 'Para el memorice se necesitan al menos 2 parejas. Escribe una por línea, separadas por =, por ejemplo: perro = dog.',
     demasiadasParejas: (cantidad: number, maximo: number) =>
       `Hay ${cantidad} parejas. El memorice se lee bien con ${maximo} como máximo.`,
+    sinTerminos:
+      'Para unir conceptos se necesitan al menos 2. Escribe un concepto y su definición por línea, separados por |, por ejemplo: Sustantivo | Palabra que nombra.',
+    demasiadosTerminos: (cantidad: number, maximo: number) =>
+      `Hay ${cantidad} conceptos. Para unirlos en la sala se leen bien ${maximo} como máximo.`,
     sinAfirmaciones: 'No encontramos afirmaciones. Escribe una por línea con (V) o (F) al final.',
     sinRespuesta: (numeros: number[]) =>
       numeros.length === 1
