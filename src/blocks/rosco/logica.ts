@@ -1,4 +1,4 @@
-// El rosco de Pasapalabra sin interfaz: aciertos, errores, pasar y deshacer.
+// El rosco de letras sin interfaz: aciertos, errores, pasar y deshacer.
 import type { Definicion } from '../../parser/tipos.ts'
 
 export type EstadoLetra = 'pendiente' | 'acierto' | 'error'
@@ -55,7 +55,7 @@ export function responder(rosco: Rosco, resultado: 'acierto' | 'error'): Rosco {
 }
 
 /**
- * Espacio o flecha derecha. Sin responder es "pasapalabra": la letra queda para la próxima vuelta.
+ * Espacio o flecha derecha. Sin responder es "rosco": la letra queda para la próxima vuelta.
  * Ya respondida, pasa a la siguiente letra por responder (o termina el rosco).
  */
 export function avanzar(rosco: Rosco): Rosco {

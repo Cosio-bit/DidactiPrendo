@@ -11,7 +11,7 @@ export const MAXIMO_ROSCO = 30
 
 /**
  * "A: …", "Con la A: …", "Empieza con A: …", "Contiene la Z: …".
- * El profe también puede escribir "A) …" o "A. …"; solo "A:" sirve para sugerir Pasapalabra,
+ * El profe también puede escribir "A) …" o "A. …"; solo "A:" sirve para sugerir el rosco,
  * porque "a) …" es una alternativa de selección múltiple.
  */
 const LETRA = /^(?:(contiene)\s+(?:la\s+)?|(?:empieza|comienza)\s+(?:con|por)\s+(?:la\s+)?|con\s+(?:la\s+)?)?([a-zñ])\s*([:.)]|[-–—](?=\s))\s*/i
@@ -94,7 +94,7 @@ function posicion(letra: string) {
 }
 
 /** Una letra por línea: la definición y la palabra, separadas por =. El rosco queda en orden alfabético. */
-export function leerPasapalabra(lineas: Linea[], hayTexto: boolean): Resultado<Definicion> & { conLetra: number } {
+export function leerRosco(lineas: Linea[], hayTexto: boolean): Resultado<Definicion> & { conLetra: number } {
   const { contenido, descartadas } = recortarBordes(conContenido(lineas), (l) => l.titulo && !leerDefinicion(l))
   const leidas: Definicion[] = []
   let conLetra = 0

@@ -82,7 +82,7 @@ const DIBUJOS: Record<TipoLectura, { relleno: ReactNode; trazo: ReactNode }> = {
       </>
     ),
   },
-  pasapalabra: {
+  rosco: {
     relleno: <circle cx="12" cy="3.5" r="2.5" />,
     trazo: (
       <>

@@ -7,7 +7,7 @@ export type BlockType =
   | 'clasificar'
   | 'tarjetas'
   | 'completar'
-  | 'pasapalabra'
+  | 'rosco'
   | 'quien-soy'
   | 'marcador'
   | 'temporizador'

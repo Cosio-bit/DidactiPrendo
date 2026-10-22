@@ -11,8 +11,8 @@ import { esListaDeTextos } from '../blocks/ordenar/logica.ts'
 import { ProyeccionOrdenar } from '../blocks/ordenar/ProyeccionOrdenar.tsx'
 import { esListaDeParejas } from '../blocks/parejas/logica.ts'
 import { ProyeccionParejas } from '../blocks/parejas/ProyeccionParejas.tsx'
-import { esListaDeDefiniciones } from '../blocks/pasapalabra/logica.ts'
-import { ProyeccionPasapalabra } from '../blocks/pasapalabra/ProyeccionPasapalabra.tsx'
+import { esListaDeDefiniciones } from '../blocks/rosco/logica.ts'
+import { ProyeccionRosco } from '../blocks/rosco/ProyeccionRosco.tsx'
 import { ProyeccionPreguntas } from '../blocks/preguntas/ProyeccionPreguntas.tsx'
 import { comoPreguntas, esListaDeAfirmaciones } from '../blocks/preguntas/verdaderoFalso.ts'
 import { esListaDeAdivinanzas } from '../blocks/quien-soy/logica.ts'
@@ -107,7 +107,7 @@ function mensajeSiNoSePuede(b: Block): string | undefined {
       return esListaDeParejas(b.items) && b.items.length > 0 ? undefined : t.sinTarjetas
     case 'completar':
       return esListaDeFrases(b.items) && sePuedeProyectar('completar', b.items) ? undefined : t.sinFrases
-    case 'pasapalabra':
+    case 'rosco':
       return esListaDeDefiniciones(b.items) && b.items.length > 0 ? undefined : t.sinDefiniciones
     case 'quien-soy':
       return esListaDeAdivinanzas(b.items) && sePuedeProyectar('quien-soy', b.items) ? undefined : t.sinAdivinanzas
@@ -219,9 +219,9 @@ function Actividad({ bloque: b }: { bloque: Block }) {
     )
   }
 
-  if (b.type === 'pasapalabra' && esListaDeDefiniciones(b.items)) {
+  if (b.type === 'rosco' && esListaDeDefiniciones(b.items)) {
     return (
-      <ProyeccionPasapalabra
+      <ProyeccionRosco
         key={b.id}
         definiciones={b.items}
         onSalir={() => salir(id)}

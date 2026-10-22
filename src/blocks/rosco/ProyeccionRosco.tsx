@@ -58,7 +58,7 @@ interface Props {
   textoVolver: string
 }
 
-export function ProyeccionPasapalabra({ definiciones, onSalir, textoVolver }: Props) {
+export function ProyeccionRosco({ definiciones, onSalir, textoVolver }: Props) {
   const [rosco, setRosco] = useState<Rosco>(() => nuevoRosco(definiciones.length))
   const pantallaCompleta = usePantallaCompleta()
   const { aciertos, errores, pendientes } = contar(rosco)
@@ -78,16 +78,16 @@ export function ProyeccionPasapalabra({ definiciones, onSalir, textoVolver }: Pr
   const texto = useTextoAjustado<HTMLDivElement>(`${rosco.actual}-${rosco.terminado}`, 64)
 
   return (
-    <div className="proyeccion proyeccion-pasapalabra">
+    <div className="proyeccion proyeccion-rosco">
       <Rueda
         letras={definiciones.map((d) => d.letra)}
         estados={rosco.estados}
         actual={rosco.terminado ? null : rosco.actual}
       />
 
-      <div className="proyeccion-pasapalabra__panel">
+      <div className="proyeccion-rosco__panel">
         <div className="proyeccion-preguntas__barra">
-          <p className="proyeccion-pasapalabra__cuenta" aria-live="polite">
+          <p className="proyeccion-rosco__cuenta" aria-live="polite">
             <span className="cuenta--acierto">{t.aciertos(aciertos)}</span>
             {' · '}
             <span className="cuenta--error">{t.errores(errores)}</span>
@@ -118,14 +118,14 @@ export function ProyeccionPasapalabra({ definiciones, onSalir, textoVolver }: Pr
             </div>
           </div>
         ) : (
-          <div ref={texto} className="proyeccion-pasapalabra__texto">
-            <p className="proyeccion-pasapalabra__letra">
+          <div ref={texto} className="proyeccion-rosco__texto">
+            <p className="proyeccion-rosco__letra">
               {definicion.contiene ? t.contieneLa(definicion.letra) : t.empiezaCon(definicion.letra)}
             </p>
-            <p className="proyeccion-pasapalabra__definicion">{definicion.definicion}</p>
+            <p className="proyeccion-rosco__definicion">{definicion.definicion}</p>
             <p
               className={[
-                'proyeccion-pasapalabra__respuesta',
+                'proyeccion-rosco__respuesta',
                 rosco.respondida ? (fueAcierto ? 'respuesta--acierto' : 'respuesta--error') : 'respuesta--reservada',
               ].join(' ')}
               aria-hidden={!rosco.respondida}
@@ -137,7 +137,7 @@ export function ProyeccionPasapalabra({ definiciones, onSalir, textoVolver }: Pr
 
         {!rosco.terminado && (
           // Siempre los mismos cuatro botones: así el espacio de la definición nunca cambia.
-          <div className="proyeccion-pasapalabra__controles">
+          <div className="proyeccion-rosco__controles">
             <Boton variante="herramienta" className="boton--acierto" disabled={rosco.respondida} onClick={() => marcar('acierto')}>
               {t.correctaBoton}
             </Boton>
@@ -148,12 +148,12 @@ export function ProyeccionPasapalabra({ definiciones, onSalir, textoVolver }: Pr
               {t.deshacerPaso}
             </Boton>
             <Boton variante="principal" onClick={() => setRosco(avanzar)}>
-              {!rosco.respondida ? t.pasapalabra : pendientes === 0 ? t.terminar : t.siguiente}
+              {!rosco.respondida ? t.pasar : pendientes === 0 ? t.terminar : t.siguiente}
             </Boton>
           </div>
         )}
       </div>
-      <AyudaTeclas>{t.teclasPasapalabra}</AyudaTeclas>
+      <AyudaTeclas>{t.teclasRosco}</AyudaTeclas>
     </div>
   )
 }

@@ -6,7 +6,7 @@ import { leerLineas, normalizar } from './lineas.ts'
 import { leerRuleta } from './lista.ts'
 import { leerOrdenar } from './ordenar.ts'
 import { leerParejas, pareceListaDeNombres } from './parejas.ts'
-import { leerPasapalabra } from './pasapalabra.ts'
+import { leerRosco } from './rosco.ts'
 import { leerPreguntas } from './preguntas.ts'
 import { leerQuienSoy } from './quienSoy.ts'
 import { leerTarjetas } from './tarjetas.ts'
@@ -50,7 +50,7 @@ function leer(texto: string, tipo?: TipoLectura): Lectura {
     const sinTitulos = lineas.filter((l) => l.texto !== '' && !l.separador && !l.titulo && !l.texto.endsWith(':')).length
     const conPalabras = leerCompletar(lineas, hayTexto).conPalabras
     if (conPalabras >= 1 && conPalabras >= sinTitulos / 2) return 'completar'
-    if (suficiente(leerPasapalabra(lineas, hayTexto).conLetra)) return 'pasapalabra'
+    if (suficiente(leerRosco(lineas, hayTexto).conLetra)) return 'rosco'
     // "Respuesta: …" debajo de las pistas; si no, el personaje con sus pistas se parece a una categoría.
     if (leerQuienSoy(lineas, hayTexto).conRespuesta > 0) return 'quien-soy'
     if (leerClasificar(lineas, hayTexto).claridad === 'clara') return 'clasificar'
@@ -90,9 +90,9 @@ function leer(texto: string, tipo?: TipoLectura): Lectura {
       const { elementos, advertencias } = leerCompletar(lineas, hayTexto)
       return { ...base, tipo: 'completar', elementos, advertencias }
     }
-    case 'pasapalabra': {
-      const { elementos, advertencias } = leerPasapalabra(lineas, hayTexto)
-      return { ...base, tipo: 'pasapalabra', elementos, advertencias }
+    case 'rosco': {
+      const { elementos, advertencias } = leerRosco(lineas, hayTexto)
+      return { ...base, tipo: 'rosco', elementos, advertencias }
     }
     case 'quien-soy': {
       const { elementos, advertencias } = leerQuienSoy(lineas, hayTexto)

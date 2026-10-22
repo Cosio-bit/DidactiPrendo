@@ -114,7 +114,7 @@ function Elementos({ lectura }: { lectura: Lectura }) {
           ))}
         </ol>
       )
-    case 'pasapalabra':
+    case 'rosco':
       return (
         <ul className="vista-previa__rosco">
           {lectura.elementos.map((d, i) => (

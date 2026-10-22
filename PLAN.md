@@ -127,13 +127,13 @@ Cada fase tiene un objetivo, sus tareas, un criterio de "terminado" y una instru
 
 ---
 
-## Fase 4c — Más bloques: Tarjetas, Completar la frase, Pasapalabra y ¿Quién soy?
+## Fase 4c — Más bloques: Tarjetas, Completar la frase, Rosco de letras y ¿Quién soy?
 
 **Objetivo:** sumar las actividades que los profes más usan en la sala, con el mismo flujo de pegar texto y proyectar.
 
 - [x] **Tarjetas:** una tarjeta a la vez; espacio la voltea y después pasa a la siguiente. Opción para mostrarlas en desorden.
 - [x] **Completar la frase:** las palabras entre corchetes aparecen como espacios numerados; se muestran en orden con espacio, con su número o con un toque. Opción para mostrar abajo las palabras que faltan.
-- [x] **Pasapalabra:** el rosco con las letras; correcta (C), incorrecta (I), pasapalabra (espacio) y deshacer (←). Las letras pasadas vuelven en la vuelta siguiente.
+- [x] **Rosco de letras:** el rosco con las letras; correcta (C), incorrecta (I), pasar (espacio) y deshacer (←). Las letras pasadas vuelven en la vuelta siguiente.
 - [x] **¿Quién soy?:** las pistas aparecen de a una y al final la respuesta, sin equipos ni puntos. "Revelar respuesta" si el curso adivina antes.
 
 **Terminado cuando:** cada bloque se crea pegando texto y se proyecta de principio a fin con teclado o toques, en 1024×768, sin que la letra cambie de tamaño mientras se juega.

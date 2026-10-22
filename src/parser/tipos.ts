@@ -7,7 +7,7 @@ export type TipoLectura =
   | 'clasificar'
   | 'tarjetas'
   | 'completar'
-  | 'pasapalabra'
+  | 'rosco'
   | 'quien-soy'
 
 export interface Alternativa {
@@ -46,7 +46,7 @@ export interface Frase {
   partes: ParteFrase[]
 }
 
-/** Una letra del rosco de Pasapalabra. */
+/** Una letra del rosco de letras. */
 export interface Definicion {
   /** En mayúscula; la Ñ es una letra aparte. */
   letra: string
@@ -118,5 +118,5 @@ export type Lectura =
   | (LecturaBase & { tipo: 'clasificar'; elementos: Categoria[] })
   | (LecturaBase & { tipo: 'tarjetas'; elementos: Pareja[] })
   | (LecturaBase & { tipo: 'completar'; elementos: Frase[] })
-  | (LecturaBase & { tipo: 'pasapalabra'; elementos: Definicion[] })
+  | (LecturaBase & { tipo: 'rosco'; elementos: Definicion[] })
   | (LecturaBase & { tipo: 'quien-soy'; elementos: Adivinanza[] })

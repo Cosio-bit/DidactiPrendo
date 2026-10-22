@@ -42,7 +42,7 @@ export function textosLargos(lectura: Lectura): string[] {
       return lectura.elementos.flatMap((p) => [...largo(p.a, LARGO_MAXIMO.tarjeta), ...largo(p.b, LARGO_MAXIMO.tarjeta)])
     case 'completar':
       return lectura.elementos.flatMap((f) => largo(textoDeFrase(f), LARGO_MAXIMO.frase))
-    case 'pasapalabra':
+    case 'rosco':
       return lectura.elementos.flatMap((d) => [
         ...largo(d.definicion, LARGO_MAXIMO.definicion),
         ...largo(d.respuesta, LARGO_MAXIMO.palabra),

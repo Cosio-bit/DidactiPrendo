@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import * as completar from '../../src/blocks/completar/logica.ts'
-import * as pasapalabra from '../../src/blocks/pasapalabra/logica.ts'
+import * as rosco from '../../src/blocks/rosco/logica.ts'
 import * as quienSoy from '../../src/blocks/quien-soy/logica.ts'
 import * as tarjetas from '../../src/blocks/tarjetas/logica.ts'
 import type { Adivinanza, Frase } from '../../src/parser/tipos.ts'
@@ -78,39 +78,39 @@ describe('completar la frase', () => {
   })
 })
 
-describe('pasapalabra', () => {
+describe('rosco', () => {
   it('correcta o incorrecta marca la letra; espacio pasa a la siguiente', () => {
-    let r = pasapalabra.nuevoRosco(3)
-    r = pasapalabra.responder(r, 'acierto')
+    let r = rosco.nuevoRosco(3)
+    r = rosco.responder(r, 'acierto')
     expect(r).toMatchObject({ estados: ['acierto', 'pendiente', 'pendiente'], respondida: true, actual: 0 })
     // Ya respondida, no se puede volver a marcar.
-    expect(pasapalabra.responder(r, 'error')).toBe(r)
-    r = pasapalabra.avanzar(r)
+    expect(rosco.responder(r, 'error')).toBe(r)
+    r = rosco.avanzar(r)
     expect(r).toMatchObject({ actual: 1, respondida: false })
   })
 
-  it('pasapalabra deja la letra para la próxima vuelta', () => {
-    let r = pasapalabra.nuevoRosco(3)
-    r = pasapalabra.avanzar(r) // pasa la A
-    r = pasapalabra.avanzar(pasapalabra.responder(r, 'error')) // B incorrecta
-    r = pasapalabra.avanzar(pasapalabra.responder(r, 'acierto')) // C correcta
+  it('pasar deja la letra para la próxima vuelta', () => {
+    let r = rosco.nuevoRosco(3)
+    r = rosco.avanzar(r) // pasa la A
+    r = rosco.avanzar(rosco.responder(r, 'error')) // B incorrecta
+    r = rosco.avanzar(rosco.responder(r, 'acierto')) // C correcta
     expect(r.actual).toBe(0)
-    r = pasapalabra.avanzar(pasapalabra.responder(r, 'acierto'))
+    r = rosco.avanzar(rosco.responder(r, 'acierto'))
     expect(r.terminado).toBe(true)
-    expect(pasapalabra.contar(r)).toEqual({ aciertos: 2, errores: 1, pendientes: 0 })
+    expect(rosco.contar(r)).toEqual({ aciertos: 2, errores: 1, pendientes: 0 })
   })
 
-  it('con una sola letra por responder, pasapalabra se queda en ella', () => {
-    const r = pasapalabra.avanzar(pasapalabra.responder(pasapalabra.nuevoRosco(2), 'acierto'))
-    expect(pasapalabra.avanzar(r).actual).toBe(1)
+  it('con una sola letra por responder, pasar se queda en ella', () => {
+    const r = rosco.avanzar(rosco.responder(rosco.nuevoRosco(2), 'acierto'))
+    expect(rosco.avanzar(r).actual).toBe(1)
   })
 
   it('deshacer devuelve la última letra respondida, aunque el rosco haya terminado', () => {
-    let r = pasapalabra.avanzar(pasapalabra.responder(pasapalabra.nuevoRosco(1), 'error'))
+    let r = rosco.avanzar(rosco.responder(rosco.nuevoRosco(1), 'error'))
     expect(r.terminado).toBe(true)
-    r = pasapalabra.deshacer(r)
+    r = rosco.deshacer(r)
     expect(r).toMatchObject({ estados: ['pendiente'], actual: 0, terminado: false, historial: [] })
-    expect(pasapalabra.deshacer(r)).toBe(r)
+    expect(rosco.deshacer(r)).toBe(r)
   })
 })
 

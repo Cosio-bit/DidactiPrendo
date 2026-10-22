@@ -9,7 +9,7 @@ type TipoConTexto =
   | 'clasificar'
   | 'tarjetas'
   | 'completar'
-  | 'pasapalabra'
+  | 'rosco'
   | 'quien-soy'
 
 /** "a", "a y b", "a, b y c" */
@@ -125,7 +125,7 @@ export const textos = {
     clasificar: 'Clasificar',
     tarjetas: 'Tarjetas',
     completar: 'Completar la frase',
-    pasapalabra: 'Pasapalabra',
+    rosco: 'Rosco de letras',
     'quien-soy': '¿Quién soy?',
     marcador: 'Marcador',
     temporizador: 'Temporizador',
@@ -157,7 +157,7 @@ export const textos = {
       clasificar: 'Mamíferos: perro, ballena, puma\nAves: cóndor, loica, pingüino',
       tarjetas: '¿Capital de Chile? = Santiago\nperro = dog\n7 × 8 = 56',
       completar: 'La [fotosíntesis] ocurre en las [hojas] de la planta.\nEl agua hierve a los [100] grados.',
-      pasapalabra: 'A: Insecto que hace miel = abeja\nB: Mamífero marino más grande = ballena\nC: Ave nacional de Chile = cóndor',
+      rosco: 'A: Insecto que hace miel = abeja\nB: Mamífero marino más grande = ballena\nC: Ave nacional de Chile = cóndor',
       'quien-soy':
         "Bernardo O'Higgins\nNací en Chillán.\nFui Director Supremo de Chile.\nMi padre fue virrey del Perú.\n\nGabriela Mistral\nFui profesora en el norte y en el sur.\nGané el Premio Nobel de Literatura.",
     },
@@ -170,7 +170,7 @@ export const textos = {
       clasificar: 'Cada categoría con dos puntos y sus elementos separados por comas.',
       tarjetas: 'Una tarjeta por línea: lo de adelante, un signo =, y lo de atrás. Al proyectar se ven de a una y se voltean.',
       completar: 'Una frase por línea. Pon entre corchetes [ ] las palabras que el curso debe completar.',
-      pasapalabra: 'Una letra por línea: la letra con dos puntos, la definición, un signo = y la palabra.',
+      rosco: 'Una letra por línea: la letra con dos puntos, la definición, un signo = y la palabra.',
       'quien-soy':
         'La respuesta en la primera línea y debajo las pistas, de la más difícil a la más fácil. Deja una línea vacía entre una adivinanza y otra.',
     },
@@ -317,14 +317,14 @@ export const textos = {
     porResponder: (n: number) => `${n} por responder`,
     correctaBoton: '✓ Correcta',
     incorrectaBoton: '✗ Incorrecta',
-    pasapalabra: 'Pasapalabra',
+    pasar: 'Pasar',
     respuestaCorrecta: (palabra: string) => `✓ ${palabra}`,
     respuestaIncorrecta: (palabra: string) => `✗ Era: ${palabra}`,
     letraDelRosco: (letra: string, estado: 'pendiente' | 'acierto' | 'error') =>
       `${letra}: ${estado === 'acierto' ? 'acierto' : estado === 'error' ? 'error' : 'por responder'}`,
     rosco: 'Rosco',
     roscoTerminado: '¡Terminó el rosco!',
-    teclasPasapalabra: 'C: correcta · I: incorrecta · Espacio: pasapalabra y avanzar · ←: deshacer · Esc: volver',
+    teclasRosco: 'C: correcta · I: incorrecta · Espacio: pasar y avanzar · ←: deshacer · Esc: volver',
     sinDefiniciones: 'Esta actividad no tiene definiciones para el rosco. Sal y revisa el texto.',
     numeroAdivinanza: (n: number, total: number) => `Adivinanza ${n} de ${total}`,
     pistaDe: (n: number, total: number) => `Pista ${n} de ${total}`,
@@ -388,7 +388,7 @@ export const textos = {
         clasificar: ['categoría', 'categorías'],
         tarjetas: ['tarjeta', 'tarjetas'],
         completar: ['frase', 'frases'],
-        pasapalabra: ['letra', 'letras'],
+        rosco: ['letra', 'letras'],
         'quien-soy': ['adivinanza', 'adivinanzas'],
       }[tipo]
       return `${n} ${n === 1 ? singular : plural}`

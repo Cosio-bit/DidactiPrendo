@@ -115,7 +115,7 @@
   --tipo-clasificar: #d6409f;
   --tipo-tarjetas: #e2701e;
   --tipo-completar: #0e9488;
-  --tipo-pasapalabra: #3a56c5;
+  --tipo-rosco: #3a56c5;
   --tipo-quien-soy: #9a6a3a;
   --icono-tipo-opacidad: 0.35;
 
@@ -157,7 +157,7 @@
   --tipo-clasificar: #ff7ac8;
   --tipo-tarjetas: #ffa155;
   --tipo-completar: #3fe0cf;
-  --tipo-pasapalabra: #8fa6ff;
+  --tipo-rosco: #8fa6ff;
   --tipo-quien-soy: #e0a66a;
   --icono-tipo-opacidad: 0.5;
   --cuadricula: transparent;
@@ -732,7 +732,7 @@ h1:focus {
   border-bottom: 3px solid var(--tipo-completar);
 }
 
-/* Pasapalabra: la letra en un círculo, como en el rosco. */
+/* Rosco de letras: la letra en un círculo, como en el rosco. */
 .vista-previa__rosco {
   list-style: none;
   margin: 0;
@@ -756,7 +756,7 @@ h1:focus {
   height: 1.8em;
   font-weight: 800;
   color: var(--fondo);
-  background: var(--tipo-pasapalabra);
+  background: var(--tipo-rosco);
   border-radius: 50%;
 }
 
@@ -2653,8 +2653,8 @@ h1:focus {
   opacity: 0.35;
 }
 
-/* ---------- Pasapalabra: el rosco a la izquierda, la definición a la derecha ---------- */
-.proyeccion-pasapalabra {
+/* ---------- Rosco de letras: el rosco a la izquierda, la definición a la derecha ---------- */
+.proyeccion-rosco {
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
 }
@@ -2668,8 +2668,8 @@ h1:focus {
 }
 
 .rosco__letra circle {
-  fill: var(--tipo-pasapalabra);
-  stroke: var(--tipo-pasapalabra);
+  fill: var(--tipo-rosco);
+  stroke: var(--tipo-rosco);
   stroke-width: 1.2;
 }
 
@@ -2702,7 +2702,7 @@ h1:focus {
   fill: var(--texto-color);
 }
 
-.proyeccion-pasapalabra__panel {
+.proyeccion-rosco__panel {
   height: 100%;
   min-width: 0;
   min-height: 0;
@@ -2711,7 +2711,7 @@ h1:focus {
   gap: var(--espacio-2);
 }
 
-.proyeccion-pasapalabra__cuenta {
+.proyeccion-rosco__cuenta {
   font-size: var(--texto-grande);
   font-weight: 700;
 }
@@ -2724,7 +2724,7 @@ h1:focus {
   color: var(--peligro);
 }
 
-.proyeccion-pasapalabra__texto {
+.proyeccion-rosco__texto {
   min-height: 0;
   overflow: hidden;
   display: flex;
@@ -2734,17 +2734,17 @@ h1:focus {
   line-height: 1.2;
 }
 
-.proyeccion-pasapalabra__letra {
+.proyeccion-rosco__letra {
   font-size: 0.7em;
   font-weight: 700;
-  color: var(--tipo-pasapalabra);
+  color: var(--tipo-rosco);
 }
 
-.proyeccion-pasapalabra__definicion {
+.proyeccion-rosco__definicion {
   font-weight: 800;
 }
 
-.proyeccion-pasapalabra__respuesta {
+.proyeccion-rosco__respuesta {
   font-weight: 800;
 }
 
@@ -2761,13 +2761,13 @@ h1:focus {
   visibility: hidden;
 }
 
-.proyeccion-pasapalabra__controles {
+.proyeccion-rosco__controles {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--espacio-1);
 }
 
-.proyeccion-pasapalabra__controles .boton {
+.proyeccion-rosco__controles .boton {
   min-height: 64px;
   font-size: 26px;
 }
@@ -2784,7 +2784,7 @@ h1:focus {
 
 /* Pantalla vertical o muy angosta: rosco arriba, definición abajo. */
 @media (max-aspect-ratio: 1/1) {
-  .proyeccion-pasapalabra {
+  .proyeccion-rosco {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr);
     justify-items: center;
@@ -2796,7 +2796,7 @@ h1:focus {
     height: min(70vw, calc(30vh - var(--alto-herramientas, 0px) / 3));
   }
 
-  .proyeccion-pasapalabra__panel {
+  .proyeccion-rosco__panel {
     width: 100%;
   }
 }
@@ -2857,7 +2857,7 @@ h1:focus {
 
 /* En el celular: los botones del rosco más chicos. */
 @media (max-width: 600px), (max-height: 500px) {
-  .proyeccion-pasapalabra__controles .boton {
+  .proyeccion-rosco__controles .boton {
     min-height: 48px;
     font-size: 20px;
   }

@@ -81,12 +81,12 @@ test('completar la frase: mostrar las palabras no cambia la letra ni hace saltar
   expect(await page.locator('.hueco').evaluateAll((hs) => hs.map((h) => h.getBoundingClientRect().toJSON()))).toEqual(posiciones)
 })
 
-test('pasapalabra: responder no cambia el tamaño de la letra', async ({ page }) => {
+test('rosco de letras: responder no cambia el tamaño de la letra', async ({ page }) => {
   await proyectar(page, 'A: Insecto que hace miel = abeja\nB: Mamífero marino más grande del planeta = ballena')
-  const texto = '.proyeccion-pasapalabra__texto'
+  const texto = '.proyeccion-rosco__texto'
   const inicial = await letra(page, texto)
   await page.keyboard.press('i')
-  await expect(page.locator('.proyeccion-pasapalabra__respuesta')).toHaveText('✗ Era: abeja')
+  await expect(page.locator('.proyeccion-rosco__respuesta')).toHaveText('✗ Era: abeja')
   expect(await letra(page, texto)).toBe(inicial)
 })
 

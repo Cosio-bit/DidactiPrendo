@@ -12,7 +12,7 @@ export const TIPOS_CON_TEXTO: TipoLectura[] = [
   'clasificar',
   'tarjetas',
   'completar',
-  'pasapalabra',
+  'rosco',
   'quien-soy',
 ]
 
@@ -31,7 +31,7 @@ export function sePuedeProyectar(tipo: BlockType, items: unknown): boolean {
     case 'preguntas':
     case 'verdadero-falso':
     case 'tarjetas':
-    case 'pasapalabra':
+    case 'rosco':
       return items.length >= 1
     case 'completar':
       return items.some((f) => Array.isArray(f?.partes) && f.partes.some((p: { oculta?: unknown }) => p.oculta === true))

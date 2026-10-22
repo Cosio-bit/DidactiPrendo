@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { parseText } from '../../src/parser/parseText.ts'
 import type { Adivinanza, Definicion, Frase, Lectura, Pareja } from '../../src/parser/tipos.ts'
 
-/* Textos de ejemplo para Tarjetas, Completar la frase, Pasapalabra y ¿Quién soy? */
+/* Textos de ejemplo para Tarjetas, Completar la frase, Rosco de letras y ¿Quién soy? */
 
 function codigos(lectura: Lectura) {
   return lectura.advertencias.map((a) => a.codigo)
@@ -14,7 +14,7 @@ function frases(lectura: Lectura): Frase[] {
 }
 
 function rosco(lectura: Lectura): Definicion[] {
-  expect(lectura.tipo).toBe('pasapalabra')
+  expect(lectura.tipo).toBe('rosco')
   return lectura.elementos as Definicion[]
 }
 
@@ -87,10 +87,10 @@ describe('lector: completar la frase', () => {
   })
 })
 
-describe('lector: pasapalabra', () => {
+describe('lector: rosco de letras', () => {
   it('con la letra y dos puntos se sugiere, y queda en orden alfabético', () => {
     const l = parseText('C: Ave nacional de Chile = cóndor\nA: Insecto que hace miel = abeja\nÑ: Ave corredora = ñandú')
-    expect(l.tipoSugerido).toBe('pasapalabra')
+    expect(l.tipoSugerido).toBe('rosco')
     expect(rosco(l)).toEqual([
       { letra: 'A', contiene: false, definicion: 'Insecto que hace miel', respuesta: 'abeja' },
       { letra: 'C', contiene: false, definicion: 'Ave nacional de Chile', respuesta: 'cóndor' },
@@ -100,7 +100,7 @@ describe('lector: pasapalabra', () => {
   })
 
   it('sin letra: la saca de la palabra, que es el lado más corto', () => {
-    const l = parseText('Insecto que hace miel = abeja\nballena = Mamífero marino más grande', 'pasapalabra')
+    const l = parseText('Insecto que hace miel = abeja\nballena = Mamífero marino más grande', 'rosco')
     expect(rosco(l).map((d) => [d.letra, d.respuesta])).toEqual([
       ['A', 'abeja'],
       ['B', 'ballena'],
@@ -108,7 +108,7 @@ describe('lector: pasapalabra', () => {
   })
 
   it('"Contiene la X" y una palabra que no empieza con su letra', () => {
-    const l = parseText('Contiene la X: Instrumento musical de teclas = xilófono\nZ: Fruta amarilla = plátano', 'pasapalabra')
+    const l = parseText('Contiene la X: Instrumento musical de teclas = xilófono\nZ: Fruta amarilla = plátano', 'rosco')
     expect(rosco(l).map((d) => [d.letra, d.contiene])).toEqual([
       ['X', true],
       ['Z', true],
@@ -118,12 +118,12 @@ describe('lector: pasapalabra', () => {
   })
 
   it('"Con la A:" y la respuesta escrita como "Respuesta:"', () => {
-    const l = parseText('Con la A: Insecto que hace miel. Respuesta: abeja', 'pasapalabra')
+    const l = parseText('Con la A: Insecto que hace miel. Respuesta: abeja', 'rosco')
     expect(rosco(l)).toEqual([{ letra: 'A', contiene: false, definicion: 'Insecto que hace miel', respuesta: 'abeja' }])
   })
 
   it('una tabla de Excel con letra, definición y palabra', () => {
-    const l = parseText('A\tInsecto que hace miel\tabeja\nB\tMamífero marino\tballena', 'pasapalabra')
+    const l = parseText('A\tInsecto que hace miel\tabeja\nB\tMamífero marino\tballena', 'rosco')
     expect(rosco(l).map((d) => d.respuesta)).toEqual(['abeja', 'ballena'])
   })
 
@@ -184,7 +184,7 @@ describe('lector: ¿quién soy?', () => {
 })
 
 describe('lector: los tipos nuevos explican lo que no entendieron', () => {
-  const tipos = ['tarjetas', 'completar', 'pasapalabra', 'quien-soy'] as const
+  const tipos = ['tarjetas', 'completar', 'rosco', 'quien-soy'] as const
   const muestras = ['', '***', 'hola', '=', 'a = ', ': x', '(V)', '| |', 'Mamíferos:', '[ ]', 'A:']
 
   it.each(muestras)('con %j, en todos los tipos', (texto) => {

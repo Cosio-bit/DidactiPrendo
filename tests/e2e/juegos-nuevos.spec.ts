@@ -65,27 +65,27 @@ test('completar la frase: las palabras aparecen con espacio, con su número o co
   await expect(page.getByText('¡Completaron todas las frases!').first()).toBeVisible()
 })
 
-test('pasapalabra: correcta, incorrecta, pasar, deshacer y terminar el rosco', async ({ page }) => {
+test('rosco de letras: correcta, incorrecta, pasar, deshacer y terminar el rosco', async ({ page }) => {
   await crear(page, 'A: Insecto que hace miel = abeja\nB: Mamífero marino más grande = ballena\nC: Ave nacional de Chile = cóndor')
-  await expect(page.getByRole('radio', { name: 'Pasapalabra (sugerido)' })).toBeChecked()
+  await expect(page.getByRole('radio', { name: 'Rosco de letras (sugerido)' })).toBeChecked()
   await proyectar(page)
 
-  const cuenta = page.locator('.proyeccion-pasapalabra__cuenta')
-  const texto = page.locator('.proyeccion-pasapalabra__texto')
+  const cuenta = page.locator('.proyeccion-rosco__cuenta')
+  const texto = page.locator('.proyeccion-rosco__texto')
   await expect(texto).toContainText('Empieza con A')
   await expect(texto).toContainText('Insecto que hace miel')
 
   await page.keyboard.press('c')
-  await expect(page.locator('.proyeccion-pasapalabra__respuesta')).toHaveText('✓ abeja')
+  await expect(page.locator('.proyeccion-rosco__respuesta')).toHaveText('✓ abeja')
   await expect(cuenta).toHaveText('1 acierto · 0 errores · 2 por responder')
   await page.keyboard.press('Space')
 
-  // B: pasapalabra; queda para la próxima vuelta.
+  // B: se pasa; queda para la próxima vuelta.
   await expect(texto).toContainText('Empieza con B')
   await page.keyboard.press('Space')
   await expect(texto).toContainText('Empieza con C')
   await page.keyboard.press('i')
-  await expect(page.locator('.proyeccion-pasapalabra__respuesta')).toHaveText('✗ Era: cóndor')
+  await expect(page.locator('.proyeccion-rosco__respuesta')).toHaveText('✗ Era: cóndor')
 
   // Deshacer vuelve a preguntar la C.
   await page.keyboard.press('ArrowLeft')
