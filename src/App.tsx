@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { textos } from './i18n/es-CL.ts'
 import { irA, useRuta } from './navegacion.ts'
 import { Editor } from './pantallas/Editor.tsx'
+import { CrearConIA } from './pantallas/CrearConIA.tsx'
 import { Inicio } from './pantallas/Inicio.tsx'
 import { MisActividades } from './pantallas/MisActividades.tsx'
 import { Imprimir } from './pantallas/Imprimir.tsx'
@@ -62,6 +63,7 @@ function App() {
       <main ref={principal} className="principal cuadricula">
         {ruta.pantalla === 'inicio' && <Inicio />}
         {ruta.pantalla === 'mis-actividades' && <MisActividades />}
+        {ruta.pantalla === 'crear-con-ia' && <CrearConIA />}
         {ruta.pantalla === 'editor' && <Editor key={ruta.id} id={ruta.id} />}
         {ruta.pantalla === 'imprimir' && <Imprimir key={ruta.id} id={ruta.id} />}
         {ruta.pantalla === 'recibir' && <Recibir key={ruta.datos} datos={ruta.datos} />}

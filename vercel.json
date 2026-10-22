@@ -1,0 +1,5 @@
+{
+  "functions": {
+    "api/crear-con-ia.ts": { "maxDuration": 60 }
+  }
+}
