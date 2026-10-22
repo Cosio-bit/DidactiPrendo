@@ -100,6 +100,7 @@ export const textos = {
       pedido: 'Escribe qué actividad quieres (hasta 1.500 letras). Si pegaste una guía, que tenga hasta 40.000 letras.',
       codigo: 'El código de acceso no es correcto. Revísalo y vuelve a intentar.',
       'sin-configurar': 'La IA todavía no está configurada en esta página. Avísale a quien administra la app.',
+      clave: 'La clave de la IA no está bien configurada. Avísale a quien administra la app.',
       'sin-creditos': 'Se acabó el saldo para usar la IA. Avísale a quien administra la app.',
       ocupado: 'La IA está ocupada. Espera un minuto y vuelve a intentar.',
       rechazo: 'La IA no pudo responder ese pedido. Prueba escribiéndolo de otra forma.',

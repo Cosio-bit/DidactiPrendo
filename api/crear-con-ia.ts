@@ -1,6 +1,7 @@
 // Función de Vercel: arma actividades con Claude a partir del pedido del profe (y su guía, si la pega).
 // Es lo único de la app que pasa por un servidor, y solo cuando el profe usa "Crear con IA".
 // La clave de la API vive en la variable de entorno `key` de Vercel: nunca llega al navegador.
+// Si la clave no pertenece a un espacio de trabajo (workspace), se indica cuál en WORKSPACE_ID.
 // No se guarda nada: el pedido va a Claude, la respuesta vuelve al profe y se olvida.
 import Anthropic from '@anthropic-ai/sdk'
 
@@ -100,7 +101,15 @@ export function armarMensaje({ pedido, guia }: Pick<Pedido, 'pedido' | 'guia'>):
 }
 
 /** Por qué no se pudo; la app lo traduce a un aviso para el profe. */
-export type CodigoError = 'pedido' | 'codigo' | 'sin-configurar' | 'sin-creditos' | 'ocupado' | 'rechazo' | 'falla'
+export type CodigoError =
+  | 'pedido'
+  | 'codigo'
+  | 'sin-configurar'
+  | 'clave'
+  | 'sin-creditos'
+  | 'ocupado'
+  | 'rechazo'
+  | 'falla'
 
 function responder(datos: unknown, estado = 200) {
   return Response.json(datos, { status: estado, headers: { 'Cache-Control': 'no-store' } })
@@ -118,7 +127,13 @@ export async function POST(solicitud: Request): Promise<Response> {
   const codigoPiloto = process.env.CODIGO_PILOTO?.trim()
   if (codigoPiloto && pedido.codigo.toLowerCase() !== codigoPiloto.toLowerCase()) return error('codigo', 401)
 
-  const cliente = new Anthropic({ apiKey: clave, maxRetries: 1, timeout: 55_000 })
+  const espacio = process.env.WORKSPACE_ID?.trim()
+  const cliente = new Anthropic({
+    apiKey: clave,
+    maxRetries: 1,
+    timeout: 55_000,
+    defaultHeaders: espacio ? { 'anthropic-workspace-id': espacio } : undefined,
+  })
   try {
     const respuesta = await cliente.beta.messages.create({
       model: MODELO,
@@ -146,6 +161,15 @@ export async function POST(solicitud: Request): Promise<Response> {
     }
     if (e instanceof Anthropic.BadRequestError && /usage limits|credit balance/i.test(e.message)) {
       return error('sin-creditos', 402)
+    }
+    // Clave inválida, sin permiso o sin espacio de trabajo: lo tiene que arreglar quien administra la app.
+    if (
+      e instanceof Anthropic.AuthenticationError ||
+      e instanceof Anthropic.PermissionDeniedError ||
+      (e instanceof Anthropic.BadRequestError && /workspace/i.test(e.message))
+    ) {
+      console.error('Problema con la clave de la API', e.message)
+      return error('clave', 500)
     }
     console.error('Error al llamar a Claude', e)
     return error('falla', 502)

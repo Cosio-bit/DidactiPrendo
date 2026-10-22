@@ -22,6 +22,7 @@ export type ErrorIA =
   | 'pedido'
   | 'codigo'
   | 'sin-configurar'
+  | 'clave'
   | 'sin-creditos'
   | 'ocupado'
   | 'rechazo'
@@ -33,7 +34,16 @@ export type ResultadoIA =
   | { ok: true; actividades: ActividadIA[]; mensaje: string }
   | { ok: false; error: ErrorIA }
 
-const ERRORES_DEL_SERVIDOR: ErrorIA[] = ['pedido', 'codigo', 'sin-configurar', 'sin-creditos', 'ocupado', 'rechazo', 'falla']
+const ERRORES_DEL_SERVIDOR: ErrorIA[] = [
+  'pedido',
+  'codigo',
+  'sin-configurar',
+  'clave',
+  'sin-creditos',
+  'ocupado',
+  'rechazo',
+  'falla',
+]
 
 /** Convierte la respuesta de la función en actividades listas para mostrar. Nunca lanza errores. */
 export function leerRespuesta(datos: unknown): ResultadoIA {
