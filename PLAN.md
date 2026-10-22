@@ -7,8 +7,8 @@ Además, medir si pagarían.
 **Fuera del alcance del piloto:**
 - Cuentas de usuario.
 - Pagos.
-- Inteligencia artificial integrada.
-- Servidor propio.
+- ~~Inteligencia artificial integrada.~~ Cambio de alcance (octubre 2026): un profe pidió que la IA eligiera y llenara la actividad. Se suma "Crear con IA" (ver Fase 7).
+- Servidor propio, salvo la función de Vercel que usa "Crear con IA".
 - ~~Más de 4 bloques.~~ Cambio de alcance (octubre 2026): se suman Parejas, Verdadero o falso, Ordenar y Clasificar para tener repertorio desde el piloto (ver Fase 4b). El marcador y el temporizador pasan a ser herramientas que acompañan a cualquier bloque.
 
 Cada fase tiene un objetivo, sus tareas, un criterio de "terminado" y una instrucción sugerida para pegarle a Claude Code. Las fases están pensadas para avanzar en sesiones cortas, en paralelo con el semestre.
@@ -155,18 +155,26 @@ Cada fase tiene un objetivo, sus tareas, un criterio de "terminado" y una instru
 
 ---
 
-## Fase 7 — Puente con ChatGPT u otra IA (1 a 2 sesiones)
+## Fase 7 — Crear con IA
 
-**Objetivo:** aprovechar la IA que el profesor ya paga, sin costo para ti.
+**Objetivo:** que el profe pida en sus palabras ("términos pareados del género narrativo", "una actividad para recordar las partes de una noticia") o pegue su guía, y la IA elija la actividad que mejor sirve y la llene.
 
-- [ ] Botón **"Pedirle a ChatGPT"**. Armar una instrucción lista para copiar, con:
-  - Tema, curso y cantidad.
-  - Y, lo más importante, **el formato exacto** que el lector entiende.
-- [ ] Botón "Copiar" y enlace para abrir ChatGPT, Gemini o Copilot.
-- [ ] Al pegar la respuesta, el lector la convierte en bloque.
-- [ ] Sentido inverso: "Copiar esta actividad para pedir otra versión" (más fácil, más difícil, otro tema).
+**Hecho:**
+- [x] Función de Vercel `api/crear-con-ia.ts` con Claude Sonnet 5.5 (esfuerzo bajo). La clave está en Vercel y nunca llega al navegador. La IA responde con una forma fija (tipo, nombre, motivo y el texto en el formato del lector), y la función no guarda nada.
+- [x] Pantalla "Crear con IA": pedido, guía opcional (texto pegado) y aviso de privacidad. Cada propuesta se revisa con el mismo lector y se muestra con su vista previa; se usa una o se guardan todas.
+- [x] Errores explicados en español: sin internet, sin saldo, clave mal configurada, código del piloto.
+- [x] Pruebas unitarias y de punta a punta que simulan la respuesta (no gastan saldo).
 
-**Terminado cuando:** con ChatGPT gratuito se obtiene un quiz de 10 preguntas listo para proyectar en menos de 3 minutos.
+**Pendiente:**
+- [ ] Cargar saldo en la consola de Anthropic y poner un límite de gasto.
+- [ ] Probar con 20 a 30 pedidos reales de profes: ¿elige bien la actividad?, ¿el contenido es correcto?, ¿cuánto cuesta cada pedido?
+- [ ] Pasar a una clave del espacio de trabajo "DidactiPrendo", con su propio límite de gasto, y quitar `WORKSPACE_ID`.
+- [ ] Definir `CODIGO_PILOTO` antes de compartir el enlace con más personas.
+- [ ] Subir la guía como archivo (PDF o Word), además de pegar su texto.
+- [ ] "Pedir otra versión" de una actividad: más fácil, más difícil u otro tema.
+- [ ] Alternativa sin saldo: copiar la instrucción para pegarla en ChatGPT, Gemini o Copilot, y pegar la respuesta en el editor.
+
+**Terminado cuando:** 5 profes reales piden una actividad y la proyectan en menos de 3 minutos, y en al menos 27 de 30 pedidos reales la actividad elegida tiene sentido y el contenido es correcto.
 
 ---
 
@@ -211,7 +219,7 @@ Cada fase tiene un objetivo, sus tareas, un criterio de "terminado" y una instru
 - Pagos locales: débito y transferencia vía Webpay, Mercado Pago o Flow.
 - Requiere iniciar actividades en el SII (Servicio de Impuestos Internos) y emitir boletas.
 - Pasar Vercel al plan Pro (uso comercial).
-- IA integrada en la app, con un servidor propio que proteja la clave y límites de uso por persona.
+- IA para clientes reales: cuentas, límites de uso por persona y un plan pagado ("premium") que cubra el costo de la IA. El piloto ya tiene "Crear con IA" con una sola clave (Fase 7).
 - Más bloques:
   - Dado, sorteo de equipos.
   - Modo multigrado.

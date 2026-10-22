@@ -26,6 +26,7 @@ Aplicación web para que profesores chilenos creen **bloques didácticos vacíos
    - Se guardan en IndexedDB, la base de datos interna del navegador.
    - No hay servidor propio en el piloto.
    - **Nunca** enviar a ningún servidor nombres de estudiantes ni el contenido de los bloques.
+   - **Única excepción: "Crear con IA"** (decidido en octubre de 2026 para el piloto). Solo cuando el profe lo usa, su pedido y el texto de su guía van a Claude (Anthropic) a través de la función `api/crear-con-ia.ts`. La pantalla lo avisa y pide no escribir nombres de estudiantes. La función no guarda nada, y lo demás sigue funcionando sin internet.
 4. **Pensada para proyectar.**
    - Letra grande y alto contraste; debe leerse desde el fondo de una sala con un proyector de baja luz.
    - Debe verse bien en 1024×768 píxeles y en formato 4:3 y 16:9.
@@ -59,12 +60,15 @@ Aplicación web para que profesores chilenos creen **bloques didácticos vacíos
 | Pruebas unitarias | Vitest | Probar funciones aisladas, sobre todo el lector de texto |
 | Pruebas de punta a punta | Playwright | Simular a un profesor usando la app con clics reales |
 | Publicación | Vercel | Publica el sitio desde GitHub; cada cambio genera un enlace de prueba |
+| IA ("Crear con IA") | Claude Sonnet 5.5, vía una función de Vercel | Elige la actividad y la llena a partir del pedido del profe. La clave está en la variable de entorno `key` (y `WORKSPACE_ID` si la clave no tiene espacio de trabajo); `CODIGO_PILOTO` limita el uso a quien conoce el código |
 
-Se eligió Vite en vez de Next.js porque la app es un sitio estático que funciona sin servidor. Así el modo sin internet es más simple.
+Se eligió Vite en vez de Next.js porque la app es un sitio estático que funciona sin servidor. Así el modo sin internet es más simple. La única función de servidor es `api/crear-con-ia.ts`; `npm run dev` no la ejecuta (la pantalla avisa que no está disponible), así que se prueba en el enlace de prueba de Vercel o simulando su respuesta en las pruebas.
 
 ## Estructura de carpetas
 
 ```
+api/
+  crear-con-ia.ts      función de Vercel: instrucciones para Claude y llamada a la API
 src/
   i18n/es-CL.ts        textos visibles en español
   parser/              lector de texto pegado -> bloque
@@ -79,7 +83,7 @@ src/
     temporizador/
   storage/             Dexie: guardar, listar, exportar, importar
   projection/          modo pantalla completa y atajos de teclado
-  ai-bridge/           arma instrucciones para ChatGPT y lee sus respuestas
+  ai-bridge/           pide actividades a la IA y las revisa con el lector
   ui/                  componentes comunes (botones, diálogos, deshacer)
 tests/
   unit/                Vitest
