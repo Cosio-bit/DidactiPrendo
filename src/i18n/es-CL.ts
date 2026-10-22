@@ -1,6 +1,16 @@
 // Todos los textos visibles de la aplicación. Nunca escribirlos directo en los componentes.
 
-type TipoConTexto = 'ruleta' | 'preguntas' | 'parejas' | 'verdadero-falso' | 'ordenar' | 'clasificar'
+type TipoConTexto =
+  | 'ruleta'
+  | 'preguntas'
+  | 'parejas'
+  | 'verdadero-falso'
+  | 'ordenar'
+  | 'clasificar'
+  | 'tarjetas'
+  | 'completar'
+  | 'pasapalabra'
+  | 'quien-soy'
 
 /** "a", "a y b", "a, b y c" */
 function enumerar(cosas: string[]): string {
@@ -113,6 +123,10 @@ export const textos = {
     'verdadero-falso': 'Verdadero o falso',
     ordenar: 'Ordenar',
     clasificar: 'Clasificar',
+    tarjetas: 'Tarjetas',
+    completar: 'Completar la frase',
+    pasapalabra: 'Pasapalabra',
+    'quien-soy': '¿Quién soy?',
     marcador: 'Marcador',
     temporizador: 'Temporizador',
   },
@@ -141,6 +155,11 @@ export const textos = {
       'verdadero-falso': 'La ballena es un mamífero (V)\nEl Sol es un planeta (F)',
       ordenar: 'Semilla\nGerminación\nPlanta\nFlor\nFruto',
       clasificar: 'Mamíferos: perro, ballena, puma\nAves: cóndor, loica, pingüino',
+      tarjetas: '¿Capital de Chile? = Santiago\nperro = dog\n7 × 8 = 56',
+      completar: 'La [fotosíntesis] ocurre en las [hojas] de la planta.\nEl agua hierve a los [100] grados.',
+      pasapalabra: 'A: Insecto que hace miel = abeja\nB: Mamífero marino más grande = ballena\nC: Ave nacional de Chile = cóndor',
+      'quien-soy':
+        "Bernardo O'Higgins\nNací en Chillán.\nFui Director Supremo de Chile.\nMi padre fue virrey del Perú.\n\nGabriela Mistral\nFui profesora en el norte y en el sur.\nGané el Premio Nobel de Literatura.",
     },
     comoEscribir: {
       ruleta: 'Un elemento por línea: nombres del curso, temas, preguntas para conversar.',
@@ -149,6 +168,11 @@ export const textos = {
       'verdadero-falso': 'Una afirmación por línea, con (V) o (F) al final.',
       ordenar: 'Un elemento por línea, en el orden correcto. Al proyectar aparecen desordenados.',
       clasificar: 'Cada categoría con dos puntos y sus elementos separados por comas.',
+      tarjetas: 'Una tarjeta por línea: lo de adelante, un signo =, y lo de atrás. Al proyectar se ven de a una y se voltean.',
+      completar: 'Una frase por línea. Pon entre corchetes [ ] las palabras que el curso debe completar.',
+      pasapalabra: 'Una letra por línea: la letra con dos puntos, la definición, un signo = y la palabra.',
+      'quien-soy':
+        'La respuesta en la primera línea y debajo las pistas, de la más difícil a la más fácil. Deja una línea vacía entre una adivinanza y otra.',
     },
     listo: 'Listo',
     proyectar: 'Proyectar',
@@ -160,6 +184,14 @@ export const textos = {
     opciones: 'Opciones de la ruleta',
     eliminarAlSalir: 'Sacar de la ruleta lo que sale',
     sonido: 'Sonido al girar',
+  },
+  tarjetas: {
+    opciones: 'Opciones de las tarjetas',
+    mezclar: 'Mostrar las tarjetas en desorden',
+  },
+  completar: {
+    opciones: 'Opciones de completar la frase',
+    banco: 'Mostrar abajo las palabras que faltan',
   },
   imprimir: {
     titulo: 'Imprimir',
@@ -262,6 +294,45 @@ export const textos = {
     teclasPreguntas: 'Espacio: revelar y avanzar · ←: anterior · A a E: comentar el error · Esc: volver',
     teclasPreguntasConTiempo:
       'Espacio: revelar y avanzar · ←: anterior · A a E: comentar el error · P: pausar · Esc: volver',
+    numeroTarjeta: (n: number, total: number) => `Tarjeta ${n} de ${total}`,
+    voltear: 'Voltear',
+    tarjetaAdelante: (texto: string) => `Adelante: ${texto}. Toca para voltear`,
+    tarjetaAtras: (texto: string) => `Atrás: ${texto}. Toca para voltear`,
+    tarjetasTerminadas: '¡Terminaron las tarjetas!',
+    teclasTarjetas: 'Espacio: voltear y avanzar · ←: anterior · Esc: volver',
+    sinTarjetas: 'Esta actividad no tiene tarjetas. Sal y revisa el texto.',
+    numeroFrase: (n: number, total: number) => `Frase ${n} de ${total}`,
+    palabraOculta: (n: number) => `Palabra ${n}, oculta. Toca para mostrarla`,
+    palabraVisible: (n: number, palabra: string) => `Palabra ${n}: ${palabra}. Toca para ocultarla`,
+    palabrasQueFaltan: 'Palabras que faltan',
+    mostrarPalabra: 'Mostrar la palabra que sigue',
+    mostrarTodasLasPalabras: 'Mostrar todas',
+    frasesTerminadas: '¡Completaron todas las frases!',
+    teclasCompletar: 'Espacio: mostrar la palabra que sigue y avanzar · 1 a 9: mostrar esa palabra · ←: anterior · Esc: volver',
+    sinFrases: 'Esta actividad no tiene palabras para completar. Sal y revisa el texto.',
+    empiezaCon: (letra: string) => `Empieza con ${letra}`,
+    contieneLa: (letra: string) => `Contiene la ${letra}`,
+    aciertos: (n: number) => `${n} ${n === 1 ? 'acierto' : 'aciertos'}`,
+    errores: (n: number) => `${n} ${n === 1 ? 'error' : 'errores'}`,
+    porResponder: (n: number) => `${n} por responder`,
+    correctaBoton: '✓ Correcta',
+    incorrectaBoton: '✗ Incorrecta',
+    pasapalabra: 'Pasapalabra',
+    respuestaCorrecta: (palabra: string) => `✓ ${palabra}`,
+    respuestaIncorrecta: (palabra: string) => `✗ Era: ${palabra}`,
+    letraDelRosco: (letra: string, estado: 'pendiente' | 'acierto' | 'error') =>
+      `${letra}: ${estado === 'acierto' ? 'acierto' : estado === 'error' ? 'error' : 'por responder'}`,
+    rosco: 'Rosco',
+    roscoTerminado: '¡Terminó el rosco!',
+    teclasPasapalabra: 'C: correcta · I: incorrecta · Espacio: pasapalabra y avanzar · ←: deshacer · Esc: volver',
+    sinDefiniciones: 'Esta actividad no tiene definiciones para el rosco. Sal y revisa el texto.',
+    numeroAdivinanza: (n: number, total: number) => `Adivinanza ${n} de ${total}`,
+    pistaDe: (n: number, total: number) => `Pista ${n} de ${total}`,
+    otraPista: 'Mostrar otra pista',
+    respuestaEra: 'La respuesta:',
+    adivinanzasTerminadas: '¡Terminaron las adivinanzas!',
+    teclasQuienSoy: 'Espacio: otra pista, revelar y avanzar · ←: anterior · Esc: volver',
+    sinAdivinanzas: 'Esta actividad no tiene adivinanzas con pistas. Sal y revisa el texto.',
   },
   /** Marcador por equipos y temporizador: acompañan a cualquier actividad proyectada. */
   herramientas: {
@@ -315,12 +386,19 @@ export const textos = {
         parejas: ['pareja', 'parejas'],
         'verdadero-falso': ['afirmación', 'afirmaciones'],
         clasificar: ['categoría', 'categorías'],
+        tarjetas: ['tarjeta', 'tarjetas'],
+        completar: ['frase', 'frases'],
+        pasapalabra: ['letra', 'letras'],
+        'quien-soy': ['adivinanza', 'adivinanzas'],
       }[tipo]
       return `${n} ${n === 1 ? singular : plural}`
     },
     verdadero: 'Verdadero',
     falso: 'Falso',
     sinMarcar: 'sin marcar',
+    respuesta: 'Respuesta',
+    empiezaCon: (letra: string) => `Empieza con ${letra}`,
+    contieneLa: (letra: string) => `Contiene la ${letra}`,
     paso: (n: number) => `${n}.`,
   },
   confirmarBorrado: {
@@ -411,6 +489,41 @@ export const textos = {
       largos.length === 1
         ? `Este texto es largo y en la sala se verá con letra más chica: ${citar(largos)}. Si puedes, acórtalo.`
         : `Estos textos son largos y en la sala se verán con letra más chica: ${citar(largos)}. Si puedes, acórtalos.`,
+    lineasSinReverso: (lineas: string[]) =>
+      lineas.length === 1
+        ? `No usamos esta línea porque no tiene lo de atrás: ${citar(lineas)}. Escribe las dos caras separadas por =, por ejemplo: perro = dog.`
+        : `No usamos estas líneas porque no tienen lo de atrás: ${citar(lineas)}. Escribe las dos caras separadas por =, por ejemplo: perro = dog.`,
+    sinTarjetas: 'Escribe una tarjeta por línea: lo de adelante, un signo = y lo de atrás. Por ejemplo: perro = dog.',
+    lineasSinPalabras: (lineas: string[]) =>
+      lineas.length === 1
+        ? `No usamos esta línea porque no tiene palabras entre corchetes: ${citar(lineas)}.`
+        : `No usamos estas líneas porque no tienen palabras entre corchetes: ${citar(lineas)}.`,
+    sinFrases:
+      'No encontramos palabras para completar. Pon entre corchetes las que faltan, por ejemplo: La [fotosíntesis] ocurre en las [hojas].',
+    lineasSinDefinicion: (lineas: string[]) =>
+      lineas.length === 1
+        ? `No usamos esta línea porque no encontramos la definición y la palabra: ${citar(lineas)}. Sepáralas con =, por ejemplo: A: Insecto que hace miel = abeja.`
+        : `No usamos estas líneas porque no encontramos la definición y la palabra: ${citar(lineas)}. Sepáralas con =, por ejemplo: A: Insecto que hace miel = abeja.`,
+    sinDefiniciones:
+      'No encontramos definiciones para el rosco. Escribe una por línea: la letra, la definición, un signo = y la palabra. Por ejemplo: A: Insecto que hace miel = abeja.',
+    letraNoCalza: (casos: string[]) =>
+      casos.length === 1
+        ? `La palabra no tiene su letra: ${citar(casos)}. Revisa la letra o la palabra.`
+        : `Estas palabras no tienen su letra: ${citar(casos)}. Revisa la letra o la palabra.`,
+    letrasRepetidas: (letras: string[]) =>
+      letras.length === 1
+        ? `La letra ${letras[0]} tiene más de una palabra. En el rosco aparecerá dos veces.`
+        : `Las letras ${enumerar(letras)} tienen más de una palabra. En el rosco aparecerán repetidas.`,
+    demasiadasDefiniciones: (cantidad: number, maximo: number) =>
+      `Hay ${cantidad} definiciones. En el rosco se leen bien ${maximo} como máximo.`,
+    sinAdivinanzas:
+      'No encontramos adivinanzas. Escribe la respuesta en la primera línea y debajo sus pistas. Deja una línea vacía entre una adivinanza y otra.',
+    sinPistas: (respuestas: string[]) =>
+      respuestas.length === 1
+        ? `${citar(respuestas)} no tiene pistas. Escríbelas arriba de la respuesta.`
+        : `${citar(respuestas)} no tienen pistas. Escríbelas arriba de la respuesta.`,
+    demasiadasPistas: (respuestas: string[], maximo: number) =>
+      `${citar(respuestas)} ${respuestas.length === 1 ? 'tiene' : 'tienen'} más de ${maximo} pistas. En la sala se leen bien ${maximo} como máximo.`,
     preguntasRepetidas: (numeros: number[]) =>
       `${preguntasN(numeros, 'aparece', 'aparecen')} más de una vez. No las borramos, por si es a propósito.`,
   },

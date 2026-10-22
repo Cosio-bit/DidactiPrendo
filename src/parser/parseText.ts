@@ -1,11 +1,15 @@
 import { textos } from '../i18n/es-CL.ts'
 import { leerClasificar } from './clasificar.ts'
+import { leerCompletar } from './completar.ts'
 import { textosLargos } from './largos.ts'
 import { leerLineas, normalizar } from './lineas.ts'
 import { leerRuleta } from './lista.ts'
 import { leerOrdenar } from './ordenar.ts'
 import { leerParejas, pareceListaDeNombres } from './parejas.ts'
+import { leerPasapalabra } from './pasapalabra.ts'
 import { leerPreguntas } from './preguntas.ts'
+import { leerQuienSoy } from './quienSoy.ts'
+import { leerTarjetas } from './tarjetas.ts'
 import type { Lectura, TipoLectura } from './tipos.ts'
 import { leerVerdaderoFalso } from './verdaderoFalso.ts'
 
@@ -38,14 +42,23 @@ function leer(texto: string, tipo?: TipoLectura): Lectura {
 
   function sugerir(): TipoLectura {
     if (leerPreguntas(lineas, hayTexto).validas > 0) return 'preguntas'
-    if (leerClasificar(lineas, hayTexto).claridad === 'clara') return 'clasificar'
 
     const lineasConTexto = lineas.filter((l) => l.texto !== '' && !l.separador && !l.titulo).length
     const suficiente = (n: number) => n >= 2 && n >= lineasConTexto * PROPORCION_MINIMA
+    // Las palabras entre corchetes y "A: …" no se confunden con nada más.
+    // Para completar basta la mitad, sin contar títulos como "Completa las frases:".
+    const sinTitulos = lineas.filter((l) => l.texto !== '' && !l.separador && !l.titulo && !l.texto.endsWith(':')).length
+    const conPalabras = leerCompletar(lineas, hayTexto).conPalabras
+    if (conPalabras >= 1 && conPalabras >= sinTitulos / 2) return 'completar'
+    if (suficiente(leerPasapalabra(lineas, hayTexto).conLetra)) return 'pasapalabra'
+    // "Respuesta: …" debajo de las pistas; si no, el personaje con sus pistas se parece a una categoría.
+    if (leerQuienSoy(lineas, hayTexto).conRespuesta > 0) return 'quien-soy'
+    if (leerClasificar(lineas, hayTexto).claridad === 'clara') return 'clasificar'
+
     const vf = leerVerdaderoFalso(lineas, hayTexto)
     if (vf.marcadas >= 2 && vf.marcadas >= vf.elementos.length * PROPORCION_MINIMA) return 'verdadero-falso'
     if (suficiente(leerParejas(lineas, hayTexto).conSeparador) && !pareceListaDeNombres(lineas)) return 'parejas'
-    // Ordenar nunca se sugiere: una lista ordenada se ve igual que una lista para la ruleta.
+    // Ordenar y Tarjetas nunca se sugieren: se ven igual que una lista para la ruleta o que las parejas.
     return 'ruleta'
   }
 
@@ -71,5 +84,19 @@ function leer(texto: string, tipo?: TipoLectura): Lectura {
     }
     case 'ruleta':
       return { ...base, tipo: 'ruleta', ...leerRuleta(lineas, hayTexto) }
+    case 'tarjetas':
+      return { ...base, tipo: 'tarjetas', ...leerTarjetas(lineas, hayTexto) }
+    case 'completar': {
+      const { elementos, advertencias } = leerCompletar(lineas, hayTexto)
+      return { ...base, tipo: 'completar', elementos, advertencias }
+    }
+    case 'pasapalabra': {
+      const { elementos, advertencias } = leerPasapalabra(lineas, hayTexto)
+      return { ...base, tipo: 'pasapalabra', elementos, advertencias }
+    }
+    case 'quien-soy': {
+      const { elementos, advertencias } = leerQuienSoy(lineas, hayTexto)
+      return { ...base, tipo: 'quien-soy', elementos, advertencias }
+    }
   }
 }

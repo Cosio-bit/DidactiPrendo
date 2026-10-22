@@ -5,12 +5,20 @@ import { esListaDePreguntas, leerConfigPreguntas } from '../blocks/preguntas/log
 import { esListaDeCategorias } from '../blocks/clasificar/logica.ts'
 import { ProyeccionClasificar } from '../blocks/clasificar/ProyeccionClasificar.tsx'
 import { sePuedeProyectar } from '../blocks/catalogo.ts'
+import { esListaDeFrases, leerConfigCompletar } from '../blocks/completar/logica.ts'
+import { ProyeccionCompletar } from '../blocks/completar/ProyeccionCompletar.tsx'
 import { esListaDeTextos } from '../blocks/ordenar/logica.ts'
 import { ProyeccionOrdenar } from '../blocks/ordenar/ProyeccionOrdenar.tsx'
 import { esListaDeParejas } from '../blocks/parejas/logica.ts'
 import { ProyeccionParejas } from '../blocks/parejas/ProyeccionParejas.tsx'
+import { esListaDeDefiniciones } from '../blocks/pasapalabra/logica.ts'
+import { ProyeccionPasapalabra } from '../blocks/pasapalabra/ProyeccionPasapalabra.tsx'
 import { ProyeccionPreguntas } from '../blocks/preguntas/ProyeccionPreguntas.tsx'
 import { comoPreguntas, esListaDeAfirmaciones } from '../blocks/preguntas/verdaderoFalso.ts'
+import { esListaDeAdivinanzas } from '../blocks/quien-soy/logica.ts'
+import { ProyeccionQuienSoy } from '../blocks/quien-soy/ProyeccionQuienSoy.tsx'
+import { leerConfigTarjetas } from '../blocks/tarjetas/logica.ts'
+import { ProyeccionTarjetas } from '../blocks/tarjetas/ProyeccionTarjetas.tsx'
 import { textos } from '../i18n/es-CL.ts'
 import { destinoAlVolver, volverDeProyeccion } from '../navegacion.ts'
 import { entrarPantallaCompleta, salirPantallaCompleta } from '../projection/usePantallaCompleta.ts'
@@ -95,6 +103,14 @@ function mensajeSiNoSePuede(b: Block): string | undefined {
       return esListaDeTextos(b.items) && b.items.length >= 2 ? undefined : t.sinElementosOrdenar
     case 'clasificar':
       return esListaDeCategorias(b.items) && sePuedeProyectar('clasificar', b.items) ? undefined : t.sinCategorias
+    case 'tarjetas':
+      return esListaDeParejas(b.items) && b.items.length > 0 ? undefined : t.sinTarjetas
+    case 'completar':
+      return esListaDeFrases(b.items) && sePuedeProyectar('completar', b.items) ? undefined : t.sinFrases
+    case 'pasapalabra':
+      return esListaDeDefiniciones(b.items) && b.items.length > 0 ? undefined : t.sinDefiniciones
+    case 'quien-soy':
+      return esListaDeAdivinanzas(b.items) && sePuedeProyectar('quien-soy', b.items) ? undefined : t.sinAdivinanzas
     default:
       return t.tipoNoDisponible
   }
@@ -171,6 +187,55 @@ function Actividad({ bloque: b }: { bloque: Block }) {
         key={b.id}
         titulo={nombreVisible(b)}
         categorias={categorias}
+        onSalir={() => salir(id)}
+        textoVolver={textoVolver(id)}
+      />
+    )
+  }
+
+  if (b.type === 'tarjetas' && esListaDeParejas(b.items)) {
+    return (
+      <ProyeccionTarjetas
+        key={b.id}
+        tarjetas={b.items}
+        config={leerConfigTarjetas(b.config)}
+        onSalir={() => salir(id)}
+        textoVolver={textoVolver(id)}
+      />
+    )
+  }
+
+  if (b.type === 'completar' && esListaDeFrases(b.items)) {
+    // Una frase sin palabras ocultas no tiene nada que completar.
+    const frases = b.items.filter((f) => f.partes.some((p) => p.oculta))
+    return (
+      <ProyeccionCompletar
+        key={b.id}
+        frases={frases}
+        config={leerConfigCompletar(b.config)}
+        onSalir={() => salir(id)}
+        textoVolver={textoVolver(id)}
+      />
+    )
+  }
+
+  if (b.type === 'pasapalabra' && esListaDeDefiniciones(b.items)) {
+    return (
+      <ProyeccionPasapalabra
+        key={b.id}
+        definiciones={b.items}
+        onSalir={() => salir(id)}
+        textoVolver={textoVolver(id)}
+      />
+    )
+  }
+
+  if (b.type === 'quien-soy' && esListaDeAdivinanzas(b.items)) {
+    const adivinanzas = b.items.filter((a) => a.pistas.length > 0)
+    return (
+      <ProyeccionQuienSoy
+        key={b.id}
+        adivinanzas={adivinanzas}
         onSalir={() => salir(id)}
         textoVolver={textoVolver(id)}
       />

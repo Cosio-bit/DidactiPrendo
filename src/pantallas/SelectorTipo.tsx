@@ -10,7 +10,7 @@ interface Props {
   onCambiar: (tipo: TipoLectura) => void
 }
 
-/** Los seis tipos de actividad, siempre a la vista para que el profe conozca el repertorio. */
+/** Todos los tipos de actividad, siempre a la vista para que el profe conozca el repertorio. */
 export function SelectorTipo({ elegido, sugerido, onCambiar }: Props) {
   const grupo = useId()
   const idEtiqueta = useId()

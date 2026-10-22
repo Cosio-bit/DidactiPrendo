@@ -60,3 +60,47 @@ test('selección múltiple: revelar y comentar el error no cambian el tamaño de
   await expect(page.locator('.alternativa-proyectada--correcta')).toBeVisible()
   expect(await letra(page, contenido)).toBe(inicial)
 })
+
+test('completar la frase: mostrar las palabras no cambia la letra ni hace saltar la frase de línea', async ({ page }) => {
+  await proyectar(
+    page,
+    'La [fotosíntesis] ocurre en las [hojas] de la planta, gracias a la luz del [Sol] y al agua que sube por el [tallo].',
+  )
+  const contenido = '.proyeccion-preguntas__contenido'
+  const frase = page.locator('.proyeccion-completar__frase')
+  await expect(page.getByText('Frase 1 de 1')).toBeVisible()
+  const inicial = await letra(page, contenido)
+  const alto = (await frase.boundingBox())!.height
+  const posiciones = await page.locator('.hueco').evaluateAll((hs) => hs.map((h) => h.getBoundingClientRect().toJSON()))
+  for (let i = 0; i < 4; i++) {
+    await page.keyboard.press('Space')
+    expect(await letra(page, contenido)).toBe(inicial)
+  }
+  await expect(page.locator('.hueco--visible')).toHaveCount(4)
+  expect((await frase.boundingBox())!.height).toBe(alto)
+  expect(await page.locator('.hueco').evaluateAll((hs) => hs.map((h) => h.getBoundingClientRect().toJSON()))).toEqual(posiciones)
+})
+
+test('pasapalabra: responder no cambia el tamaño de la letra', async ({ page }) => {
+  await proyectar(page, 'A: Insecto que hace miel = abeja\nB: Mamífero marino más grande del planeta = ballena')
+  const texto = '.proyeccion-pasapalabra__texto'
+  const inicial = await letra(page, texto)
+  await page.keyboard.press('i')
+  await expect(page.locator('.proyeccion-pasapalabra__respuesta')).toHaveText('✗ Era: abeja')
+  expect(await letra(page, texto)).toBe(inicial)
+})
+
+test('¿quién soy?: las pistas y la respuesta aparecen sin cambiar el tamaño de la letra', async ({ page }) => {
+  await proyectar(
+    page,
+    "Bernardo O'Higgins\nNací en Chillán.\nEstudié en Inglaterra y conocí a Francisco de Miranda.\nFui Director Supremo.",
+    '¿Quién soy?',
+  )
+  const contenido = '.proyeccion-quien-soy__contenido'
+  const inicial = await letra(page, contenido)
+  for (let i = 0; i < 3; i++) {
+    await page.keyboard.press('Space')
+    expect(await letra(page, contenido)).toBe(inicial)
+  }
+  await expect(page.locator('.proyeccion-quien-soy__respuesta')).toHaveAttribute('aria-hidden', 'false')
+})

@@ -113,6 +113,10 @@
   --tipo-verdadero-falso: #2e9e4a;
   --tipo-ordenar: #7b5cd6;
   --tipo-clasificar: #d6409f;
+  --tipo-tarjetas: #e2701e;
+  --tipo-completar: #0e9488;
+  --tipo-pasapalabra: #3a56c5;
+  --tipo-quien-soy: #9a6a3a;
   --icono-tipo-opacidad: 0.35;
 
   font-family: var(--f-texto);
@@ -151,6 +155,10 @@
   --tipo-verdadero-falso: #5fd37a;
   --tipo-ordenar: #b39dff;
   --tipo-clasificar: #ff7ac8;
+  --tipo-tarjetas: #ffa155;
+  --tipo-completar: #3fe0cf;
+  --tipo-pasapalabra: #8fa6ff;
+  --tipo-quien-soy: #e0a66a;
   --icono-tipo-opacidad: 0.5;
   --cuadricula: transparent;
   --cuadricula-proyeccion: transparent;
@@ -713,6 +721,43 @@ h1:focus {
   list-style: none;
   margin: var(--espacio-1) 0 0;
   padding: 0;
+}
+
+/* Completar la frase: la palabra que el curso debe adivinar, marcada. */
+.vista-previa__oculta {
+  padding: 0 0.2em;
+  font-weight: 700;
+  color: inherit;
+  background: var(--elegido-fondo);
+  border-bottom: 3px solid var(--tipo-completar);
+}
+
+/* Pasapalabra: la letra en un círculo, como en el rosco. */
+.vista-previa__rosco {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--espacio-1);
+  overflow-wrap: anywhere;
+}
+
+.vista-previa__rosco li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--espacio-1);
+}
+
+.vista-previa__letra {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 1.8em;
+  height: 1.8em;
+  font-weight: 800;
+  color: var(--fondo);
+  background: var(--tipo-pasapalabra);
+  border-radius: 50%;
 }
 
 .alternativa--correcta {
@@ -1291,13 +1336,13 @@ h1:focus {
   }
 }
 
-/* Selector de tipo: los seis en una fila de ancho completo. */
+/* Selector de tipo: los diez en dos filas de ancho completo. */
 .selector-tipo--fila-completa {
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--espacio-1);
 }
 
-/* "Tipo de actividad" a la izquierda y las seis opciones al lado, en una sola fila. */
+/* "Tipo de actividad" a la izquierda y las opciones al lado. */
 .selector-tipo-fila {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -2465,5 +2510,355 @@ h1:focus {
 
   .dialogo-compartir__corto {
     order: 1;
+  }
+}
+
+/* ---------- Tarjetas: una tarjeta grande que se voltea ---------- */
+.tarjeta-grande {
+  justify-self: center;
+  width: min(100%, 1200px);
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  /* Lejos, para que al girar la tarjeta (que es grande) no tape la barra de arriba. */
+  perspective: 3600px;
+  touch-action: manipulation;
+}
+
+.tarjeta-grande__interior {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.4s ease;
+  transform-style: preserve-3d;
+}
+
+/* Voltear la tarjeta es la única animación: es funcional (CLAUDE.md, regla 8). */
+.tarjeta-grande--volteada .tarjeta-grande__interior {
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tarjeta-grande__interior {
+    transition: none;
+  }
+}
+
+.tarjeta-grande__cara {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--espacio-3);
+  border: 4px solid var(--borde-color);
+  border-top: 16px solid var(--tipo-tarjetas);
+  border-radius: var(--radio-grande);
+  background: var(--superficie);
+  backface-visibility: hidden;
+  overflow: hidden;
+  text-align: center;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+/* Lo de atrás en otro color, para que el curso sepa qué cara está viendo. */
+.tarjeta-grande__cara--atras {
+  transform: rotateY(180deg);
+  background: var(--elegido-fondo);
+}
+
+.tarjeta-grande:focus-visible {
+  outline: var(--foco) solid var(--foco-color);
+  outline-offset: 4px;
+}
+
+/* ---------- Completar la frase ---------- */
+.proyeccion-completar__frase {
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+/* La palabra que falta: una caja subrayada del ancho de la palabra, con su número. */
+.hueco {
+  position: relative;
+  display: inline-block;
+  min-width: 2.5em;
+  margin: 0 0.05em;
+  padding: 0 0.2em;
+  font: inherit;
+  /* Negrita también mientras está oculta: así, al mostrarla, no se ensancha ni mueve la frase. */
+  font-weight: 800;
+  line-height: 1.25;
+  color: inherit;
+  text-align: center;
+  vertical-align: baseline;
+  background: var(--superficie);
+  border: 0;
+  border-bottom: 0.1em solid var(--texto-color);
+  border-radius: 0.15em 0.15em 0 0;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.hueco:not(.hueco--visible) .hueco__palabra {
+  visibility: hidden;
+}
+
+.hueco__numero {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0.6em;
+  font-weight: 700;
+  color: var(--texto-suave);
+}
+
+.hueco--visible {
+  color: var(--correcta);
+  background: var(--elegido-fondo);
+  border-bottom-color: var(--correcta);
+}
+
+.hueco:focus-visible {
+  outline: var(--foco) solid var(--foco-color);
+  outline-offset: 2px;
+}
+
+.proyeccion-completar__banco ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.3em 0.6em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8em;
+}
+
+.banco__palabra {
+  padding: 0.05em 0.5em;
+  border: 3px dashed var(--borde-color);
+  border-radius: 0.3em;
+}
+
+/* Ya está en la frase: queda tachada y tenue, pero en su lugar (nada se mueve). */
+.banco__palabra--usada {
+  text-decoration: line-through;
+  opacity: 0.35;
+}
+
+/* ---------- Pasapalabra: el rosco a la izquierda, la definición a la derecha ---------- */
+.proyeccion-pasapalabra {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+}
+
+.rosco {
+  display: block;
+  width: min(calc(100vh - 48px - var(--alto-herramientas, 0px)), 46vw);
+  height: min(calc(100vh - 48px - var(--alto-herramientas, 0px)), 46vw);
+  font-family: var(--f-titulo);
+  font-weight: 800;
+}
+
+.rosco__letra circle {
+  fill: var(--tipo-pasapalabra);
+  stroke: var(--tipo-pasapalabra);
+  stroke-width: 1.2;
+}
+
+.rosco__letra text {
+  fill: var(--fondo);
+}
+
+.rosco__letra--acierto circle {
+  fill: var(--correcta);
+  stroke: var(--correcta);
+}
+
+/* El error queda hueco (no solo rojo), para distinguirlo también con daltonismo. */
+.rosco__letra--error circle {
+  fill: var(--fondo);
+  stroke: var(--peligro);
+  stroke-width: 2.5;
+}
+
+.rosco__letra--error text {
+  fill: var(--peligro);
+}
+
+.rosco__letra--actual circle {
+  stroke: var(--texto-color);
+  stroke-width: 3;
+}
+
+.rosco__centro {
+  fill: var(--texto-color);
+}
+
+.proyeccion-pasapalabra__panel {
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: var(--espacio-2);
+}
+
+.proyeccion-pasapalabra__cuenta {
+  font-size: var(--texto-grande);
+  font-weight: 700;
+}
+
+.cuenta--acierto {
+  color: var(--correcta);
+}
+
+.cuenta--error {
+  color: var(--peligro);
+}
+
+.proyeccion-pasapalabra__texto {
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.4em;
+  line-height: 1.2;
+}
+
+.proyeccion-pasapalabra__letra {
+  font-size: 0.7em;
+  font-weight: 700;
+  color: var(--tipo-pasapalabra);
+}
+
+.proyeccion-pasapalabra__definicion {
+  font-weight: 800;
+}
+
+.proyeccion-pasapalabra__respuesta {
+  font-weight: 800;
+}
+
+.respuesta--acierto {
+  color: var(--correcta);
+}
+
+.respuesta--error {
+  color: var(--peligro);
+}
+
+/* Lugar reservado para la respuesta: ocupa su espacio sin verse, para que nada cambie de tamaño. */
+.respuesta--reservada {
+  visibility: hidden;
+}
+
+.proyeccion-pasapalabra__controles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--espacio-1);
+}
+
+.proyeccion-pasapalabra__controles .boton {
+  min-height: 64px;
+  font-size: 26px;
+}
+
+.boton--acierto:not(:disabled) {
+  color: var(--correcta);
+  border-color: var(--correcta);
+}
+
+.boton--error:not(:disabled) {
+  color: var(--peligro);
+  border-color: var(--peligro);
+}
+
+/* Pantalla vertical o muy angosta: rosco arriba, definición abajo. */
+@media (max-aspect-ratio: 1/1) {
+  .proyeccion-pasapalabra {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    justify-items: center;
+  }
+
+  /* Más chico que la ruleta: lo que importa leer es la definición. */
+  .rosco {
+    width: min(70vw, calc(30vh - var(--alto-herramientas, 0px) / 3));
+    height: min(70vw, calc(30vh - var(--alto-herramientas, 0px) / 3));
+  }
+
+  .proyeccion-pasapalabra__panel {
+    width: 100%;
+  }
+}
+
+/* ---------- ¿Quién soy?: las pistas aparecen de a una ---------- */
+.proyeccion-quien-soy__pistas {
+  font-size: var(--texto-grande);
+  font-weight: 700;
+  color: var(--tipo-quien-soy);
+}
+
+.proyeccion-quien-soy__lista {
+  display: grid;
+  gap: 0.25em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pista {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+  font-weight: 700;
+}
+
+.pista__numero {
+  flex: none;
+  min-width: 1.4em;
+  text-align: center;
+  font-weight: 800;
+  border: 3px solid currentColor;
+  border-radius: 0.3em;
+}
+
+/* La pista que falta: se ve su número, el texto ocupa su lugar sin verse. */
+.pista--oculta .pista__numero {
+  opacity: 0.35;
+  border-style: dashed;
+}
+
+.pista--oculta .pista__texto {
+  visibility: hidden;
+}
+
+.proyeccion-quien-soy__respuesta {
+  padding: 0.1em 0.4em;
+  font-weight: 800;
+  color: var(--correcta);
+  border: 3px solid var(--correcta);
+  border-radius: var(--radio);
+}
+
+.proyeccion-quien-soy__etiqueta {
+  font-size: 0.7em;
+  font-weight: 700;
+}
+
+/* En el celular: los botones del rosco más chicos. */
+@media (max-width: 600px), (max-height: 500px) {
+  .proyeccion-pasapalabra__controles .boton {
+    min-height: 48px;
+    font-size: 20px;
   }
 }

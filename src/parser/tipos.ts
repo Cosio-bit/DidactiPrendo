@@ -1,4 +1,14 @@
-export type TipoLectura = 'ruleta' | 'preguntas' | 'parejas' | 'verdadero-falso' | 'ordenar' | 'clasificar'
+export type TipoLectura =
+  | 'ruleta'
+  | 'preguntas'
+  | 'parejas'
+  | 'verdadero-falso'
+  | 'ordenar'
+  | 'clasificar'
+  | 'tarjetas'
+  | 'completar'
+  | 'pasapalabra'
+  | 'quien-soy'
 
 export interface Alternativa {
   texto: string
@@ -26,6 +36,32 @@ export interface Categoria {
   elementos: string[]
 }
 
+/** Un trozo de una frase para completar: texto a la vista o una palabra que el curso debe adivinar. */
+export interface ParteFrase {
+  texto: string
+  oculta: boolean
+}
+
+export interface Frase {
+  partes: ParteFrase[]
+}
+
+/** Una letra del rosco de Pasapalabra. */
+export interface Definicion {
+  /** En mayúscula; la Ñ es una letra aparte. */
+  letra: string
+  /** "Contiene la X" en vez de "Empieza con X". */
+  contiene: boolean
+  definicion: string
+  respuesta: string
+}
+
+/** Un personaje (o cosa) de ¿Quién soy?, con sus pistas de la más difícil a la más fácil. */
+export interface Adivinanza {
+  respuesta: string
+  pistas: string[]
+}
+
 export type CodigoAdvertencia =
   | 'sin-elementos'
   | 'sin-preguntas'
@@ -49,6 +85,15 @@ export type CodigoAdvertencia =
   | 'categoria-vacia'
   | 'demasiadas-categorias'
   | 'texto-largo'
+  | 'sin-tarjetas'
+  | 'sin-frases'
+  | 'sin-definiciones'
+  | 'letra-repetida'
+  | 'letra-no-calza'
+  | 'demasiadas-definiciones'
+  | 'sin-adivinanzas'
+  | 'sin-pistas'
+  | 'demasiadas-pistas'
 
 export interface Advertencia {
   codigo: CodigoAdvertencia
@@ -71,3 +116,7 @@ export type Lectura =
   | (LecturaBase & { tipo: 'verdadero-falso'; elementos: Afirmacion[] })
   | (LecturaBase & { tipo: 'ordenar'; elementos: string[] })
   | (LecturaBase & { tipo: 'clasificar'; elementos: Categoria[] })
+  | (LecturaBase & { tipo: 'tarjetas'; elementos: Pareja[] })
+  | (LecturaBase & { tipo: 'completar'; elementos: Frase[] })
+  | (LecturaBase & { tipo: 'pasapalabra'; elementos: Definicion[] })
+  | (LecturaBase & { tipo: 'quien-soy'; elementos: Adivinanza[] })

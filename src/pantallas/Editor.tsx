@@ -1,7 +1,9 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { esTipoConTexto, sePuedeImprimir, sePuedeProyectar, usaTemporizador } from '../blocks/catalogo.ts'
+import { leerConfigCompletar } from '../blocks/completar/logica.ts'
 import { leerConfigPreguntas, OPCIONES_DE_TIEMPO } from '../blocks/preguntas/logica.ts'
 import { leerConfigRuleta } from '../blocks/ruleta/logica.ts'
+import { leerConfigTarjetas } from '../blocks/tarjetas/logica.ts'
 import { textos } from '../i18n/es-CL.ts'
 import { irA } from '../navegacion.ts'
 import { parseText } from '../parser/parseText.ts'
@@ -141,6 +143,8 @@ export function Editor({ id }: { id: string }) {
   const esRuleta = lectura.tipo === 'ruleta'
   const configRuleta = leerConfigRuleta(actual.config)
   const configPreguntas = leerConfigPreguntas(actual.config)
+  const configTarjetas = leerConfigTarjetas(actual.config)
+  const configCompletar = leerConfigCompletar(actual.config)
   const proyectable = sePuedeProyectar(lectura.tipo, lectura.elementos)
 
   const hayTexto = actual.texto.trim() !== ''
@@ -206,6 +210,34 @@ export function Editor({ id }: { id: string }) {
               onChange={(evento) => cambiarOpcion({ sonido: evento.target.checked })}
             />
             {textos.ruleta.sonido}
+          </label>
+        </fieldset>
+      )}
+
+      {lectura.tipo === 'tarjetas' && (
+        <fieldset className="opciones">
+          <legend className="solo-lector">{textos.tarjetas.opciones}</legend>
+          <label className="opcion">
+            <input
+              type="checkbox"
+              checked={configTarjetas.mezclarTarjetas}
+              onChange={(evento) => cambiarOpcion({ mezclarTarjetas: evento.target.checked })}
+            />
+            {textos.tarjetas.mezclar}
+          </label>
+        </fieldset>
+      )}
+
+      {lectura.tipo === 'completar' && (
+        <fieldset className="opciones">
+          <legend className="solo-lector">{textos.completar.opciones}</legend>
+          <label className="opcion">
+            <input
+              type="checkbox"
+              checked={configCompletar.bancoDePalabras}
+              onChange={(evento) => cambiarOpcion({ bancoDePalabras: evento.target.checked })}
+            />
+            {textos.completar.banco}
           </label>
         </fieldset>
       )}

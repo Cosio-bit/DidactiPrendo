@@ -64,6 +64,52 @@ const DIBUJOS: Record<TipoLectura, { relleno: ReactNode; trazo: ReactNode }> = {
       </>
     ),
   },
+  tarjetas: {
+    relleno: <rect x="2" y="7" width="15" height="14" rx="2" />,
+    trazo: (
+      <>
+        <rect x="2" y="7" width="15" height="14" rx="2" />
+        <path d="M7 3.5h13a2 2 0 0 1 2 2V16" />
+      </>
+    ),
+  },
+  completar: {
+    relleno: <rect x="9" y="4" width="8" height="7" rx="1.5" />,
+    trazo: (
+      <>
+        <path d="M2 10h5M19 10h3M2 17h20" />
+        <rect x="9" y="4" width="8" height="7" rx="1.5" />
+      </>
+    ),
+  },
+  pasapalabra: {
+    relleno: <circle cx="12" cy="3.5" r="2.5" />,
+    trazo: (
+      <>
+        <circle cx="12" cy="3.5" r="2.5" />
+        <circle cx="19.5" cy="8" r="2" />
+        <circle cx="19.5" cy="16" r="2" />
+        <circle cx="12" cy="20.5" r="2" />
+        <circle cx="4.5" cy="16" r="2" />
+        <circle cx="4.5" cy="8" r="2" />
+      </>
+    ),
+  },
+  'quien-soy': {
+    relleno: (
+      <>
+        <circle cx="12" cy="8" r="4.5" />
+        <path d="M3.5 22c0-5 3.8-8 8.5-8s8.5 3 8.5 8z" />
+      </>
+    ),
+    trazo: (
+      <>
+        <circle cx="12" cy="8" r="4.5" />
+        <path d="M3.5 22c0-5 3.8-8 8.5-8s8.5 3 8.5 8" />
+        <path d="M10.3 6.8a1.8 1.8 0 1 1 2.4 1.7c-.5.2-.7.6-.7 1.1" />
+      </>
+    ),
+  },
 }
 
 /** El dibujo del tipo de actividad, en su color; decorativo, porque el nombre del tipo ya está escrito al lado. */

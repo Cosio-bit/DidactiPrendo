@@ -5,6 +5,10 @@ export type BlockType =
   | 'verdadero-falso'
   | 'ordenar'
   | 'clasificar'
+  | 'tarjetas'
+  | 'completar'
+  | 'pasapalabra'
+  | 'quien-soy'
   | 'marcador'
   | 'temporizador'
 

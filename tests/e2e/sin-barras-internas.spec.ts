@@ -22,7 +22,7 @@ async function textosCortados(page: Page) {
   return page.evaluate(() =>
     [
       ...document.querySelectorAll<HTMLElement>(
-        '.carta__cara, .proyeccion-ruleta__resultado, .proyeccion-preguntas__contenido, .proyeccion-ordenar__contenido',
+        '.carta__cara, .proyeccion-ruleta__resultado, .proyeccion-preguntas__contenido, .proyeccion-ordenar__contenido, .tarjeta-grande__cara, .proyeccion-pasapalabra__texto',
       ),
     ]
       .filter((e) => e.scrollHeight > e.clientHeight + 1 || e.scrollWidth > e.clientWidth + 1)
@@ -61,12 +61,19 @@ test('proyección: nada se desplaza dentro de la pantalla, ni con textos largos'
     [Array.from({ length: 12 }, (_, i) => `concepto ${i + 1} = ${largo} ${i + 1}`).join('\n'), 'Parejas'],
     [Array.from({ length: 12 }, (_, i) => `Paso ${i + 1}: ${largo}`).join('\n'), 'Ordenar'],
     [`Grupo uno: ${Array.from({ length: 8 }, (_, i) => `elemento largo ${i}`).join(', ')}\nGrupo dos: ${Array.from({ length: 8 }, (_, i) => `otro elemento ${i}`).join(', ')}`, 'Clasificar'],
+    [`concepto = ${largo} ${largo}`, 'Tarjetas'],
+    [`La [primera] parte de ${largo}, y la [segunda] parte de ${largo}, y la [tercera] de ${largo}.`, 'Completar'],
+    [Array.from({ length: 27 }, (_, i) => `${'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'[i]}: ${largo} = palabra`).join('\n'), 'Pasapalabra'],
+    [`Respuesta larga\n${Array.from({ length: 8 }, (_, i) => `Pista ${i + 1}: ${largo}`).join('\n')}`, '¿Quién soy'],
   ]
   for (const [texto, tipo] of casos) {
     await pegar(page, texto, tipo)
     await page.getByRole('button', { name: 'Proyectar' }).click()
     await expect(page.locator('.proyeccion')).toBeVisible()
     if (tipo === 'Parejas') await page.getByRole('button', { name: 'Mostrar todas' }).click()
+    if (tipo === 'Tarjetas') await page.keyboard.press('Space')
+    if (tipo === 'Completar' || tipo === '¿Quién soy') await page.getByRole('button', { name: /Mostrar todas|Revelar respuesta/ }).click()
+    if (tipo === 'Pasapalabra') await page.keyboard.press('i')
     await page.waitForTimeout(400)
     expect(await cuadrosConBarra(page), `${tipo ?? 'texto'}`).toEqual([])
     expect(await textosCortados(page), `${tipo ?? 'texto'}`).toEqual([])

@@ -4,7 +4,7 @@ Este archivo lo lee Claude Code al comenzar cada sesión. Resume qué se constru
 
 ## Qué es
 
-Aplicación web para que profesores chilenos creen **bloques didácticos vacíos** (ruleta, selección múltiple, parejas, verdadero o falso, ordenar, clasificar) y los **proyecten en la sala** con un data o una pizarra interactiva. El marcador por equipos y el temporizador acompañan a cualquier bloque.
+Aplicación web para que profesores chilenos creen **bloques didácticos vacíos** (ruleta, selección múltiple, parejas, verdadero o falso, ordenar, clasificar, tarjetas, completar la frase, pasapalabra y ¿quién soy?) y los **proyecten en la sala** con un data o una pizarra interactiva. El marcador por equipos y el temporizador acompañan a cualquier bloque.
 
 - La aplicación **no entrega contenido**: el profesor pone el suyo.
 - La forma principal de crear un bloque es **pegar texto plano** (una lista, preguntas copiadas de Word o de ChatGPT) y que el bloque se arme solo.
@@ -74,6 +74,10 @@ src/
     parejas/           memorice
     ordenar/
     clasificar/
+    tarjetas/          una tarjeta a la vez, se voltea
+    completar/         completar la frase
+    pasapalabra/       el rosco de letras
+    quien-soy/         pistas de a una
     marcador/
     temporizador/
   storage/             Dexie: guardar, listar, exportar, importar
@@ -90,6 +94,7 @@ tests/
 ```ts
 type BlockType =
   | "ruleta" | "preguntas" | "parejas" | "verdadero-falso" | "ordenar" | "clasificar"
+  | "tarjetas" | "completar" | "pasapalabra" | "quien-soy"
   | "marcador" | "temporizador";
 
 interface Block {
@@ -138,7 +143,14 @@ Para pasar actividades entre computadores (`src/storage/intercambio.ts`):
   - pingüino
   ```
   También sirve una tabla con una columna por categoría.
-- El lector **nunca sugiere Ordenar** (una lista ordenada se ve igual que una lista para la ruleta): el profe lo elige.
+- **Tarjetas**: igual que parejas, `lo de adelante = lo de atrás`, una por línea.
+- **Completar la frase**: una frase (o párrafo) por línea, con las palabras que faltan entre corchetes:
+  `La [fotosíntesis] ocurre en las [hojas].`
+- **Pasapalabra**: una letra por línea, `A: definición = palabra`.
+  - También `Con la A:`, `Contiene la X:`, `… Respuesta: palabra` o una tabla `Letra | Definición | Palabra`.
+  - Sin letra, la saca de la palabra (el lado más corto). El rosco queda en orden alfabético, con la Ñ después de la N.
+- **¿Quién soy?**: la respuesta en la primera línea y debajo las pistas, de la más difícil a la más fácil; una línea vacía entre adivinanzas. También sirve una línea `Respuesta: …` (como lo escribe ChatGPT).
+- El lector **nunca sugiere Ordenar ni Tarjetas** (se ven igual que una lista para la ruleta o que las parejas): el profe los elige.
 - Debe tolerar texto copiado de Word, Google Docs, Excel (tabulaciones) y ChatGPT (negritas `**`, numeración, títulos).
 - Ante una duda, el lector **sugiere** un tipo de bloque y muestra una vista previa; nunca falla en silencio.
 

@@ -11,7 +11,13 @@ function primerosElementos(bloque: Pick<Block, 'items'>): string {
     if (typeof item === 'string') return item
     if (typeof item !== 'object' || item === null) return ''
     const i = item as Record<string, unknown>
-    return String(i.enunciado ?? i.texto ?? i.nombre ?? i.a ?? '')
+    // Completar la frase: las palabras ocultas no se muestran, por si la lista se ve proyectada.
+    if (Array.isArray(i.partes)) {
+      return i.partes.map((p: { texto?: unknown; oculta?: unknown }) => (p.oculta ? '___' : String(p.texto ?? ''))).join('')
+    }
+    // Pasapalabra y ¿Quién soy?: lo que se ve primero, no la respuesta.
+    const primeraPista = Array.isArray(i.pistas) ? i.pistas[0] : undefined
+    return String(i.enunciado ?? i.texto ?? i.nombre ?? i.a ?? i.definicion ?? primeraPista ?? '')
   })
   return textosDe.filter(Boolean).join(', ')
 }

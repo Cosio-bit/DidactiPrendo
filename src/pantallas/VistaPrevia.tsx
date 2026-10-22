@@ -86,6 +86,67 @@ function Elementos({ lectura }: { lectura: Lectura }) {
           ))}
         </ul>
       )
+    case 'tarjetas':
+      return (
+        <ol className="vista-previa__lista">
+          {lectura.elementos.map((p, i) => (
+            <li key={i}>
+              {p.a} <span aria-hidden="true">⟲</span> {p.b}
+            </li>
+          ))}
+        </ol>
+      )
+    case 'completar':
+      return (
+        <ol className="vista-previa__lista">
+          {lectura.elementos.map((frase, i) => (
+            <li key={i}>
+              {frase.partes.map((parte, j) =>
+                parte.oculta ? (
+                  <mark key={j} className="vista-previa__oculta">
+                    {parte.texto}
+                  </mark>
+                ) : (
+                  parte.texto
+                ),
+              )}
+            </li>
+          ))}
+        </ol>
+      )
+    case 'pasapalabra':
+      return (
+        <ul className="vista-previa__rosco">
+          {lectura.elementos.map((d, i) => (
+            <li key={i}>
+              <span className="vista-previa__letra">{d.letra}</span>
+              <span>
+                <span className="etiqueta">{d.contiene ? t.contieneLa(d.letra) : t.empiezaCon(d.letra)}:</span>{' '}
+                {d.definicion} <strong className="etiqueta-correcta">→ {d.respuesta}</strong>
+              </span>
+            </li>
+          ))}
+        </ul>
+      )
+    case 'quien-soy':
+      return (
+        <ol className="vista-previa__preguntas">
+          {lectura.elementos.map((a, i) => (
+            <li key={i}>
+              <p className="vista-previa__enunciado">
+                {t.respuesta}: {a.respuesta}
+              </p>
+              <ol className="vista-previa__alternativas">
+                {a.pistas.map((pista, j) => (
+                  <li key={j}>
+                    {t.paso(j + 1)} {pista}
+                  </li>
+                ))}
+              </ol>
+            </li>
+          ))}
+        </ol>
+      )
   }
 }
 

@@ -22,11 +22,16 @@ export function leerPareja(linea: Linea): Pareja | null {
     const [a, b] = linea.celdas
     return { a, b }
   }
+  return separarPareja(linea.texto)
+}
+
+/** Parte el texto en sus dos lados ("perro = dog"), o null si no tiene separador o un lado queda vacío. */
+export function separarPareja(texto: string): Pareja | null {
   for (const separador of SEPARADORES) {
-    const m = linea.texto.match(separador)
+    const m = texto.match(separador)
     if (!m) continue
-    const a = lado(linea.texto.slice(0, m.index))
-    const b = lado(linea.texto.slice(m.index! + m[0].length))
+    const a = lado(texto.slice(0, m.index))
+    const b = lado(texto.slice(m.index! + m[0].length))
     // Una definición con dos puntos debe tener un término corto antes.
     const terminoLargo = separador === SEPARADORES[2] && a.split(/\s+/).length > 6
     return TIENE_CONTENIDO.test(a) && TIENE_CONTENIDO.test(b) && !terminoLargo ? { a, b } : null
