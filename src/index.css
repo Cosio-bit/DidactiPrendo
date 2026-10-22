@@ -2686,3 +2686,85 @@ h1:focus {
     order: 1;
   }
 }
+
+/* Crear con IA: el pedido arriba y, debajo, lo que propone la IA. */
+.zona-ia {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
+  background: var(--aviso-fondo);
+  border: var(--borde) solid var(--aviso-borde);
+  border-radius: var(--radio-grande);
+}
+
+.crear-con-ia,
+.crear-con-ia__pedido,
+.crear-con-ia__resultado {
+  display: grid;
+  gap: var(--espacio-3);
+}
+
+.crear-con-ia__area {
+  resize: none;
+  overflow: hidden;
+}
+
+.crear-con-ia__codigo {
+  max-width: 16em;
+}
+
+.crear-con-ia__privacidad,
+.crear-con-ia__esperando {
+  color: var(--texto-suave);
+}
+
+.crear-con-ia__esperando {
+  font-weight: 700;
+}
+
+.crear-con-ia__error {
+  padding: var(--espacio-2);
+  font-weight: 700;
+  background: var(--error-fondo);
+  border-left: 6px solid var(--peligro);
+  border-radius: 0 var(--radio) var(--radio) 0;
+}
+
+.crear-con-ia__resultado h2:focus,
+.crear-con-ia__error:focus {
+  outline: none;
+}
+
+.propuesta {
+  display: grid;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
+  background: var(--superficie);
+  border: var(--borde) solid;
+  border-left-width: 10px;
+  border-radius: var(--radio-grande);
+}
+
+.propuesta__cabecera {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.propuesta__cabecera h3 {
+  margin: 0;
+  font-size: var(--texto-grande);
+}
+
+.propuesta__icono {
+  flex: none;
+  width: 52px;
+  height: 52px;
+}
+
+.propuesta__tipo {
+  color: var(--texto-suave);
+}

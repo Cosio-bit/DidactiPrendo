@@ -95,7 +95,19 @@ export function Inicio() {
           {textos.inicio.misActividades}
         </Boton>
       </div>
-      {/* Las seis actividades con su dibujo y para qué sirven; cada una abre el editor con ella elegida. */}
+      {/* Para quien no tiene el texto escrito: la IA elige la actividad y la llena. */}
+      <section className="zona-ia" aria-labelledby="crear-con-ia">
+        <div>
+          <h2 id="crear-con-ia" className="zona-cargar__titulo">
+            {textos.inicio.iaTitulo}
+          </h2>
+          <p className="zona-cargar__ayuda">{textos.inicio.iaAyuda}</p>
+        </div>
+        <Boton variante="navegacion" onClick={() => irA({ pantalla: 'crear-con-ia' })}>
+          {textos.inicio.crearConIA}
+        </Boton>
+      </section>
+      {/* Las siete actividades con su dibujo y para qué sirven; cada una abre el editor con ella elegida. */}
       <section className="inicio__tipos" aria-labelledby="que-crear">
         <div>
           <h2 id="que-crear">{textos.inicio.queCrear}</h2>

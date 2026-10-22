@@ -4,6 +4,7 @@ import { useSyncExternalStore } from 'react'
 export type Ruta =
   | { pantalla: 'inicio' }
   | { pantalla: 'mis-actividades' }
+  | { pantalla: 'crear-con-ia' }
   | { pantalla: 'editor'; id: string }
   | { pantalla: 'proyectar'; id: string }
   | { pantalla: 'imprimir'; id: string }
@@ -13,6 +14,7 @@ export type Ruta =
 export function leerRuta(hash: string): Ruta {
   const partes = hash.replace(/^#\/?/, '').split('/')
   if (partes[0] === 'actividades') return { pantalla: 'mis-actividades' }
+  if (partes[0] === 'crear-con-ia') return { pantalla: 'crear-con-ia' }
   if (partes[0] === 'actividad' && partes[1]) {
     return { pantalla: 'editor', id: decodeURIComponent(partes[1]) }
   }
@@ -34,6 +36,8 @@ export function hashDe(ruta: Ruta): string {
       return '#/'
     case 'mis-actividades':
       return '#/actividades'
+    case 'crear-con-ia':
+      return '#/crear-con-ia'
     case 'editor':
       return `#/actividad/${encodeURIComponent(ruta.id)}`
     case 'proyectar':
