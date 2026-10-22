@@ -2768,3 +2768,10 @@ h1:focus {
 .propuesta__tipo {
   color: var(--texto-suave);
 }
+
+/* El botón para pedir: grande para tocarlo, pero sin empujar el formulario fuera de la pantalla en 1024×768. */
+.crear-con-ia__crear {
+  min-height: 64px;
+  padding-inline: var(--espacio-4);
+  font-size: var(--texto-grande);
+}

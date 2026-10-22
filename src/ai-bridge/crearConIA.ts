@@ -72,11 +72,14 @@ export function leerRespuesta(datos: unknown): ResultadoIA {
   return { ok: true, actividades, mensaje: typeof d.mensaje === 'string' ? d.mensaje.trim() : '' }
 }
 
+/** Solo si el navegador confirma que no hay conexión (si no lo sabe, se intenta igual). */
+const sinConexion = () => navigator.onLine === false
+
 export async function pedirActividades(
   pedido: { pedido: string; guia: string; codigo: string },
   enviar: typeof fetch = fetch,
 ): Promise<ResultadoIA> {
-  if (!navigator.onLine) return { ok: false, error: 'sin-internet' }
+  if (sinConexion()) return { ok: false, error: 'sin-internet' }
   try {
     const respuesta = await enviar(RUTA_API, {
       method: 'POST',
@@ -87,6 +90,6 @@ export async function pedirActividades(
     if (respuesta.status === 404 || respuesta.status === 405) return { ok: false, error: 'no-disponible' }
     return leerRespuesta(await respuesta.json().catch(() => null))
   } catch {
-    return { ok: false, error: navigator.onLine ? 'falla' : 'sin-internet' }
+    return { ok: false, error: sinConexion() ? 'sin-internet' : 'falla' }
   }
 }

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-test('la pantalla de inicio saluda al profe y ofrece dos acciones grandes, las siete actividades y cargar material', async ({ page }) => {
+test('la pantalla de inicio saluda al profe y ofrece dos acciones grandes, crear con IA, las siete actividades y cargar material', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('heading', { name: 'Hola, profe' })).toBeVisible()
 
@@ -9,6 +9,7 @@ test('la pantalla de inicio saluda al profe y ofrece dos acciones grandes, las s
   await expect(acciones).toHaveText([
     'Crear actividad',
     'Mis actividades',
+    'Crear con IA',
     /^Ruleta/,
     /^Selección múltiple/,
     /^Parejas/,

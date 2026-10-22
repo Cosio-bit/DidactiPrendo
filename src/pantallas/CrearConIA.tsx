@@ -118,7 +118,7 @@ export function CrearConIA() {
             value={pedido}
             placeholder={t.pedidoEjemplo}
             maxLength={1500}
-            rows={3}
+            rows={2}
             onChange={(evento) => setPedido(evento.target.value)}
           />
         </div>
@@ -171,7 +171,7 @@ export function CrearConIA() {
 
         <p className="crear-con-ia__privacidad">{t.privacidad}</p>
         <div>
-          <Boton type="submit" variante="principal" grande disabled={esperando || !pedido.trim()}>
+          <Boton type="submit" variante="principal" className="crear-con-ia__crear" disabled={esperando || !pedido.trim()}>
             {t.crear}
           </Boton>
         </div>

@@ -1,3 +1,4 @@
+/// <reference types="node" />
 // Función de Vercel: arma actividades con Claude a partir del pedido del profe (y su guía, si la pega).
 // Es lo único de la app que pasa por un servidor, y solo cuando el profe usa "Crear con IA".
 // La clave de la API vive en la variable de entorno `key` de Vercel: nunca llega al navegador.
