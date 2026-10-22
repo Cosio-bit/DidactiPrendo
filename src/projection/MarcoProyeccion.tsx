@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type CSSProperties, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { leerMarcador, nuevoMarcador, type Marcador } from '../blocks/marcador/logica.ts'
 import { nombreDeColor } from '../blocks/marcador/nombres.ts'
 import { DialogoEquipos } from '../blocks/marcador/DialogoEquipos.tsx'
@@ -10,6 +10,7 @@ import { ajustes } from '../storage/ajustes.ts'
 import { Boton } from '../ui/Boton.tsx'
 import { RanuraTeclas } from './ranuraTeclas.ts'
 import { useAtajos } from './useAtajos.ts'
+import { EVENTO_NO_CABE } from './useTextoAjustado.ts'
 import { useTamano } from './useTamano.ts'
 
 const t = textos.herramientas
@@ -36,6 +37,46 @@ async function cargar(): Promise<Guardado> {
     marcador: leerMarcador(marcador) ?? nuevoMarcador(2, nombreDeColor),
     totalMs: typeof total === 'number' && Number.isFinite(total) ? total : 3 * MINUTO_MS,
   }
+}
+
+/** Lo mínimo que se alarga la pantalla cada vez (en altos de pantalla), y hasta cuánto. */
+const PASO_MINIMO = 0.25
+const MAXIMO_ALARGAR = 6
+
+/**
+ * En el celular, si un texto no cabe ni con la letra mínima, la pantalla de la actividad se alarga
+ * de a poco hasta que cabe, y se desplaza la página (nunca se corta el texto ni hay un cuadro con barra).
+ * Si cambia el tamaño de la pantalla, se vuelve a partir sin alargar.
+ */
+function useAlargarSiNoCabe() {
+  const raiz = useRef<HTMLDivElement>(null)
+  const [extra, setExtra] = useState(0)
+  useEffect(() => {
+    const marco = raiz.current
+    if (!marco) return
+    let pedido = 0
+    let falta = 0
+    function alNoCaber(evento: Event) {
+      // Varias cajas pueden avisar a la vez (las cartas del memorice): se alarga una vez por cuadro, lo que pida la que más necesita.
+      falta = Math.max(falta, (evento as CustomEvent<number>).detail || 0)
+      if (pedido) return
+      pedido = requestAnimationFrame(() => {
+        pedido = 0
+        const paso = Math.ceil(Math.max(falta + 8, window.innerHeight * PASO_MINIMO))
+        falta = 0
+        setExtra((e) => Math.min(e + paso, window.innerHeight * MAXIMO_ALARGAR))
+      })
+    }
+    const reiniciar = () => setExtra(0)
+    marco.addEventListener(EVENTO_NO_CABE, alNoCaber)
+    window.addEventListener('resize', reiniciar)
+    return () => {
+      cancelAnimationFrame(pedido)
+      marco.removeEventListener(EVENTO_NO_CABE, alNoCaber)
+      window.removeEventListener('resize', reiniciar)
+    }
+  }, [])
+  return [raiz, extra] as const
 }
 
 function guardar(clave: string, valor: unknown) {
@@ -75,6 +116,7 @@ function Marco({ guardado, children }: Props & { guardado: Guardado }) {
   /** Dónde va la ayuda de teclas de la actividad (en el pie). */
   const [ranura, setRanura] = useState<HTMLElement | null>(null)
   const [abajo, { alto }] = useTamano<HTMLDivElement>()
+  const [raiz, extra] = useAlargarSiNoCabe()
 
   // Cada cambio queda guardado para la próxima actividad.
   useEffect(() => {
@@ -100,9 +142,11 @@ function Marco({ guardado, children }: Props & { guardado: Guardado }) {
 
   return (
     <div
+      ref={raiz}
       className={abiertas ? 'proyeccion-marco proyeccion-marco--con-herramientas' : 'proyeccion-marco'}
       data-tiempo-acabado={tiempoAcabado && temporizadorVisible}
-      style={{ '--alto-herramientas': `${alto}px` } as CSSProperties}
+      data-alargada={extra > 0 || undefined}
+      style={{ '--alto-herramientas': `${alto}px`, '--alto-extra': `${extra}px` } as CSSProperties}
     >
       <RanuraTeclas.Provider value={ranura}>{children}</RanuraTeclas.Provider>
       <div ref={abajo} className="proyeccion-marco__abajo">

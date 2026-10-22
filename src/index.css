@@ -2456,6 +2456,16 @@ h1:focus {
     height: max(80vh, calc(100% - var(--alto-herramientas, 0px)));
   }
 
+  /* Un texto que no cabe ni con la letra mínima: la actividad se alarga y se desplaza la página. */
+  .proyeccion-marco[data-alargada] {
+    overflow-y: auto;
+  }
+
+  .proyeccion-marco[data-alargada] > .proyeccion {
+    flex: 0 0 auto;
+    height: calc(max(80vh, 100% - var(--alto-herramientas, 0px)) + var(--alto-extra, 0px));
+  }
+
   .equipo__puntos {
     font-size: 28px;
   }
