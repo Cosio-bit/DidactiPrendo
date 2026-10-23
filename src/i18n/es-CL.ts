@@ -4,6 +4,7 @@ type TipoConTexto =
   | 'ruleta'
   | 'preguntas'
   | 'parejas'
+  | 'terminos-pareados'
   | 'verdadero-falso'
   | 'ordenar'
   | 'clasificar'
@@ -48,15 +49,73 @@ export const textos = {
     saludoDestacado: 'profe',
     descripcion: 'Convierte tus listas y preguntas en actividades para proyectar en la sala.',
     comoFunciona: 'Así funciona',
+    /** Los mismos nombres de los pasos del editor, para que el profe los reconozca al crear. */
     pasos: [
-      'Pega el texto que ya tienes: de Word o Excel.',
-      'Elige la actividad: ruleta, preguntas, memorice y más.',
-      'Proyecta y juega con el curso.',
+      { titulo: 'Pega tu texto', detalle: 'De Word, Excel o ChatGPT' },
+      { titulo: 'Elige la actividad', detalle: 'Ruleta, memorice y más' },
+      { titulo: 'Proyecta', detalle: 'Y juega con el curso' },
     ],
     crearActividad: 'Crear actividad',
     misActividades: 'Mis actividades',
+    queCrear: '¿Qué puedes crear?',
+    queCrearAyuda: 'Toca una para empezar con ella.',
+    /** Para qué sirve cada actividad, con lo que el profe ya tiene a mano. */
+    usos: {
+      ruleta: 'Sortea nombres de la lista del curso',
+      preguntas: 'Las preguntas de tu prueba, con alternativas',
+      parejas: 'Memorice: voltear cartas y encontrar parejas',
+      'terminos-pareados': 'Unir cada concepto con su definición',
+      'verdadero-falso': 'Afirmaciones para responder V o F',
+      ordenar: 'Pasos o fechas para poner en orden',
+      clasificar: 'Elementos para separar en grupos',
+      tarjetas: 'Preguntas o palabras para voltear de a una',
+      completar: 'Frases con las palabras que faltan',
+      rosco: 'Una definición por cada letra',
+      'quien-soy': 'Pistas de a una para adivinar',
+    } satisfies Record<TipoConTexto, string>,
+    iaTitulo: '¿No tienes el texto listo?',
+    iaAyuda: 'Cuéntale a la IA qué quieres repasar. Ella elige la actividad y la llena por ti.',
+    crearConIA: 'Crear con IA',
     cargarTitulo: '¿Te pasaron un archivo de actividades?',
     cargarAyuda: 'Arrástralo a esta página o búscalo en tu computador.',
+  },
+  /** Pedirle a la IA que elija y llene la actividad. */
+  crearConIA: {
+    titulo: 'Crear con IA',
+    explicacion: 'Cuéntale a la IA qué quieres repasar o preparar. Ella elige la actividad que mejor sirve y la llena por ti.',
+    pedido: '¿Qué actividad quieres?',
+    pedidoEjemplo:
+      'Por ejemplo: términos pareados con los conceptos del género narrativo, para 6° básico. O: una actividad para recordar las partes de una noticia.',
+    agregarGuia: 'Agregar el texto de una guía (opcional)',
+    guia: 'Texto de tu guía o material',
+    guiaAyuda: 'Copia el texto de tu guía (de Word, PDF o Docs) y pégalo aquí. La IA armará las actividades con ese contenido.',
+    quitarGuia: 'Quitar la guía',
+    codigo: 'Código de acceso',
+    codigoAyuda: 'Lo encuentras en el mensaje con que te invitaron a probar la app.',
+    crear: 'Crear con IA',
+    esperando: 'Armando tu actividad… Puede tardar hasta un minuto.',
+    privacidad:
+      'Tu pedido y el texto de tu guía se envían a Claude, la IA de Anthropic, para armar la actividad. No escribas nombres de estudiantes.',
+    revisa: 'La IA puede equivocarse: revisa el contenido antes de proyectar.',
+    propuestas: (n: number) => (n === 1 ? 'La IA te propone esta actividad' : `La IA te propone ${n} actividades`),
+    porQue: 'Por qué:',
+    usar: 'Usar esta actividad',
+    guardarTodas: (n: number) => `Guardar las ${n} en Mis actividades`,
+    guardadas: (n: number) => (n === 1 ? 'Se guardó 1 actividad en Mis actividades' : `Se guardaron ${n} actividades en Mis actividades`),
+    noSirve: 'Esta no quedó bien armada. Pide de nuevo o usa otra.',
+    nada: 'La IA no armó ninguna actividad. Prueba escribiendo el pedido de otra forma.',
+    errores: {
+      pedido: 'Escribe qué actividad quieres (hasta 1.500 letras). Si pegaste una guía, que tenga hasta 40.000 letras.',
+      codigo: 'El código de acceso no es correcto. Revísalo y vuelve a intentar.',
+      'sin-configurar': 'La IA todavía no está configurada en esta página. Avísale a quien administra la app.',
+      clave: 'La clave de la IA no está bien configurada. Avísale a quien administra la app.',
+      'sin-creditos': 'Se acabó el saldo para usar la IA. Avísale a quien administra la app.',
+      ocupado: 'La IA está ocupada. Espera un minuto y vuelve a intentar.',
+      rechazo: 'La IA no pudo responder ese pedido. Prueba escribiéndolo de otra forma.',
+      falla: 'No se pudo crear la actividad. Vuelve a intentar en un momento.',
+      'sin-internet': 'Necesitas internet para crear con IA. Todo lo demás funciona sin conexión.',
+      'no-disponible': 'Crear con IA no está disponible en esta versión de la página.',
+    },
   },
   misActividades: {
     titulo: 'Mis actividades',
@@ -120,6 +179,7 @@ export const textos = {
     ruleta: 'Ruleta',
     preguntas: 'Selección múltiple',
     parejas: 'Parejas',
+    'terminos-pareados': 'Términos pareados',
     'verdadero-falso': 'Verdadero o falso',
     ordenar: 'Ordenar',
     clasificar: 'Clasificar',
@@ -152,6 +212,8 @@ export const textos = {
       ruleta: 'Ana\nBenjamín\nCatalina\nDiego',
       preguntas: '¿Cuánto es 1/2 + 1/4?\na) 2/6\n*b) 3/4\nc) 1/8',
       parejas: 'perro = dog\ngato = cat\ncasa = house',
+      'terminos-pareados':
+        'Texto narrativo | Relata hechos reales o imaginarios\nTexto informativo | Entrega datos sobre un tema\nTexto argumentativo | Defiende una opinión con razones',
       'verdadero-falso': 'La ballena es un mamífero (V)\nEl Sol es un planeta (F)',
       ordenar: 'Semilla\nGerminación\nPlanta\nFlor\nFruto',
       clasificar: 'Mamíferos: perro, ballena, puma\nAves: cóndor, loica, pingüino',
@@ -165,6 +227,8 @@ export const textos = {
       ruleta: 'Un elemento por línea: nombres del curso, temas, preguntas para conversar.',
       preguntas: 'La pregunta y debajo sus alternativas a), b), c). Pon un * antes de la correcta.',
       parejas: 'Una pareja por línea, separada por =. También sirven dos columnas copiadas de Word o Excel.',
+      'terminos-pareados':
+        'Un concepto y su definición por línea, separados por | o =. También sirve una tabla de dos columnas copiada de Docs, Word, Excel o ChatGPT.',
       'verdadero-falso': 'Una afirmación por línea, con (V) o (F) al final.',
       ordenar: 'Un elemento por línea, en el orden correcto. Al proyectar aparecen desordenados.',
       clasificar: 'Cada categoría con dos puntos y sus elementos separados por comas.',
@@ -264,6 +328,15 @@ export const textos = {
     teclasOrdenar: 'Arrastra o toca cada elemento y luego su lugar · Espacio: el que sigue · ←: deshacer · Esc: volver',
     elegirLugar: 'Ahora toca su lugar en el orden (o presiona su número). Esc para soltarlo',
     sinElementosOrdenar: 'Esta actividad necesita al menos 2 elementos para ordenar. Sal y revisa el texto.',
+    unidos: (n: number, total: number) => `${n} de ${total} unidos`,
+    pareadosTerminado: '¡Todo unido!',
+    noEsSuDefinicion: 'No es su definición',
+    columnaConceptos: 'Conceptos',
+    columnaDefiniciones: 'Definiciones',
+    teclasPareados: 'Toca un concepto y luego su definición, o arrástralo · Espacio: el que sigue · ←: deshacer · Esc: volver',
+    elegirDefinicion: 'Ahora toca su definición (o presiona Esc para soltarlo)',
+    elegirConcepto: 'Ahora toca su concepto (o presiona Esc para soltarla)',
+    sinTerminos: 'Esta actividad necesita al menos 2 conceptos con su definición. Sal y revisa el texto.',
     ubicados: (n: number, total: number) => `${n} de ${total} clasificados`,
     clasificacionTerminada: '¡Todo clasificado!',
     categoriaBoton: (n: number, nombre: string) => `${n}: ${nombre}`,
@@ -384,6 +457,7 @@ export const textos = {
         ordenar: ['elemento', 'elementos'],
         preguntas: ['pregunta', 'preguntas'],
         parejas: ['pareja', 'parejas'],
+        'terminos-pareados': ['concepto', 'conceptos'],
         'verdadero-falso': ['afirmación', 'afirmaciones'],
         clasificar: ['categoría', 'categorías'],
         tarjetas: ['tarjeta', 'tarjetas'],
@@ -424,6 +498,7 @@ export const textos = {
     cambioOpciones: 'cambio de opciones',
     borrado: (nombre: string) => `borrado de «${nombre}»`,
     importacion: 'actividades traídas del archivo',
+    creadasConIA: 'actividades creadas con IA',
   },
   lector: {
     sinElementos: 'No encontramos nada para usar. Escribe o pega un elemento por línea.',
@@ -460,6 +535,10 @@ export const textos = {
     sinParejas: 'Para el memorice se necesitan al menos 2 parejas. Escribe una por línea, separadas por =, por ejemplo: perro = dog.',
     demasiadasParejas: (cantidad: number, maximo: number) =>
       `Hay ${cantidad} parejas. El memorice se lee bien con ${maximo} como máximo.`,
+    sinTerminos:
+      'Para unir conceptos se necesitan al menos 2. Escribe un concepto y su definición por línea, separados por |, por ejemplo: Sustantivo | Palabra que nombra.',
+    demasiadosTerminos: (cantidad: number, maximo: number) =>
+      `Hay ${cantidad} conceptos. Para unirlos en la sala se leen bien ${maximo} como máximo.`,
     sinAfirmaciones: 'No encontramos afirmaciones. Escribe una por línea con (V) o (F) al final.',
     sinRespuesta: (numeros: number[]) =>
       numeros.length === 1

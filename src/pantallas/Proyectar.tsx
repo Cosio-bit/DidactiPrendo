@@ -11,6 +11,7 @@ import { esListaDeTextos } from '../blocks/ordenar/logica.ts'
 import { ProyeccionOrdenar } from '../blocks/ordenar/ProyeccionOrdenar.tsx'
 import { esListaDeParejas } from '../blocks/parejas/logica.ts'
 import { ProyeccionParejas } from '../blocks/parejas/ProyeccionParejas.tsx'
+import { ProyeccionPareados } from '../blocks/pareados/ProyeccionPareados.tsx'
 import { esListaDeDefiniciones } from '../blocks/rosco/logica.ts'
 import { ProyeccionRosco } from '../blocks/rosco/ProyeccionRosco.tsx'
 import { ProyeccionPreguntas } from '../blocks/preguntas/ProyeccionPreguntas.tsx'
@@ -99,6 +100,8 @@ function mensajeSiNoSePuede(b: Block): string | undefined {
       return esListaDeAfirmaciones(b.items) && b.items.length > 0 ? undefined : t.sinAfirmaciones
     case 'parejas':
       return esListaDeParejas(b.items) && b.items.length >= 2 ? undefined : t.sinParejas
+    case 'terminos-pareados':
+      return esListaDeParejas(b.items) && b.items.length >= 2 ? undefined : t.sinTerminos
     case 'ordenar':
       return esListaDeTextos(b.items) && b.items.length >= 2 ? undefined : t.sinElementosOrdenar
     case 'clasificar':
@@ -160,6 +163,18 @@ function Actividad({ bloque: b }: { bloque: Block }) {
     return (
       <ProyeccionParejas
         key={b.id}
+        parejas={b.items}
+        onSalir={() => salir(id)}
+        textoVolver={textoVolver(id)}
+      />
+    )
+  }
+
+  if (b.type === 'terminos-pareados' && esListaDeParejas(b.items)) {
+    return (
+      <ProyeccionPareados
+        key={b.id}
+        titulo={nombreVisible(b)}
         parejas={b.items}
         onSalir={() => salir(id)}
         textoVolver={textoVolver(id)}

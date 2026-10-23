@@ -53,11 +53,12 @@ function Elementos({ lectura }: { lectura: Lectura }) {
         </ol>
       )
     case 'parejas':
+    case 'terminos-pareados':
       return (
         <ol className="vista-previa__lista">
           {lectura.elementos.map((p, i) => (
             <li key={i}>
-              {p.a} <span aria-hidden="true">↔</span> {p.b}
+              {lectura.tipo === 'terminos-pareados' ? <strong>{p.a}</strong> : p.a} <span aria-hidden="true">↔</span> {p.b}
             </li>
           ))}
         </ol>

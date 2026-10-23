@@ -4,9 +4,16 @@ import type { Pareja } from './tipos.ts'
 
 /** El memorice se lee bien proyectado hasta con esta cantidad de parejas. */
 export const MAXIMO_PAREJAS = 12
+/** En términos pareados las definiciones son más largas: caben menos en la pantalla. */
+export const MAXIMO_TERMINOS = 10
 
+const DOS_PUNTOS = /\s*:\s+/
 /** Separadores, del más claro al más dudoso. Se usa el primero que aparezca en la línea. */
-const SEPARADORES: RegExp[] = [/\s*=\s*/, /\s*(?:→|->|⇒)\s*/, /\s*:\s+/, /\s+[-–—]\s+/]
+const SEPARADORES: RegExp[] = [/\s*=\s*/, /\s*\|\s*/, /\s*(?:→|->|⇒)\s*/, DOS_PUNTOS, /\s+[-–—]\s+/]
+
+/** Títulos de columna de una tabla de conceptos ("Concepto | Definición"): no son una pareja. */
+const TITULO_DE_COLUMNA =
+  /^(?:conceptos?|t[eé]rminos?|palabras?|columna [ab12]|definici[oó]n(?:es)?|significados?|descripci[oó]n(?:es)?|caracter[ií]sticas?|ejemplos?)$/i
 
 const TIENE_CONTENIDO = /[\p{L}\p{N}]/u
 /** "Ana", "Benjamín": una sola palabra con mayúscula, como un nombre o un apellido. */
@@ -33,7 +40,7 @@ export function separarPareja(texto: string): Pareja | null {
     const a = lado(texto.slice(0, m.index))
     const b = lado(texto.slice(m.index! + m[0].length))
     // Una definición con dos puntos debe tener un término corto antes.
-    const terminoLargo = separador === SEPARADORES[2] && a.split(/\s+/).length > 6
+    const terminoLargo = separador === DOS_PUNTOS && a.split(/\s+/).length > 6
     return TIENE_CONTENIDO.test(a) && TIENE_CONTENIDO.test(b) && !terminoLargo ? { a, b } : null
   }
   return null
@@ -47,8 +54,24 @@ export function pareceListaDeNombres(lineas: Linea[]): boolean {
   return nombres.length >= filas.length * 0.8
 }
 
-export function leerParejas(lineas: Linea[], hayTexto: boolean): Resultado<Pareja> & { conSeparador: number } {
-  const { contenido, descartadas } = recortarBordes(conContenido(lineas), (l) => l.titulo && !leerPareja(l))
+/** La fila de títulos de una tabla, como "Concepto | Definición". */
+function esFilaDeTitulos(linea: Linea): boolean {
+  const pareja = leerPareja(linea)
+  return pareja !== null && TITULO_DE_COLUMNA.test(pareja.a) && TITULO_DE_COLUMNA.test(pareja.b)
+}
+
+/** Para qué actividad se leen las parejas: cambia el máximo y cómo se explican los problemas. */
+export type UsoParejas = 'memorice' | 'pareados'
+
+export function leerParejas(
+  lineas: Linea[],
+  hayTexto: boolean,
+  uso: UsoParejas = 'memorice',
+): Resultado<Pareja> & { conSeparador: number } {
+  const { contenido, descartadas } = recortarBordes(
+    conContenido(lineas),
+    (l) => (l.titulo && !leerPareja(l)) || esFilaDeTitulos(l),
+  )
   const elementos: Pareja[] = []
   let conSeparador = 0
   for (const linea of contenido) {
@@ -61,16 +84,33 @@ export function leerParejas(lineas: Linea[], hayTexto: boolean): Resultado<Parej
     }
   }
 
-  const advertencias = ignoradas(descartadas, t.lineasSinPareja)
+  // La fila de títulos se descarta sin avisar: es lo esperable en una tabla.
+  const advertencias = ignoradas(
+    descartadas.filter((l) => !esFilaDeTitulos(l)),
+    t.lineasSinPareja,
+  )
+  const sinParejas = uso === 'memorice' ? t.sinParejas : t.sinTerminos
   if (elementos.length === 0) {
-    if (hayTexto) advertencias.push(advertencia('sin-parejas', t.sinParejas))
+    if (hayTexto) advertencias.push(advertencia('sin-parejas', sinParejas))
     return { elementos, advertencias, conSeparador }
   }
   const repetidas = repetidos(elementos, (p) => claveComparacion(p.a))
   if (repetidas.length > 0) advertencias.push(advertencia('repetidos', t.repetidos(repetidas.map((p) => p.a))))
-  if (elementos.length < 2) advertencias.push(advertencia('sin-parejas', t.sinParejas))
-  if (elementos.length > MAXIMO_PAREJAS) {
-    advertencias.push(advertencia('demasiadas-parejas', t.demasiadasParejas(elementos.length, MAXIMO_PAREJAS)))
+  if (elementos.length < 2) advertencias.push(advertencia('sin-parejas', sinParejas))
+  const maximo = uso === 'memorice' ? MAXIMO_PAREJAS : MAXIMO_TERMINOS
+  if (elementos.length > maximo) {
+    const mensaje = uso === 'memorice' ? t.demasiadasParejas : t.demasiadosTerminos
+    advertencias.push(advertencia('demasiadas-parejas', mensaje(elementos.length, maximo)))
   }
   return { elementos, advertencias, conSeparador }
+}
+
+/**
+ * Definiciones largas (frases) se leen mejor en términos pareados que en cartas de memorice.
+ * Se mira el promedio de palabras del lado derecho.
+ */
+export function parecenDefiniciones(parejas: Pareja[]): boolean {
+  if (parejas.length === 0) return false
+  const palabras = parejas.reduce((suma, p) => suma + p.b.split(/\s+/).length, 0) / parejas.length
+  return palabras >= 5
 }

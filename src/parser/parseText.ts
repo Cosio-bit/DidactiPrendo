@@ -5,7 +5,7 @@ import { textosLargos } from './largos.ts'
 import { leerLineas, normalizar } from './lineas.ts'
 import { leerRuleta } from './lista.ts'
 import { leerOrdenar } from './ordenar.ts'
-import { leerParejas, pareceListaDeNombres } from './parejas.ts'
+import { leerParejas, pareceListaDeNombres, parecenDefiniciones } from './parejas.ts'
 import { leerRosco } from './rosco.ts'
 import { leerPreguntas } from './preguntas.ts'
 import { leerQuienSoy } from './quienSoy.ts'
@@ -57,7 +57,11 @@ function leer(texto: string, tipo?: TipoLectura): Lectura {
 
     const vf = leerVerdaderoFalso(lineas, hayTexto)
     if (vf.marcadas >= 2 && vf.marcadas >= vf.elementos.length * PROPORCION_MINIMA) return 'verdadero-falso'
-    if (suficiente(leerParejas(lineas, hayTexto).conSeparador) && !pareceListaDeNombres(lineas)) return 'parejas'
+    const parejas = leerParejas(lineas, hayTexto)
+    if (suficiente(parejas.conSeparador) && !pareceListaDeNombres(lineas)) {
+      // Con definiciones largas, unir cada concepto con su definición se lee mejor que un memorice.
+      return parecenDefiniciones(parejas.elementos) ? 'terminos-pareados' : 'parejas'
+    }
     // Ordenar y Tarjetas nunca se sugieren: se ven igual que una lista para la ruleta o que las parejas.
     return 'ruleta'
   }
@@ -71,6 +75,10 @@ function leer(texto: string, tipo?: TipoLectura): Lectura {
     case 'parejas': {
       const { elementos, advertencias } = leerParejas(lineas, hayTexto)
       return { ...base, tipo: 'parejas', elementos, advertencias }
+    }
+    case 'terminos-pareados': {
+      const { elementos, advertencias } = leerParejas(lineas, hayTexto, 'pareados')
+      return { ...base, tipo: 'terminos-pareados', elementos, advertencias }
     }
     case 'verdadero-falso': {
       const { elementos, advertencias } = leerVerdaderoFalso(lineas, hayTexto)

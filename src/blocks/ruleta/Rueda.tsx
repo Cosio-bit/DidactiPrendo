@@ -1,4 +1,5 @@
-import { memo } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
+import { acomodarEtiqueta, RADIO_RUEDA, type MedirTexto } from './logica.ts'
 
 // Colores de la marca (Amarillo Idea, Celeste Calma, Rojo Libro y su celeste oscuro) más tres de la
 // paleta Okabe-Ito, para que los segmentos vecinos se distingan también con daltonismo.
@@ -14,7 +15,6 @@ const COLORES = [
 
 /** Con más segmentos que esto, los nombres no caben en la rueda: se leen en el resultado. */
 const MAXIMO_CON_NOMBRES = 16
-const LARGO_NOMBRE = 14
 
 function color(i: number, n: number) {
   // El último no puede repetir el color del primero, porque quedan juntos.
@@ -27,22 +27,51 @@ function punto(angulo: number, radio: number) {
   return `${(radio * Math.cos(rad)).toFixed(3)} ${(radio * Math.sin(rad)).toFixed(3)}`
 }
 
-function recortar(texto: string) {
-  return texto.length > LARGO_NOMBRE ? `${texto.slice(0, LARGO_NOMBRE - 1)}…` : texto
+const R = RADIO_RUEDA
+const ALTO_LINEA = 1.15
+
+let contexto: CanvasRenderingContext2D | null | undefined
+
+/** Mide el texto con la letra de la app en negrita; sin dibujo disponible, lo estima. */
+const medir: MedirTexto = (texto) => {
+  if (contexto === undefined) {
+    contexto = document.createElement('canvas').getContext?.('2d') ?? null
+  }
+  if (!contexto) return texto.length * 0.62
+  const familia = getComputedStyle(document.documentElement).getPropertyValue('--f-texto').trim() || 'sans-serif'
+  contexto.font = `700 100px ${familia}`
+  return contexto.measureText(texto).width / 100
 }
 
-const R = 100
+/** Cambia cuando terminan de cargar las letras de la app, para volver a medir con las verdaderas. */
+function useLetrasCargadas() {
+  const [cargadas, setCargadas] = useState(false)
+  useEffect(() => {
+    let vigente = true
+    document.fonts?.ready.then(() => vigente && setCargadas(true))
+    return () => {
+      vigente = false
+    }
+  }, [])
+  return cargadas
+}
 
 /** La rueda sin girar: segmentos, nombres (si caben) y borde. Se dibuja una sola vez por lista. */
-const Segmentos = memo(function Segmentos({ elementos }: { elementos: string[] }) {
+const Segmentos = memo(function Segmentos({ elementos, letrasCargadas }: { elementos: string[]; letrasCargadas: boolean }) {
   const n = elementos.length
   const paso = 360 / n
   const conNombres = n <= MAXIMO_CON_NOMBRES
-  const tamanoLetra = Math.min(14, (2 * Math.PI * R * 0.6) / n / 1.4)
+  // Cada nombre con la letra más grande que le cabe: uno largo no achica a los demás.
+  const etiquetas = useMemo(
+    () => (conNombres ? elementos.map((e) => acomodarEtiqueta(e, n, medir)) : []),
+    // Al cargar las letras de la app se vuelve a medir.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [elementos, n, conNombres, letrasCargadas],
+  )
 
   return (
     <>
-      {elementos.map((elemento, i) => {
+      {elementos.map((_, i) => {
         const { fondo, texto } = color(i, n)
         const inicio = i * paso
         const fin = (i + 1) * paso
@@ -62,14 +91,22 @@ const Segmentos = memo(function Segmentos({ elementos }: { elementos: string[] }
             {conNombres && (
               <text
                 // En la mitad izquierda el texto se da vuelta para no quedar de cabeza.
-                transform={`rotate(${medio - 90}) translate(${R * 0.58} 0)${medio > 180 ? ' rotate(180)' : ''}`}
+                transform={
+                  n === 1
+                    ? undefined
+                    : `rotate(${medio - 90}) translate(${etiquetas[i].distancia.toFixed(2)} 0)${medio > 180 ? ' rotate(180)' : ''}`
+                }
                 textAnchor="middle"
                 dominantBaseline="central"
-                fontSize={tamanoLetra}
+                fontSize={etiquetas[i].tamano.toFixed(2)}
                 fontWeight={700}
                 fill={texto}
               >
-                {recortar(elemento)}
+                {etiquetas[i].lineas.map((linea, j, lineas) => (
+                  <tspan key={j} x={0} y={((j - (lineas.length - 1) / 2) * ALTO_LINEA * etiquetas[i].tamano).toFixed(2)}>
+                    {linea}
+                  </tspan>
+                ))}
               </text>
             )}
           </g>
@@ -88,6 +125,7 @@ interface Props {
 }
 
 export function Rueda({ elementos, rotacion, descripcion, onToque }: Props) {
+  const letrasCargadas = useLetrasCargadas()
   return (
     <svg
       className="rueda"
@@ -97,7 +135,7 @@ export function Rueda({ elementos, rotacion, descripcion, onToque }: Props) {
       onClick={onToque}
     >
       <g transform={`rotate(${rotacion})`}>
-        <Segmentos elementos={elementos} />
+        <Segmentos elementos={elementos} letrasCargadas={letrasCargadas} />
       </g>
       <circle r={8} fill="var(--texto-color)" />
       {/* Puntero arriba, apuntando hacia la rueda. */}

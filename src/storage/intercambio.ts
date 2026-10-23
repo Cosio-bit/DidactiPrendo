@@ -6,6 +6,7 @@ const TIPOS: BlockType[] = [
   'ruleta',
   'preguntas',
   'parejas',
+  'terminos-pareados',
   'verdadero-falso',
   'ordenar',
   'clasificar',

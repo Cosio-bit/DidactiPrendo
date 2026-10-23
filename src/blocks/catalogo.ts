@@ -7,6 +7,7 @@ export const TIPOS_CON_TEXTO: TipoLectura[] = [
   'ruleta',
   'preguntas',
   'parejas',
+  'terminos-pareados',
   'verdadero-falso',
   'ordenar',
   'clasificar',
@@ -26,6 +27,7 @@ export function sePuedeProyectar(tipo: BlockType, items: unknown): boolean {
   switch (tipo) {
     case 'ruleta':
     case 'parejas':
+    case 'terminos-pareados':
     case 'ordenar':
       return items.length >= 2
     case 'preguntas':

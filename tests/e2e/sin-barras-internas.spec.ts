@@ -22,7 +22,7 @@ async function textosCortados(page: Page) {
   return page.evaluate(() =>
     [
       ...document.querySelectorAll<HTMLElement>(
-        '.carta__cara, .proyeccion-ruleta__resultado, .proyeccion-preguntas__contenido, .proyeccion-ordenar__contenido, .tarjeta-grande__cara, .proyeccion-rosco__texto',
+        '.carta__cara, .proyeccion-ruleta__resultado, .proyeccion-preguntas__contenido, .proyeccion-ordenar__contenido, .proyeccion-pareados__contenido, .tarjeta-grande__cara, .proyeccion-rosco__texto',
       ),
     ]
       .filter((e) => e.scrollHeight > e.clientHeight + 1 || e.scrollWidth > e.clientWidth + 1)
@@ -59,6 +59,7 @@ test('proyección: nada se desplaza dentro de la pantalla, ni con textos largos'
     [nombres],
     [preguntas],
     [Array.from({ length: 12 }, (_, i) => `concepto ${i + 1} = ${largo} ${i + 1}`).join('\n'), 'Parejas'],
+    [Array.from({ length: 10 }, (_, i) => `concepto ${i + 1} | ${largo} ${i + 1}`).join('\n'), 'Términos pareados'],
     [Array.from({ length: 12 }, (_, i) => `Paso ${i + 1}: ${largo}`).join('\n'), 'Ordenar'],
     [`Grupo uno: ${Array.from({ length: 8 }, (_, i) => `elemento largo ${i}`).join(', ')}\nGrupo dos: ${Array.from({ length: 8 }, (_, i) => `otro elemento ${i}`).join(', ')}`, 'Clasificar'],
     [`concepto = ${largo} ${largo}`, 'Tarjetas'],

@@ -110,6 +110,7 @@
   --tipo-ruleta: #d9a400;
   --tipo-preguntas: #1f8fd1;
   --tipo-parejas: var(--rojo);
+  --tipo-terminos-pareados: #0f8a7e;
   --tipo-verdadero-falso: #2e9e4a;
   --tipo-ordenar: #7b5cd6;
   --tipo-clasificar: #d6409f;
@@ -152,6 +153,7 @@
   --tipo-ruleta: #ffd400;
   --tipo-preguntas: #58c4f2;
   --tipo-parejas: #ff6b5a;
+  --tipo-terminos-pareados: #3fe0cf;
   --tipo-verdadero-falso: #5fd37a;
   --tipo-ordenar: #b39dff;
   --tipo-clasificar: #ff7ac8;
@@ -1336,18 +1338,16 @@ h1:focus {
   }
 }
 
-/* Selector de tipo: los diez en dos filas de ancho completo. */
+/* Selector de tipo: los once en dos filas de ancho completo, con su título arriba. */
 .selector-tipo--fila-completa {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: var(--espacio-1);
 }
 
-/* "Tipo de actividad" a la izquierda y las opciones al lado. */
 .selector-tipo-fila {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: var(--espacio-2);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--espacio-1);
 }
 
 /* El dibujo de cada juego, tenue detrás del nombre: el mismo que se ve en Mis actividades. */
@@ -1363,12 +1363,19 @@ h1:focus {
   text-align: center;
 }
 
-/* El círculo del botón de opción no hace falta: la opción elegida se marca con su borde. */
+/*
+ * El círculo del botón de opción no hace falta: la opción elegida se marca con su borde.
+ * Queda invisible encima de toda la opción, así cualquier toque cae en él.
+ */
 .selector-tipo--fila-completa .selector-tipo__opcion input {
   position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
   opacity: 0;
-  width: 1px;
-  height: 1px;
+  cursor: pointer;
 }
 
 .selector-tipo--fila-completa .selector-tipo__opcion:focus-within {
@@ -1382,10 +1389,12 @@ h1:focus {
 }
 
 @media (max-width: 800px) {
-  .selector-tipo-fila {
-    grid-template-columns: 1fr;
+  .selector-tipo--fila-completa {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+}
 
+@media (max-width: 600px) {
   .selector-tipo--fila-completa {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -1728,6 +1737,102 @@ h1:focus {
   border-radius: 0.3em;
 }
 
+/* Términos pareados: conceptos numerados a la izquierda, definiciones desordenadas a la derecha
+   y, en el medio, una línea de color por cada pareja unida. */
+.proyeccion-pareados__contenido {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  align-content: center;
+  line-height: 1.2;
+}
+
+.proyeccion-pareados__columnas {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) 2.4em minmax(0, 3fr);
+  row-gap: 0.3em;
+}
+
+.proyeccion-pareados__encabezado {
+  grid-row: 1;
+  grid-column: 1;
+  font-size: 0.7em;
+  font-weight: 700;
+  color: var(--texto-suave);
+}
+
+.proyeccion-pareados__encabezado--definiciones {
+  grid-column: 3;
+}
+
+/* Las líneas van detrás de las tarjetas: solo se ven en el espacio del medio. */
+.proyeccion-pareados__lineas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.proyeccion-pareados__lineas line {
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.pareado {
+  position: relative;
+  z-index: 1;
+  grid-column: 1;
+  align-items: center;
+  /* El navegador no debe desplazar la pantalla mientras se arrastra con el dedo. */
+  touch-action: none;
+}
+
+.pareado--definicion {
+  grid-column: 3;
+}
+
+/* El espacio para el número del concepto, como en la prueba en papel. */
+.pareado__casilla {
+  flex: none;
+  min-width: 1.5em;
+  min-height: 1.3em;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  border: max(1px, 0.08em) dashed var(--borde-color);
+  border-radius: 0.3em;
+}
+
+/* Pareja unida: borde, número y casilla del color de su línea. */
+.pareado--unido {
+  border-color: var(--union);
+  box-shadow: inset 0 0 0 0.08em var(--union);
+  cursor: default;
+}
+
+.pareado--unido .ficha__letra,
+.pareado--unido .pareado__casilla {
+  color: var(--fondo);
+  background: var(--union);
+  border: max(1px, 0.08em) solid var(--union);
+}
+
+.pareado--destino {
+  border-color: var(--principal);
+  background: var(--herramienta-fondo);
+  box-shadow: inset 0 0 0 0.12em var(--principal);
+}
+
+/* En pantallas angostas, los conceptos (cortos) necesitan casi tanto ancho como las definiciones. */
+@media (max-width: 600px) {
+  .proyeccion-pareados__columnas {
+    grid-template-columns: minmax(0, 1fr) 1.4em minmax(0, 1.2fr);
+  }
+}
+
 /* Ayuda del editor vacío: cómo se escribe el tipo elegido, con un ejemplo. */
 .como-escribir {
   display: grid;
@@ -1740,38 +1845,176 @@ h1:focus {
   font-size: var(--texto);
 }
 
-/* Inicio: qué es la app y cómo se usa, en una frase y tres pasos. */
-/* Saludo a la izquierda y el logo completo (con el eslogan) a la derecha. */
-.inicio__cabecera {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--espacio-3);
-}
-
+/* Inicio: qué es la app, cómo se usa en tres pasos y qué se puede crear. */
 .inicio__presentacion {
   display: grid;
   gap: var(--espacio-1);
 }
 
-/* Logo completo: la ampolleta y, centrados debajo, el nombre y el eslogan. */
-.marca-completa {
-  flex: none;
+.inicio__descripcion {
+  color: var(--texto-suave);
+}
+
+.inicio__pasos,
+.inicio__tipos {
+  display: grid;
+  gap: var(--espacio-2);
+}
+
+/* Los tres pasos en tarjetas de color, unidas por una flecha: primero, después, al final. */
+.inicio__pasos ol {
   margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--espacio-4);
+}
+
+.inicio__paso {
+  --paso-color: var(--tipo-ruleta);
+  --paso-fondo: var(--amarillo-suave);
+  position: relative;
   display: grid;
   justify-items: center;
+  align-content: start;
+  gap: 4px;
+  padding: 12px var(--espacio-2);
   text-align: center;
+  background: var(--paso-fondo);
+  border: var(--borde) solid var(--paso-color);
+  border-radius: var(--radio-grande);
+}
+
+.inicio__paso--2 {
+  --paso-color: var(--tipo-preguntas);
+  --paso-fondo: var(--celeste-suave);
+}
+
+.inicio__paso--3 {
+  --paso-color: var(--tipo-parejas);
+  --paso-fondo: var(--rojo-suave);
+}
+
+:root[data-tema='alto-contraste'] .inicio__paso {
+  --paso-fondo: #000000;
+}
+
+/* La flecha entre un paso y el siguiente, dibujada con bordes (no se lee en voz alta). */
+.inicio__paso:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: calc(-1 * var(--espacio-4) / 2 - 2px);
+  width: 14px;
+  height: 14px;
+  border-top: 4px solid var(--texto-color);
+  border-right: 4px solid var(--texto-color);
+  transform: translate(25%, -50%) rotate(45deg);
+}
+
+.inicio__paso-dibujo {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  color: var(--paso-color);
+}
+
+.inicio__paso > span {
+  display: grid;
+  justify-items: center;
+}
+
+.inicio__paso-titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  line-height: 1.2;
+}
+
+.inicio__paso-numero {
+  flex: none;
+  width: 1.4em;
+  height: 1.4em;
+  display: grid;
+  place-items: center;
+  font-family: var(--f-titulo);
+  font-weight: 800;
+  color: var(--tinta);
+  background: var(--amarillo);
+  border-radius: 50%;
+}
+
+.inicio__paso-detalle {
+  font-size: 20px;
+  line-height: 1.25;
+  color: var(--texto-suave);
+}
+
+/* Las seis actividades: botones con el dibujo y el color de cada una. */
+.inicio__tipos ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--espacio-2);
+}
+
+.tipo-inicio {
+  width: 100%;
+  height: 100%;
+  min-height: var(--boton-minimo);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px var(--espacio-2);
+  font: inherit;
+  text-align: left;
+  color: var(--texto-color);
+  background: var(--superficie);
+  border: var(--borde) solid;
+  border-left-width: 10px;
+  border-radius: var(--radio);
+  box-shadow: 0 4px 0 rgb(23 32 43 / 0.1);
+  cursor: pointer;
+}
+
+.tipo-inicio > span {
+  display: grid;
+}
+
+.tipo-inicio__icono {
+  flex: none;
+  width: 52px;
+  height: 52px;
+}
+
+.tipo-inicio__nombre {
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.tipo-inicio__uso {
+  font-size: 20px;
+  line-height: 1.25;
+  color: var(--texto-suave);
+}
+
+/* Logo completo al pie: la ampolleta y, centrados debajo, el nombre y el eslogan. */
+.marca-completa {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding-top: var(--espacio-3);
+  text-align: center;
+  border-top: var(--borde) solid var(--borde-suave);
 }
 
 .marca-completa img {
   display: block;
-  width: 120px;
-  height: 120px;
-}
-
-.marca-completa figcaption {
-  display: grid;
-  gap: 2px;
+  width: 96px;
+  height: 96px;
 }
 
 .marca-completa__nombre {
@@ -1783,58 +2026,34 @@ h1:focus {
 
 .marca-completa__eslogan {
   font-family: var(--f-titulo);
-  font-size: 17px;
+  font-size: 18px;
   font-style: italic;
   font-weight: 600;
   color: var(--texto-suave);
 }
 
-/* Etiqueta pequeña en mayúsculas, como en la presentación de la marca. Solo para rótulos secundarios. */
-.ceja {
-  font-family: var(--f-texto);
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--texto-suave);
-}
+/* Pantallas medianas: los pasos uno debajo del otro. */
+@media (max-width: 800px) {
+  .inicio__pasos ol {
+    grid-template-columns: 1fr;
+    gap: var(--espacio-2);
+  }
 
-.inicio__descripcion {
-  color: var(--texto-suave);
-}
+  /* Uno debajo del otro, el dibujo va al lado del texto. */
+  .inicio__paso {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+  }
 
-.inicio__pasos h2 {
-  margin-bottom: var(--espacio-1);
-}
+  .inicio__paso > span {
+    justify-items: start;
+  }
 
-.inicio__pasos ol {
-  margin: var(--espacio-1) 0 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: paso;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--espacio-2);
-}
-
-.inicio__pasos li {
-  counter-increment: paso;
-  display: flex;
-  gap: var(--espacio-1);
-}
-
-.inicio__pasos li::before {
-  content: counter(paso);
-  flex: none;
-  width: 1.6em;
-  height: 1.6em;
-  display: grid;
-  place-items: center;
-  font-family: var(--f-titulo);
-  font-weight: 800;
-  color: var(--tinta);
-  background: var(--amarillo);
-  border-radius: 50%;
+  .inicio__paso:not(:last-child)::after {
+    display: none;
+  }
 }
 
 /* El nombre de la actividad en la proyección: una sola línea, acortado si no cabe. */
@@ -2006,16 +2225,23 @@ h1:focus {
     font-size: 18px;
   }
 
-  .marca-completa {
-    display: none;
+  .marca-completa img {
+    width: 72px;
+    height: 72px;
   }
 
   .boton--grande {
     min-height: 88px;
   }
 
-  .inicio__pasos ol {
+  .inicio__tipos ul {
     grid-template-columns: 1fr;
+  }
+
+  .inicio__paso-dibujo,
+  .tipo-inicio__icono {
+    width: 44px;
+    height: 44px;
   }
 
   .actividad {
@@ -2871,4 +3097,86 @@ h1:focus {
     min-height: 48px;
     font-size: 20px;
   }
+}
+
+/* Crear con IA: el pedido arriba y, debajo, lo que propone la IA. */
+.zona-ia {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
+  background: var(--aviso-fondo);
+  border: var(--borde) solid var(--aviso-borde);
+  border-radius: var(--radio-grande);
+}
+
+.crear-con-ia,
+.crear-con-ia__pedido,
+.crear-con-ia__resultado {
+  display: grid;
+  gap: var(--espacio-3);
+}
+
+.crear-con-ia__area {
+  resize: none;
+  overflow: hidden;
+}
+
+.crear-con-ia__codigo {
+  max-width: 16em;
+}
+
+.crear-con-ia__privacidad,
+.crear-con-ia__esperando {
+  color: var(--texto-suave);
+}
+
+.crear-con-ia__esperando {
+  font-weight: 700;
+}
+
+.crear-con-ia__error {
+  padding: var(--espacio-2);
+  font-weight: 700;
+  background: var(--error-fondo);
+  border-left: 6px solid var(--peligro);
+  border-radius: 0 var(--radio) var(--radio) 0;
+}
+
+.crear-con-ia__resultado h2:focus,
+.crear-con-ia__error:focus {
+  outline: none;
+}
+
+.propuesta {
+  display: grid;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
+  background: var(--superficie);
+  border: var(--borde) solid;
+  border-left-width: 10px;
+  border-radius: var(--radio-grande);
+}
+
+.propuesta__cabecera {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.propuesta__cabecera h3 {
+  margin: 0;
+  font-size: var(--texto-grande);
+}
+
+.propuesta__icono {
+  flex: none;
+  width: 52px;
+  height: 52px;
+}
+
+.propuesta__tipo {
+  color: var(--texto-suave);
 }

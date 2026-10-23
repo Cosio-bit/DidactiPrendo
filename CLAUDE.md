@@ -4,7 +4,7 @@ Este archivo lo lee Claude Code al comenzar cada sesión. Resume qué se constru
 
 ## Qué es
 
-Aplicación web para que profesores chilenos creen **bloques didácticos vacíos** (ruleta, selección múltiple, parejas, verdadero o falso, ordenar, clasificar, tarjetas, completar la frase, rosco de letras y ¿quién soy?) y los **proyecten en la sala** con un data o una pizarra interactiva. El marcador por equipos y el temporizador acompañan a cualquier bloque.
+Aplicación web para que profesores chilenos creen **bloques didácticos vacíos** (ruleta, selección múltiple, parejas, términos pareados, verdadero o falso, ordenar, clasificar, tarjetas, completar la frase, rosco de letras y ¿quién soy?) y los **proyecten en la sala** con un data o una pizarra interactiva. El marcador por equipos y el temporizador acompañan a cualquier bloque.
 
 - La aplicación **no entrega contenido**: el profesor pone el suyo.
 - La forma principal de crear un bloque es **pegar texto plano** (una lista, preguntas copiadas de Word o de ChatGPT) y que el bloque se arme solo.
@@ -72,6 +72,7 @@ src/
     ruleta/            editor + vista de proyección
     preguntas/         selección múltiple (y verdadero o falso, que reutiliza su proyección)
     parejas/           memorice
+    pareados/          términos pareados: unir cada concepto con su definición
     ordenar/
     clasificar/
     tarjetas/          una tarjeta a la vez, se voltea
@@ -93,7 +94,7 @@ tests/
 
 ```ts
 type BlockType =
-  | "ruleta" | "preguntas" | "parejas" | "verdadero-falso" | "ordenar" | "clasificar"
+  | "ruleta" | "preguntas" | "parejas" | "terminos-pareados" | "verdadero-falso" | "ordenar" | "clasificar"
   | "tarjetas" | "completar" | "rosco" | "quien-soy"
   | "marcador" | "temporizador";
 
@@ -132,7 +133,8 @@ Para pasar actividades entre computadores (`src/storage/intercambio.ts`):
   - La pregunta termina en `?` o es la línea que viene antes de las alternativas.
   - La alternativa correcta lleva `*` al inicio.
   - Las preguntas se separan con una línea vacía.
-- **Parejas** (memorice): `palabra = definición`, una pareja por línea. También sirven `→`, `:` o dos columnas de Word o Excel.
+- **Parejas** (memorice): `palabra = definición`, una pareja por línea. También sirven `|`, `→`, `:` o dos columnas de Word o Excel.
+- **Términos pareados**: el mismo formato que Parejas (`concepto | definición`, `=` o una tabla de dos columnas de Docs, Word, Excel o ChatGPT). Se proyecta distinto: conceptos numerados a la izquierda, definiciones desordenadas a la derecha, y se une cada concepto con la suya. La fila de títulos ("Concepto | Definición") se ignora. Si las definiciones son frases (5 palabras o más en promedio), el lector sugiere Términos pareados en vez de Parejas.
 - **Verdadero o falso**: una afirmación por línea con `(V)` o `(F)` al final (también `V)` al inicio, o una línea `Respuesta: F` debajo).
 - **Ordenar**: un elemento por línea, **en el orden correcto**; la app los desordena al proyectar. Si vienen numerados, se respeta el número.
 - **Clasificar**: cada categoría termina en dos puntos y lleva sus elementos, en la misma línea separados por comas o debajo:
