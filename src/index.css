@@ -3180,3 +3180,135 @@ h1:focus {
 .propuesta__tipo {
   color: var(--texto-suave);
 }
+
+/* Crear con IA: la guía o material que sube el profe. */
+.crear-con-ia__material {
+  display: grid;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
+  background: var(--superficie);
+  border: var(--borde) dashed var(--borde-color);
+  border-radius: var(--radio-grande);
+}
+
+.crear-con-ia__material h2 {
+  margin: 0;
+}
+
+.material-subir {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-1) var(--espacio-2);
+}
+
+.material-subir .zona-cargar__ayuda {
+  flex: 1 1 16em;
+}
+
+.material-cargado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-1) var(--espacio-2);
+  padding: var(--espacio-1) var(--espacio-2);
+  background: var(--elegido-fondo);
+  border-radius: var(--radio);
+}
+
+.material-cargado p {
+  display: grid;
+  min-width: 0;
+}
+
+/* Un nombre de archivo larguísimo baja de línea en vez de salirse. */
+.material-cargado__nombre {
+  overflow-wrap: anywhere;
+}
+
+.material-cargado__tipo {
+  color: var(--texto-suave);
+}
+
+.material-cargado__acciones,
+.crear-con-ia__botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-1);
+}
+
+/* Lo que la IA entendió de la guía, para que el profe vea si captó la idea. */
+.crear-con-ia__entendido {
+  padding: var(--espacio-2) var(--espacio-3);
+  background: var(--herramienta-fondo);
+  border-left: 8px solid var(--herramienta-borde);
+  border-radius: 0 var(--radio) var(--radio) 0;
+}
+
+.crear-con-ia__entendido h2 {
+  margin: 0 0 var(--espacio-1);
+  font-size: var(--texto-grande);
+}
+
+/* ¿Ninguna te sirve? Pedir otras propuestas. */
+.crear-con-ia__otra-vez {
+  display: grid;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
+  border: var(--borde) solid var(--borde-suave);
+  border-radius: var(--radio-grande);
+}
+
+.crear-con-ia__otra-vez h2 {
+  margin: 0;
+}
+
+.tipos-pedidos {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.tipos-pedidos__lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11em, 1fr));
+  gap: var(--espacio-1);
+  margin-top: var(--espacio-1);
+}
+
+.tipo-pedido {
+  min-height: var(--boton-minimo);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px var(--espacio-1);
+  font: inherit;
+  font-size: 20px;
+  line-height: 1.15;
+  text-align: left;
+  color: var(--texto-color);
+  background: var(--superficie);
+  border: var(--borde) solid;
+  border-radius: var(--radio);
+  cursor: pointer;
+}
+
+.tipo-pedido__icono {
+  flex: none;
+  width: 32px;
+  height: 32px;
+}
+
+/* Elegido: fondo marcado y borde grueso, no solo color. */
+.tipo-pedido[aria-pressed='true'] {
+  background: var(--elegido-fondo);
+  box-shadow: inset 0 0 0 3px var(--texto-color);
+  font-weight: 700;
+}
+
+.tipo-pedido:focus-visible {
+  outline: var(--foco) solid var(--foco-color);
+  outline-offset: 2px;
+}

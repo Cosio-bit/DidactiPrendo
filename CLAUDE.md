@@ -83,7 +83,7 @@ src/
     temporizador/
   storage/             Dexie: guardar, listar, exportar, importar
   projection/          modo pantalla completa y atajos de teclado
-  ai-bridge/           arma instrucciones para ChatGPT y lee sus respuestas
+  ai-bridge/           crear con IA: lee la guía que sube el profe, pide actividades y lee la respuesta
   ui/                  componentes comunes (botones, diálogos, deshacer)
 tests/
   unit/                Vitest

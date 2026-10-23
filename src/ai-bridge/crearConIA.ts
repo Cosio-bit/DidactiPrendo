@@ -3,6 +3,7 @@
 import { esTipoConTexto, sePuedeProyectar } from '../blocks/catalogo.ts'
 import { parseText } from '../parser/parseText.ts'
 import type { Lectura, TipoLectura } from '../parser/tipos.ts'
+import type { Material } from './material.ts'
 
 export const RUTA_API = '/api/crear-con-ia'
 
@@ -20,6 +21,7 @@ export interface ActividadIA {
 
 export type ErrorIA =
   | 'pedido'
+  | 'pesado'
   | 'codigo'
   | 'sin-configurar'
   | 'clave'
@@ -31,7 +33,8 @@ export type ErrorIA =
   | 'no-disponible'
 
 export type ResultadoIA =
-  | { ok: true; actividades: ActividadIA[]; mensaje: string }
+  /** entendido: lo que la IA entendió de la guía (vacío si no hubo guía). */
+  | { ok: true; actividades: ActividadIA[]; mensaje: string; entendido: string }
   | { ok: false; error: ErrorIA }
 
 const ERRORES_DEL_SERVIDOR: ErrorIA[] = [
@@ -69,22 +72,49 @@ export function leerRespuesta(datos: unknown): ResultadoIA {
       },
     ]
   })
-  return { ok: true, actividades, mensaje: typeof d.mensaje === 'string' ? d.mensaje.trim() : '' }
+  const textoDe = (valor: unknown) => (typeof valor === 'string' ? valor.trim() : '')
+  return { ok: true, actividades, mensaje: textoDe(d.mensaje), entendido: textoDe(d.entendido) }
 }
 
-export async function pedirActividades(
-  pedido: { pedido: string; guia: string; codigo: string },
-  enviar: typeof fetch = fetch,
-): Promise<ResultadoIA> {
+export interface PedidoIA {
+  pedido: string
+  /** Texto de la guía pegado por el profe. */
+  guia: string
+  /** La guía o el material que subió (un Word ya convertido en texto, un PDF o una foto). */
+  material: Material | null
+  codigo: string
+  /** Al intentar de nuevo: qué busca el profe, lo que ya se propuso y los tipos que quiere. */
+  comentario?: string
+  anteriores?: { tipo: TipoLectura; nombre: string }[]
+  tipos?: TipoLectura[]
+}
+
+/** Lo que se envía a la función: el texto de un Word se suma al texto pegado; un PDF o una foto van aparte. */
+export function cuerpoDelPedido({ material, ...pedido }: PedidoIA) {
+  const guias = [pedido.guia.trim()]
+  if (material?.tipo === 'texto') guias.push(`(Archivo «${material.nombre}»)\n${material.texto}`)
+  return {
+    ...pedido,
+    guia: guias.filter(Boolean).join('\n\n'),
+    archivo:
+      material && material.tipo !== 'texto'
+        ? { tipo: material.tipo, mediaType: material.mediaType, datos: material.datos, nombre: material.nombre }
+        : null,
+  }
+}
+
+export async function pedirActividades(pedido: PedidoIA, enviar: typeof fetch = fetch): Promise<ResultadoIA> {
   if (!navigator.onLine) return { ok: false, error: 'sin-internet' }
   try {
     const respuesta = await enviar(RUTA_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(pedido),
+      body: JSON.stringify(cuerpoDelPedido(pedido)),
     })
     // Sin la función (por ejemplo, en el servidor de desarrollo) la ruta no existe.
     if (respuesta.status === 404 || respuesta.status === 405) return { ok: false, error: 'no-disponible' }
+    // Vercel rechaza un pedido de más de 4,5 MB antes de llegar a la función.
+    if (respuesta.status === 413) return { ok: false, error: 'pesado' }
     return leerRespuesta(await respuesta.json().catch(() => null))
   } catch {
     return { ok: false, error: navigator.onLine ? 'falla' : 'sin-internet' }

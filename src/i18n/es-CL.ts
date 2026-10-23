@@ -74,7 +74,7 @@ export const textos = {
       'quien-soy': 'Pistas de a una para adivinar',
     } satisfies Record<TipoConTexto, string>,
     iaTitulo: '¿No tienes el texto listo?',
-    iaAyuda: 'Cuéntale a la IA qué quieres repasar. Ella elige la actividad y la llena por ti.',
+    iaAyuda: 'Sube tu guía o cuéntale a la IA qué quieres repasar. Ella te propone juegos y los llena por ti.',
     crearConIA: 'Crear con IA',
     cargarTitulo: '¿Te pasaron un archivo de actividades?',
     cargarAyuda: 'Arrástralo a esta página o búscalo en tu computador.',
@@ -82,8 +82,34 @@ export const textos = {
   /** Pedirle a la IA que elija y llene la actividad. */
   crearConIA: {
     titulo: 'Crear con IA',
-    explicacion: 'Cuéntale a la IA qué quieres repasar o preparar. Ella elige la actividad que mejor sirve y la llena por ti.',
+    explicacion:
+      'Sube tu guía o material, o cuéntale a la IA qué quieres repasar. Ella entiende de qué se trata y te propone juegos para tu curso.',
+    material: 'Tu guía o material (opcional)',
+    subirMaterial: 'Subir guía o material',
+    subirAyuda: 'Un PDF, Word, PowerPoint o una foto de la guía. También puedes arrastrar el archivo a esta página.',
+    leyendoMaterial: 'Leyendo el archivo…',
+    materialCargado: {
+      pdf: 'PDF',
+      imagen: 'Foto',
+      texto: (palabras: number) => `Texto de ${palabras.toLocaleString('es-CL')} ${palabras === 1 ? 'palabra' : 'palabras'}`,
+    },
+    quitarMaterial: 'Quitar archivo',
+    cambiarMaterial: 'Cambiar archivo',
+    erroresMaterial: {
+      formato: 'Ese tipo de archivo no se puede leer. Sube un PDF, un Word (.docx), un PowerPoint (.pptx) o una foto.',
+      antiguo:
+        'Ese archivo es de un formato antiguo. Ábrelo y guárdalo como PDF (Archivo → Guardar como → PDF), y súbelo de nuevo.',
+      pesado:
+        'El archivo es muy grande (más de 3 MB o unas 30 páginas de texto). Sube solo las páginas que necesitas o pega el texto de la guía.',
+      vacio: 'El archivo no trae texto. Si es una guía escaneada, súbela como foto o PDF.',
+      danado: 'No se pudo abrir el archivo. Puede estar dañado: ábrelo, guárdalo de nuevo y vuelve a subirlo.',
+    },
+    pegarGuia: 'O pega el texto de tu guía',
+    agregarTexto: 'Agregar texto pegado',
     pedido: '¿Qué actividad quieres?',
+    pedidoConGuia: '¿Qué quieres que practiquen? (opcional)',
+    pedidoConGuiaAyuda: 'Si no escribes nada, la IA te propone juegos a partir de tu guía.',
+    pedidoConGuiaEjemplo: 'Por ejemplo: que reconozcan cada parte de la noticia y para qué sirve. Es para 6° básico.',
     pedidoEjemplo:
       'Por ejemplo: términos pareados con los conceptos del género narrativo, para 6° básico. O: una actividad para recordar las partes de una noticia.',
     agregarGuia: 'Agregar el texto de una guía (opcional)',
@@ -93,9 +119,12 @@ export const textos = {
     codigo: 'Código de acceso',
     codigoAyuda: 'Lo encuentras en el mensaje con que te invitaron a probar la app.',
     crear: 'Crear con IA',
+    proponer: 'Proponer actividades',
     esperando: 'Armando tu actividad… Puede tardar hasta un minuto.',
+    esperandoGuia: 'Leyendo tu guía y armando actividades… Puede tardar hasta un minuto.',
     privacidad:
-      'Tu pedido y el texto de tu guía se envían a Claude, la IA de Anthropic, para armar la actividad. No escribas nombres de estudiantes.',
+      'Tu pedido y tu guía o material se envían a Claude, la IA de Anthropic, para armar las actividades. No se guardan. No incluyas nombres de estudiantes.',
+    entendido: 'Esto entendí de tu guía',
     revisa: 'La IA puede equivocarse: revisa el contenido antes de proyectar.',
     propuestas: (n: number) => (n === 1 ? 'La IA te propone esta actividad' : `La IA te propone ${n} actividades`),
     porQue: 'Por qué:',
@@ -104,8 +133,21 @@ export const textos = {
     guardadas: (n: number) => (n === 1 ? 'Se guardó 1 actividad en Mis actividades' : `Se guardaron ${n} actividades en Mis actividades`),
     noSirve: 'Esta no quedó bien armada. Pide de nuevo o usa otra.',
     nada: 'La IA no armó ninguna actividad. Prueba escribiendo el pedido de otra forma.',
+    ningunaSirve: '¿Ninguna te sirve?',
+    ningunaSirveAyuda: 'Puedes pedir otras. Cuéntale a la IA a qué apuntas o qué tipo de actividad quieres, y no repetirá las que ya viste.',
+    pedirOtras: 'Pedir otras propuestas',
+    comentario: 'Cuéntale a la IA qué buscas',
+    comentarioAyuda:
+      'Di a qué apuntas o qué debe hacer el curso, con tus palabras. Mientras más claro, mejor resultado.',
+    comentarioEjemplo:
+      'Por ejemplo: quiero que identifiquen cada parte en una noticia de verdad. O: algo más fácil, para 5° básico.',
+    tiposQueQuieres: '¿Qué tipo de actividad quieres? (opcional)',
+    faltaComentario: 'Escribe qué buscas o elige al menos un tipo de actividad.',
+    cancelar: 'Cancelar',
+    intento: (n: number) => `Propuestas, intento ${n}`,
     errores: {
-      pedido: 'Escribe qué actividad quieres (hasta 1.500 letras). Si pegaste una guía, que tenga hasta 40.000 letras.',
+      pedido: 'Escribe qué actividad quieres o sube tu guía (el pedido, hasta 1.500 letras; la guía, unas 30 páginas).',
+      pesado: 'El archivo es muy grande para enviarlo. Sube solo las páginas que necesitas o pega el texto de la guía.',
       codigo: 'El código de acceso no es correcto. Revísalo y vuelve a intentar.',
       'sin-configurar': 'La IA todavía no está configurada en esta página. Avísale a quien administra la app.',
       clave: 'La clave de la IA no está bien configurada. Avísale a quien administra la app.',
@@ -152,6 +194,7 @@ export const textos = {
     ayuda:
       'Para guardar una copia o pasar tus actividades a otro computador. Para cargarlas, también puedes arrastrar el archivo a esta página.',
     soltarAqui: 'Suelta el archivo aquí para cargar tus actividades',
+    soltarGuia: 'Suelta aquí tu guía o material',
     nombreArchivoTodas: (fecha: string) => `actividades-didactiprendo-${fecha}.json`,
     nombreArchivo: (nombre: string) => `${nombre}.json`,
     descargado: 'Archivo descargado. Lo encuentras en la carpeta Descargas.',

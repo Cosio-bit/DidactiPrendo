@@ -31,6 +31,7 @@ function App() {
   }, [ruta.pantalla])
 
   // Un archivo de actividades soltado en cualquier parte de la app se carga (en la proyección se ignora).
+  // Una guía o material (PDF, Word, una foto) va a Crear con IA.
   const archivoEncima = useSoltarArchivos(ruta.pantalla === 'proyectar' ? null : cargarArchivosSoltados)
 
   // La proyección ocupa toda la pantalla, sin cabecera ni barra de guardado.
@@ -72,7 +73,7 @@ function App() {
       <BarraGuardado />
       {archivoEncima && (
         <div className="soltar-aqui" aria-hidden="true">
-          <p>{textos.respaldo.soltarAqui}</p>
+          <p>{ruta.pantalla === 'crear-con-ia' ? textos.respaldo.soltarGuia : textos.respaldo.soltarAqui}</p>
         </div>
       )}
     </div>

@@ -181,6 +181,14 @@ Cada fase tiene un objetivo, sus tareas, un criterio de "terminado" y una instru
 
 **Terminado cuando:** con ChatGPT gratuito se obtiene un quiz de 10 preguntas listo para proyectar en menos de 3 minutos.
 
+### Crear con IA a partir de la guía del profe
+
+- [x] Subir la guía o material: PDF, Word (.docx), PowerPoint (.pptx), texto o una foto. También desde "Cargar material" en el inicio o arrastrándolo a la página.
+  - Word y PowerPoint se leen en el navegador y se envía solo su texto; un PDF (hasta 3 MB) o una foto (achicada) se envían tal cual.
+  - Un .doc o .ppt antiguo explica cómo guardarlo como PDF.
+- [x] El pedido es opcional si hay guía. La IA dice "Esto entendí de tu guía" y propone 3 actividades de tipos distintos sobre ese contenido.
+- [x] "¿Ninguna te sirve?": el profe cuenta a qué apunta (y, si quiere, elige tipos de actividad) y la IA propone otras sin repetir las que ya mostró. La guía queda en caché para que el reintento cueste menos.
+
 ---
 
 ## Fase 8 — Pruebas en condiciones reales (1 a 2 sesiones)
