@@ -60,6 +60,13 @@ async function abrirCrearConIA(page: Page) {
   await expect(page.getByRole('heading', { name: 'Crear con IA', level: 1 })).toBeVisible()
 }
 
+test('primero se pide qué actividad quiere y debajo, opcional, la guía', async ({ page }) => {
+  await abrirCrearConIA(page)
+  const pedido = (await page.getByLabel('¿Qué actividad quieres?').boundingBox())!
+  const guia = (await page.getByRole('heading', { name: 'Tu guía o material (opcional)' }).boundingBox())!
+  expect(pedido.y).toBeLessThan(guia.y)
+})
+
 test('con una guía en PDF y sin pedido, la IA dice qué entendió, propone juegos y se le pueden pedir otros', async ({ page }) => {
   const enviados = await simularIA(page, [PRIMERA, SEGUNDA])
   await abrirCrearConIA(page)
@@ -68,7 +75,7 @@ test('con una guía en PDF y sin pedido, la IA dice qué entendió, propone jueg
   await expect(page.locator('.material-cargado')).toContainText('guia.pdf')
   await expect(page.locator('.material-cargado')).toContainText('PDF')
   // Con guía, el pedido es opcional.
-  await expect(page.getByLabel('¿Qué quieres que practiquen? (opcional)')).toBeVisible()
+  await expect(page.getByText('Como subiste una guía, puedes dejarlo en blanco')).toBeVisible()
   await page.getByRole('button', { name: 'Proponer actividades' }).click()
 
   await expect(page.getByRole('heading', { name: 'Esto entendí de tu guía' })).toBeVisible()
@@ -117,7 +124,7 @@ test('"Cargar material" en el inicio con un Word lleva a Crear con IA y envía s
   await expect(page.getByRole('heading', { name: 'Crear con IA', level: 1 })).toBeVisible()
   await expect(page.locator('.material-cargado')).toContainText('guia-noticia.docx')
   await expect(page.locator('.material-cargado')).toContainText(/Texto de \d+ palabras/)
-  await page.getByLabel('¿Qué quieres que practiquen? (opcional)').fill('Para 6° básico')
+  await page.getByLabel('¿Qué actividad quieres?').fill('Para 6° básico')
   await page.getByRole('button', { name: 'Proponer actividades' }).click()
 
   await expect(page.getByRole('heading', { name: 'La IA te propone 2 actividades' })).toBeVisible()
@@ -165,7 +172,7 @@ test('un Word antiguo explica cómo guardarlo como PDF, y quitar el archivo vuel
   await page.locator('input[type=file]').setInputFiles('tests/fixtures/guia.pdf')
   await expect(page.getByRole('alert')).toHaveCount(0)
   await page.getByRole('button', { name: 'Quitar archivo' }).click()
-  await expect(page.getByLabel('¿Qué actividad quieres?')).toBeVisible()
+  await expect(page.getByText('Como subiste una guía, puedes dejarlo en blanco')).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Crear con IA' })).toBeDisabled()
 })
 

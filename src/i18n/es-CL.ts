@@ -83,7 +83,7 @@ export const textos = {
   crearConIA: {
     titulo: 'Crear con IA',
     explicacion:
-      'Sube tu guía o material, o cuéntale a la IA qué quieres repasar. Ella entiende de qué se trata y te propone juegos para tu curso.',
+      'Cuéntale a la IA qué quieres repasar y, si quieres, sube tu guía o material. Ella entiende de qué se trata y te propone juegos para tu curso.',
     material: 'Tu guía o material (opcional)',
     subirMaterial: 'Subir guía o material',
     subirAyuda: 'Un PDF, Word, PowerPoint o una foto de la guía. También puedes arrastrar el archivo a esta página.',
@@ -107,8 +107,7 @@ export const textos = {
     pegarGuia: 'O pega el texto de tu guía',
     agregarTexto: 'Agregar texto pegado',
     pedido: '¿Qué actividad quieres?',
-    pedidoConGuia: '¿Qué quieres que practiquen? (opcional)',
-    pedidoConGuiaAyuda: 'Si no escribes nada, la IA te propone juegos a partir de tu guía.',
+    pedidoConGuiaAyuda: 'Como subiste una guía, puedes dejarlo en blanco: la IA te propone juegos a partir de ella.',
     pedidoConGuiaEjemplo: 'Por ejemplo: que reconozcan cada parte de la noticia y para qué sirve. Es para 6° básico.',
     pedidoEjemplo:
       'Por ejemplo: términos pareados con los conceptos del género narrativo, para 6° básico. O: una actividad para recordar las partes de una noticia.',

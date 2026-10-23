@@ -379,11 +379,9 @@ export function CrearConIA() {
           void crear()
         }}
       >
-        {zonaMaterial}
-
         <div className="campo">
           <label htmlFor={idPedido} className="campo__etiqueta">
-            {hayGuia ? t.pedidoConGuia : t.pedido}
+            {t.pedido}
           </label>
           {hayGuia && (
             <p id={idPedidoAyuda} className="zona-cargar__ayuda">
@@ -402,6 +400,8 @@ export function CrearConIA() {
             onChange={(evento) => setPedido(evento.target.value)}
           />
         </div>
+
+        {zonaMaterial}
 
         {pideCodigo && (
           <div className="campo">
